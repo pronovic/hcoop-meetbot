@@ -1,0 +1,393 @@
+#!/bin/bash
+# Shortcuts for common developer tasks
+
+# Setup the virtual environment via Poetry and install pre-commit hooks
+run_install() {
+   poetry install -v
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+
+   poetry run pre-commit install 
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+}
+
+# Activate the current Poetry virtual environment
+run_activate() {
+   echo "source "$(dirname $(poetry run which python) 2>/dev/null)/activate""
+}
+
+# Regenerate the docs/requirements.txt file
+run_requirements() {
+   poetry export --format=requirements.txt --without-hashes --dev --output=docs/requirements.txt
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+
+   poetry run python utils/dos2unix.py docs/requirements.txt
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+}
+
+# Run the Pylint code checker
+run_pylint() {
+   echo "Running pylint checks..."
+
+   poetry run which pylint > /dev/null
+   if [ $? != 0 ]; then
+      run_install
+   fi
+
+   poetry run pylint -j 0 src/limnoriameetbot tests
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+
+   echo "done"
+}
+
+# Run the MyPy code checker
+run_mypy() {
+   echo "Running mypy checks..."
+
+   poetry run which mypy > /dev/null
+   if [ $? != 0 ]; then
+      run_install
+   fi
+
+   poetry run mypy
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+
+   echo "done"
+}
+
+# Run the Safety code checker
+run_safety() {
+   echo "Running safety checks..."
+
+   poetry run which safety > /dev/null
+   if [ $? != 0 ]; then
+      run_install
+   fi
+
+   poetry run safety check $*
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+
+   echo "done"
+}
+
+# Run the black code formatter
+run_black() {
+   echo "Running black formatter..."
+
+   poetry run which black > /dev/null
+   if [ $? != 0 ]; then
+      run_install
+   fi
+
+   poetry run black $* .
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+
+   echo "done"
+}
+
+# Run the isort import formatter
+run_isort() {
+   echo "Running isort formatter..."
+
+   poetry run which isort > /dev/null
+   if [ $? != 0 ]; then
+      run_install
+   fi
+
+   poetry run isort $* .
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+
+   echo "done"
+}
+
+# Run the unit tests, optionally with coverage
+run_pytest() {
+   coverage="no"
+   html="no"
+
+   while getopts ":ch" option; do
+     case $option in
+       c) 
+         coverage="yes"
+         ;;
+       h) 
+         html="yes"
+         ;;
+       ?) 
+         echo "invalid option -$OPTARG"
+         exit 1
+         ;;
+     esac
+   done
+
+   poetry run which pytest > /dev/null
+   if [ $? != 0 ]; then
+      run_install
+   fi
+
+   if [ $coverage == "yes" ]; then
+      poetry run coverage run -m pytest tests
+      if [ $? != 0 ]; then
+         exit 1
+      fi
+
+      poetry run coverage report
+      if [ $html == "yes" ]; then
+         poetry run coverage html -d .htmlcov
+         $(which start || which open) .htmlcov/index.html 2>/dev/null  # start on Windows, open on MacOS
+      fi
+   else
+      poetry run pytest tests
+      if [ $? != 0 ]; then
+         exit 1
+      fi
+   fi
+}
+
+# Run the broader Tox test suite used by the GitHub CI action
+run_tox() {
+   poetry run which tox > /dev/null
+   if [ $? != 0 ]; then
+      run_install
+   fi
+
+   poetry run tox -c .toxrc -e "checks,docs,coverage"
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+}
+
+# Build the Sphinx documentation for limnoriameetbot.readthedocs.io
+run_docs() {
+   open="no"
+
+   while getopts ":o" option; do
+     case $option in
+       o) 
+         open="yes"
+         ;;
+       ?) 
+         echo "invalid option -$OPTARG"
+         exit 1
+         ;;
+     esac
+   done
+
+   poetry run which sphinx-build > /dev/null
+   if [ $? != 0 ]; then
+      run_install
+   fi
+
+   cd docs 
+   poetry run sphinx-build -N -E -a -b html -d _build/doctrees . _build/html 2>&1 | grep -v -F --file=.sphinxignore
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+
+   if [ $open == "yes" ]; then
+      $(which start || which open) _build/html/index.html 2>/dev/null  # start on Windows, open on MacOS
+   fi
+}
+
+# Release a specific version and tag the code
+run_release() {
+   if [ $# != 1 ]; then
+      echo "run release <version>"
+      exit 1
+   fi
+
+   VERSION=$(echo "$1" | sed 's/^v//') # so you can use "0.1.5 or "v0.1.5"
+   COPYRIGHT="2020-$(date +'%Y')"
+   DATE=$(date +'%d %b %Y')
+   TAG="v$VERSION" # follow PEP 440 naming convention
+   FILES="pyproject.toml Changelog"
+   MESSAGE="Release v$VERSION to PyPI"
+
+   if [ "$(git branch -a | grep '^\*' | sed 's/^\* //')" != "master" ]; then
+      echo "*** You are not on master; you cannot release from this branch"
+      exit 1
+   fi
+
+   git tag -l "$TAG" | grep -q "$TAG"
+   if [ $? = 0 ]; then
+      echo "*** Version v$VERSION already tagged"
+      exit 1
+   fi
+
+   head -1 Changelog | grep -q "^Version $VERSION\s\s*unreleased"
+   if [ $? != 0 ]; then
+      echo "*** Unreleased version v$VERSION is not at the head of the Changelog"
+      exit 1
+   fi
+
+   poetry version $VERSION
+   if [ $? != 0 ]; then
+      echo "*** Failed to update version"
+      exit 1
+   fi
+
+   poetry run python utils/dos2unix.py pyproject.toml
+   if [ $? != 0 ]; then
+      echo "*** Failed to update line endings"
+      exit 1
+   fi
+
+   # annoyingly, BSD sed and GNU sed are not compatible on the syntax for -i
+   # I failed miserably in all attempts to put the sed command (with empty string) into a variable
+   sed --version 2>&1 | grep -iq "GNU sed"
+   if [ $? = 0 ]; then
+      # GNU sed accepts a bare -i and assumes no backup file
+      sed -i "s/^Version $VERSION\s\s*unreleased/Version $VERSION     $DATE/g" Changelog
+      if [ $? != 0 ]; then
+         echo "*** Failed to update changelog"
+         exit 1
+      fi
+   else
+      # BSD set requires you to set an empty backup file extension
+      sed -i "" "s/^Version $VERSION\s\s*unreleased/Version $VERSION     $DATE/g" Changelog
+      if [ $? != 0 ]; then
+         echo "*** Failed to update changelog"
+         exit 1
+      fi
+   fi
+
+   git diff $FILES
+
+   git commit --no-verify -m "$MESSAGE" $FILES
+   if [ $? != 0 ]; then
+      echo "*** Commit step failed"
+      exit 1
+   fi
+
+   git tag -a "$TAG" -m "$MESSAGE"
+   if [ $? != 0 ]; then
+      echo "*** Tag step failed"
+      exit 1
+   fi
+
+   echo ""
+   echo "*** Version v$VERSION has been released and commited; you may publish now"
+   echo ""
+}
+
+# Publish the current code to PyPI and push to GitHub
+# Before doing this, you must retrieve and configure a local API token
+# For instance: poetry config pypi-token.pypi token --local
+# See: https://python-poetry.org/docs/repositories/#configuring-credentials
+run_publish() {
+   poetry build
+   if [ $? != 0 ]; then
+      echo "*** Build step failed."
+      exit 1
+   fi
+
+   poetry publish
+   if [ $? != 0 ]; then
+      echo "*** Publish step failed."
+      exit 1
+   fi
+
+   git push --follow-tags
+}
+
+# Execute one of the developer tasks
+case $1 in
+   install|setup)
+      run_install
+      ;;
+   activate)
+      run_activate
+      ;;
+   requirements)
+      run_requirements
+      ;;
+   black)
+      run_black
+      ;;
+   isort)
+      run_isort
+      ;;
+   safety)
+      run_safety
+      ;;
+   mypy)
+      run_mypy
+      ;;
+   *lint)
+      run_pylint
+      ;;
+   format)
+      run_black
+      echo ""
+      run_isort
+      ;;
+   check*)
+      run_black --check
+      echo ""
+      run_isort --check-only
+      echo ""
+      run_safety --bare
+      echo ""
+      run_mypy
+      echo ""
+      run_pylint
+      ;;
+   pytest|test*)
+      shift 1
+      run_pytest $*
+      ;;
+   tox)
+      run_tox
+      ;;
+   doc*)
+      shift 1
+      run_docs $*
+      ;;
+   release)
+      shift 1
+      run_release $*
+      ;;
+   publish)
+      run_publish
+      ;;
+   *)
+      echo ""
+      echo "------------------------------------"
+      echo "Shortcuts for common developer tasks"
+      echo "------------------------------------"
+      echo ""
+      echo "Usage: run <command>"  
+      echo ""
+      echo "- run install: Setup the virtualenv via Poetry and install pre-commit hooks"
+      echo "- run activate: Print command needed to activate the Poetry virtualenv"
+      echo "- run requirements: Regenerate the docs/requirements.txt file"
+      echo "- run format: Run the code formatters"
+      echo "- run checks: Run the code checkers"
+      echo "- run test: Run the unit tests"
+      echo "- run test -c: Run the unit tests with coverage"
+      echo "- run test -ch: Run the unit tests with coverage and open the HTML report"
+      echo "- run docs: Build the Spinx documentation for limnoriameetbot.readthedocs.io"
+      echo "- run docs -o: Build the Spinx documentation and open in a browser"
+      echo "- run tox: Run the Tox test suite used by the GitHub CI action"
+      echo "- run release: Release a specific version and tag the code"
+      echo "- run publish: Publish the current code to PyPI and push to GitHub"
+      echo ""
+      exit 1
+esac
