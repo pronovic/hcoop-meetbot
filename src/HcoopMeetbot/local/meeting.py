@@ -277,13 +277,13 @@ else:
     # First source of config: try just plain importing it
     try:
         # noinspection PyUnresolvedReferences
-        import meetingLocalConfig  # KJP: I have no idea what PyCharm is complaining about here
+        import meetingLocalConfig
 
         meetingLocalConfig = importlib.reload(meetingLocalConfig)
         if hasattr(meetingLocalConfig, "Config"):
             LocalConfig = meetingLocalConfig.Config
     except ImportError:
-        pass
+        LocalConfig = None
     if LocalConfig is None:
         for dirname in (os.path.dirname("__file__"), "."):
             fname = os.path.join(dirname, "meetingLocalConfig.py")
@@ -301,9 +301,9 @@ else:
 
 # KJP: the object design here is unconventional.  The MeetingCommands object
 #      often refers to members that only exist in the child class, like
-#     self.replacements() or self.config.  The only child class of MeetingCommands
-#     is Meeting, so I think that strictly speaking these two classes should be
-#     merged.
+#      self.replacements() or self.config.  The only child class of MeetingCommands
+#      is Meeting, so I think that strictly speaking these two classes should be
+#      merged.
 
 # noinspection PyUnresolvedReferences
 # pylint: disable=no-member:
