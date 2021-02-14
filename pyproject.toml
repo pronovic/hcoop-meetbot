@@ -28,7 +28,6 @@ python = ">=3.7,<4"
 limnoria = "^2021.01.15"
 genshi = "^0.7.5"
 Pygments = "^2.8.0"
-mwclient = "^0.10.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
