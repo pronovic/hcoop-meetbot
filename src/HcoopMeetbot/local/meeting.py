@@ -34,10 +34,11 @@ import os
 import re
 import stat
 
-import writers
-import items
-reload(writers)
-reload(items)
+from . import writers
+from . import items
+import importlib
+importlib.reload(writers)
+importlib.reload(items)
 
 __version__ = "0.1.4"
 
@@ -124,14 +125,14 @@ class Config(object):
         self.M = M
         self.writers = { }
         # Update config values with anything we may have
-        for k,v in extraConfig.iteritems():
+        for k,v in extraConfig.items():
             setattr(self, k, v)
 
         if hasattr(self, "init_hook"):
             self.init_hook()
         if writeRawLog:
             self.writers['.log.txt'] = writers.TextLog(self.M)
-        for extension, writer in self.writer_map.iteritems():
+        for extension, writer in self.writer_map.items():
             self.writers[extension] = writer(self.M)
         self.safeMode = safeMode
     def filename(self, url=False):
@@ -211,9 +212,9 @@ class Config(object):
             # If it doesn't, then it's assumed that the write took
             # care of writing (or publishing or emailing or wikifying)
             # it itself.
-            if isinstance(text, unicode):
+            if isinstance(text, str):
                 text = self.enc(text)
-            if isinstance(text, (str, unicode)):
+            if isinstance(text, str):
                 # Have a way to override saving, so no disk files are written.
                 if getattr(self, "dontSave", False):
                     pass
@@ -273,7 +274,7 @@ else:
     # First source of config: try just plain importing it
     try:
         import meetingLocalConfig
-        meetingLocalConfig = reload(meetingLocalConfig)
+        meetingLocalConfig = importlib.reload(meetingLocalConfig)
         if hasattr(meetingLocalConfig, 'Config'):
             LocalConfig = meetingLocalConfig.Config
     except ImportError:
@@ -283,7 +284,7 @@ else:
             fname = os.path.join(dirname, "meetingLocalConfig.py")
             if os.access(fname, os.F_OK):
                 meetingLocalConfig = { }
-                execfile(fname, meetingLocalConfig)
+                exec(compile(open(fname, "rb").read(), fname, 'exec'), meetingLocalConfig)
                 LocalConfig = meetingLocalConfig["Config"]
                 break
     if LocalConfig is not None:
@@ -500,13 +501,13 @@ class Meeting(MeetingCommands, object):
         if hasattr(self, '_sendReply') and not self._lurk:
             self._sendReply(self.config.enc(x))
         else:
-            print "REPLY:", self.config.enc(x)
+            print("REPLY:", self.config.enc(x))
     def topic(self, x):
         """Set the topic in the IRC channel."""
         if hasattr(self, '_setTopic') and not self._lurk:
             self._setTopic(self.config.enc(x))
         else:
-            print "TOPIC:", self.config.enc(x)
+            print("TOPIC:", self.config.enc(x))
     def settopic(self):
         "The actual code to set the topic"
         if self._meetingTopic:
@@ -644,7 +645,7 @@ if __name__ == '__main__':
             filename = m.group(1)
         else:
             filename = os.path.splitext(fname)[0]
-        print 'Saving to:', filename
+        print('Saving to:', filename)
         channel = '#'+os.path.basename(sys.argv[2]).split('.')[0]
 
         M = Meeting(channel=channel, owner=None,
@@ -668,5 +669,5 @@ if __name__ == '__main__':
                 M.addline(nick, "ACTION "+line, time_=time_)
         #M.save() # should be done by #endmeeting in the logs!
     else:
-        print 'Command "%s" not found.'%sys.argv[1]
+        print('Command "%s" not found.'%sys.argv[1])
 
