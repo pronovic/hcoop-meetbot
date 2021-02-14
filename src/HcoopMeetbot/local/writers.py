@@ -13,12 +13,6 @@ import re
 import textwrap
 import time
 
-# from meeting import timeZone, meetBotInfoURL
-
-# Needed for testing with isinstance() for properly writing.
-# from items import Topic, Action
-# from . import items
-
 # Data sanitizing for various output methods
 def html(text):
     """Escape bad sequences (in HTML) in user-generated lines."""
