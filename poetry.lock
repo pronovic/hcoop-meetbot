@@ -401,7 +401,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 name = "pygments"
 version = "2.8.0"
 description = "Pygments is a syntax highlighting package written in Python."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.5"
 
@@ -754,7 +754,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4"
-content-hash = "2ff4b4f8016b7e37d67b8457e95d18dcf7820fe16c1671f21c0bfb7b8e12429d"
+content-hash = "7c9c809c38bdafd8cfdb8787f4065ebca961ca8a94f6446aefabc5359d85568c"
 
 [metadata.files]
 alabaster = [
