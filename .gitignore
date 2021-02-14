@@ -1,6 +1,9 @@
 # Compiled Python code
 __pycache__
 
+# Temporary stuff
+/tmp
+
 # Python coverage data
 /.htmlcov
 /.coverage
