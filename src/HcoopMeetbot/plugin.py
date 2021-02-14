@@ -12,6 +12,7 @@ from supybot import callbacks, utils
 from supybot.commands import additional, many, wrap
 
 try:
+    # noinspection PyUnresolvedReferences
     from supybot.i18n import PluginInternationalization
 
     _ = PluginInternationalization("HcoopMeetbot")

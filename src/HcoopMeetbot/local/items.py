@@ -1,41 +1,10 @@
-# Richard Darst, June 2009
-
-###
-# Copyright (c) 2009, Richard Darst
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-#   * Redistributions of source code must retain the above copyright notice,
-#     this list of conditions, and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright notice,
-#     this list of conditions, and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution.
-#   * Neither the name of the author of this software nor the name of
-#     contributors to this software may be used to endorse or promote products
-#     derived from this software without specific prior written consent.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-###
-
-import os
+#import os
 import re
 import time
 
 from . import writers
 #from writers import html, rst
-import itertools
+#import itertools
 
 def inbase(i, chars='abcdefghijklmnopqrstuvwxyz', place=0):
     """Converts an integer into a postfix in base 26 using ascii chars.
@@ -49,7 +18,7 @@ def inbase(i, chars='abcdefghijklmnopqrstuvwxyz', place=0):
     if div == 0:
         return chars[mod]
     else:
-        return inbase2(div, chars=chars, place=place+1)+chars[mod]
+        return inbase(div, chars=chars, place=place+1)+chars[mod]  # KJP original code had inbase2 here, no idea why
 
 
 
@@ -67,6 +36,10 @@ class _BaseItem(object):
     endtext = ''
     startmw = ''
     endmw = ''
+    url = ''
+    nick = ''
+    time = ''
+    linenum = ''
     def get_replacements(self, M, escapewith):
         replacements = { }
         for name in dir(self):
@@ -251,7 +224,7 @@ class Link(_BaseItem):
         # (%s//[^\s]+    - protocol://... until the next space
         # (?<!\.|\))     - but the last character can NOT be . or )
         # (.*)           - any suffix
-        url_re = re.compile(r'(.*?)(%s//[^\s]+(?<!\.|\)))(.*)'%protocols)
+        url_re = re.compile(r'(.*?)(%s//[^\s]+(?<![.)]))(.*)'%protocols)
         m = url_re.match(line)
         if m:
             self.prefix = m.group(1)

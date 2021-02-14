@@ -1,34 +1,3 @@
-# Richard Darst, June 2009
-
-###
-# Copyright (c) 2009, Richard Darst
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-#   * Redistributions of source code must retain the above copyright notice,
-#     this list of conditions, and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright notice,
-#     this list of conditions, and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution.
-#   * Neither the name of the author of this software nor the name of
-#     contributors to this software may be used to endorse or promote products
-#     derived from this software without specific prior written consent.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-###
-
 import os
 import re
 import textwrap
@@ -38,7 +7,7 @@ import time
 
 # Needed for testing with isinstance() for properly writing.
 #from items import Topic, Action
-from . import items
+#from . import items
 
 # Data sanitizing for various output methods
 def html(text):
@@ -291,23 +260,34 @@ class Template(_BaseWriter):
         template = self.M.config.findFile(template)
 
         # Do the actual templating work
+        f = None
         try:
             f = open(template, 'r')
             tmpl = Template(f.read())
             stream = tmpl.generate(**repl)
         finally:
-            f.close()
+            if f:
+                f.close()
 
         return stream.render()
 
 
+# KJP: PyCharm complains about an unresolved reference to self.M below.
+#      It's not defined in this class.  I think that it works because all
+#      of the child classes of _CSSmanager also inherit from _BaseWriter,
+#      and _BaseWriter does have a self.M attribute.  This is unconvention.
+#      I think that properly speaking, _BaseWriter and _CSSmanager should
+#      be merged into a single class.
 
+# noinspection PyUnresolvedReferences
 class _CSSmanager(object):
     _css_head = textwrap.dedent('''\
         <style type="text/css">
         %s
         </style>
         ''')
+
+    # noinspection PyBroadException
     def getCSS(self, name):
         cssfile = getattr(self.M.config, 'cssFile_'+name, '')
         if cssfile.lower() == 'none':
@@ -323,7 +303,7 @@ class _CSSmanager(object):
             # Stylesheet specified
             if getattr(self.M.config, 'cssEmbed_'+name, True):
                 # external stylesheet
-                css = file(css_fname).read()
+                css = open(css_fname).read()
                 return self._css_head%css
             else:
                 # linked stylesheet
@@ -350,7 +330,7 @@ class _CSSmanager(object):
 
 
 class TextLog(_BaseWriter):
-    def format(self, extension=None):
+    def format(self, extension=None, **kwargs):
         M = self.M
         """Write raw text logs."""
         return "\n".join(M.lines)
@@ -359,14 +339,14 @@ class TextLog(_BaseWriter):
 
 
 class HTMLlog1(_BaseWriter):
-    def format(self, extension=None):
+    def format(self, extension=None, **kwargs):
         """Write pretty HTML logs."""
         M = self.M
         # pygments lexing setup:
         # (pygments HTML-formatter handles HTML-escaping)
         import pygments
-        from pygments.lexers import IrcLogsLexer
-        from pygments.formatters import HtmlFormatter
+        from pygments.lexers.textfmts import IrcLogsLexer
+        from pygments.formatters.html import HtmlFormatter
         import pygments.token as token
         from pygments.lexer import bygroups
         # Don't do any encoding in this function with pygments.
@@ -395,7 +375,7 @@ class HTMLlog1(_BaseWriter):
         # format in.  Thanks to a comment on the blog of Francis
         # Giannaros (http://francis.giannaros.org) for the suggestion
         # and instructions for how.
-        out,n = re.subn(r"(\n\s*pre\s*\{[^}]+;\s*)(\})",
+        out,n = re.subn(r"(\n\s*pre\s*{[^}]+;\s*)(})",
                         r"\1\n      white-space: pre-wrap;\2",
                         out, count=1)
         if n == 0:
@@ -405,17 +385,17 @@ class HTMLlog1(_BaseWriter):
         return out
 
 class HTMLlog2(_BaseWriter, _CSSmanager):
-    def format(self, extension=None):
+    def format(self, extension=None, **kwargs):
         """Write pretty HTML logs."""
         M = self.M
         lines = [ ]
         line_re = re.compile(r"""\s*
-            (?P<time> \[?[0-9:\s]*\]?)\s*
+            (?P<time> \[?[0-9:\s]*]?)\s*
             (?P<nick>\s+<[@+\s]?[^>]+>)\s*
             (?P<line>.*)
         """, re.VERBOSE)
         action_re = re.compile(r"""\s*
-            (?P<time> \[?[0-9:\s]*\]?)\s*
+            (?P<time> \[?[0-9:\s]*]?)\s*
             (?P<nick>\*\s+[@+\s]?[^\s]+)\s*
             (?P<line>.*)
         """,re.VERBOSE)
@@ -424,6 +404,7 @@ class HTMLlog2(_BaseWriter, _CSSmanager):
         hilight_re = re.compile(r"([^\s]+:)( .*)")
         lineNumber = 0
         for l in M.lines:
+            outline = ""
             lineNumber += 1  # starts from 1
             # is it a regular line?
             m = line_re.match(l)
@@ -472,7 +453,7 @@ class HTMLlog2(_BaseWriter, _CSSmanager):
                                 'line':html(m.group('line')),})
                 continue
             print(l)
-            print(m.groups())
+            #print(m.groups()) # KJP: PyCharm is correct that m can only be None here
             print("**error**", l)
 
         css = self.getCSS(name='log')
@@ -541,7 +522,7 @@ class HTML1(_BaseWriter):
     </body></html>
     ''')
 
-    def format(self, extension=None):
+    def format(self, extension=None, **kwargs):
         """Write the minutes summary."""
         M = self.M
 
@@ -724,7 +705,7 @@ class HTML2(_BaseWriter, _CSSmanager):
     def heading(self, name):
         return '<h3>%s</h3>'%name
 
-    def format(self, extension=None):
+    def format(self, extension=None, **kwargs):
         """Write the minutes summary."""
         M = self.M
 
@@ -814,7 +795,7 @@ class ReST(_BaseWriter):
     .. _`MeetBot`: %(MeetBotInfoURL)s
     """)
 
-    def format(self, extension=None):
+    def format(self, extension=None, **kwargs):
         """Return a ReStructured Text minutes summary."""
         M = self.M
 
@@ -899,10 +880,10 @@ class ReST(_BaseWriter):
 
 class HTMLfromReST(_BaseWriter):
 
-    def format(self, extension=None):
+    def format(self, extension=None, **kwargs):
         M = self.M
         import docutils.core
-        rst = ReST(M).format(extension)
+        rst = ReST(M).format(extension, )
         rstToHTML = docutils.core.publish_string(rst, writer_name='html',
                              settings_overrides={'file_insertion_enabled': 0,
                                                  'raw_enabled': 0,
@@ -1004,7 +985,7 @@ class Text(_BaseWriter):
         return '%s\n%s\n'%(name, '-'*len(name))
 
 
-    def format(self, extension=None):
+    def format(self, extension=None, **kwargs):
         """Return a plain text minutes summary."""
         M = self.M
 
@@ -1173,10 +1154,10 @@ class MediaWiki(_BaseWriter):
             mwpassword = kwargs.get('mwpassword', '')
             subpagename = os.path.basename(self.M.config.filename())
             mwfullname = "%s/%s" % (mwpath, subpagename)
-            force_login = (mwusername != None)
+            force_login = (mwusername is not None)
 
             site = mwclient.Site(mwsite, force_login=force_login)
-            if(force_login):
+            if force_login:
                 site.login(mwusername, mwpassword)
             page = site.Pages[mwfullname]
             some = page.edit()
@@ -1190,7 +1171,8 @@ class PmWiki(MediaWiki, object):
         return '%s %s\n'%('!'*(level+1), name)
     def replacements(self):
         #repl = super(PmWiki, self).replacements(self) # fails, type checking
-        repl = MediaWiki.replacements.__func__(self)
+        #repl = MediaWiki.replacements.__func__(self)  # KJP: 2to3 gave us this line, which is nonsensical
+        repl = super().replacements()
         repl['pageTitleHeading'] = self.heading(repl['pageTitle'],level=0)
         return repl
 

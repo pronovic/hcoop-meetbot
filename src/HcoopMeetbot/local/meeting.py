@@ -1,34 +1,3 @@
-# Richard Darst, May 2009
-
-###
-# Copyright (c) 2009, Richard Darst
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-#   * Redistributions of source code must retain the above copyright notice,
-#     this list of conditions, and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright notice,
-#     this list of conditions, and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution.
-#   * Neither the name of the author of this software nor the name of
-#     contributors to this software may be used to endorse or promote products
-#     derived from this software without specific prior written consent.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-###
-
 import time
 import os
 import re
@@ -121,7 +90,9 @@ class Config(object):
 
 
     def __init__(self, M, writeRawLog=False, safeMode=False,
-                 extraConfig={}):
+                 extraConfig=None):
+        if extraConfig is None:
+            extraConfig = {}
         self.M = M
         self.writers = { }
         # Update config values with anything we may have
@@ -205,7 +176,7 @@ class Config(object):
             else:
                 args = { }
 
-            text = writer.format(extension, **args)
+            text = writer.format(extension, )
             results[extension] = text
             # If the writer returns a string or unicode object, then
             # we should write it to a filename with that extension.
@@ -266,14 +237,29 @@ time.tzset()
 
 # load custom local configurations
 LocalConfig = None
-import __main__
+
+# KJP: I am not sure how this is supposed to work.  There is no __main__ to
+#      import.  I think that maybe __main__ exists when running the unit test,
+#      but I don't understand how this code can work the rest of the time.
+#      I added the try/except to make sure that we can move on succesfully
+#      when it's not there.
+
+# noinspection PyBroadException
+try:
+    # noinspection PyUnresolvedReferences
+    import __main__
+except:
+    __main__ = None
+
 # Two conditions where we do NOT load any local configuration files
-if getattr(__main__, 'running_tests', False): pass
+if __main__ and getattr(__main__, 'running_tests', False): pass
 elif 'MEETBOT_RUNNING_TESTS' in os.environ:   pass
 else:
+
     # First source of config: try just plain importing it
     try:
-        import meetingLocalConfig
+        # noinspection PyUnresolvedReferences
+        import meetingLocalConfig  # KJP: I have no idea what PyCharm is complaining about here
         meetingLocalConfig = importlib.reload(meetingLocalConfig)
         if hasattr(meetingLocalConfig, 'Config'):
             LocalConfig = meetingLocalConfig.Config
@@ -291,7 +277,13 @@ else:
         # Subclass Config and LocalConfig, new type overrides Config.
         Config = type('Config', (LocalConfig, Config), {})
 
+# KJP: the object design here is unconventional.  The MeetingCommands object
+#      often refers to members that only exist in the child class, like
+#     self.replacements() or self.config.  The only child class of MeetingCommands
+#     is Meeting, so I think that strictly speaking these two classes should be
+#     merged.
 
+# noinspection PyUnresolvedReferences
 class MeetingCommands(object):
     # Command Definitions
     # generic parameters to these functions:
@@ -465,7 +457,9 @@ class Meeting(MeetingCommands, object):
                  filename=None, writeRawLog=False,
                  setTopic=None, sendReply=None, getRegistryValue=None,
                  safeMode=False, channelNicks=None,
-                 extraConfig={}, network='nonetwork'):
+                 extraConfig=None, network='nonetwork'):
+        if extraConfig is None:
+            extraConfig = {}
         if getRegistryValue is not None:
             self._registryValue = getRegistryValue
         if sendReply is not None:
@@ -509,7 +503,7 @@ class Meeting(MeetingCommands, object):
         else:
             print("TOPIC:", self.config.enc(x))
     def settopic(self):
-        "The actual code to set the topic"
+        """The actual code to set the topic"""
         if self._meetingTopic:
             topic = '%s (Meeting topic: %s)'%(self.currenttopic,
                                               self._meetingTopic)
@@ -521,7 +515,7 @@ class Meeting(MeetingCommands, object):
         self.attendees[nick] = self.attendees.get(nick, 0) + lines
     def isChair(self, nick):
         """Is the nick a chair?"""
-        return (nick == self.owner  or  nick in self.chairs)
+        return nick == self.owner or nick in self.chairs
     def save(self, **kwargs):
         return self.config.save(**kwargs)
     # Primary enttry point for new lines in the log:
@@ -602,14 +596,16 @@ def parse_time(time_):
     except ValueError: pass
     try: return time.strptime(time_, "%H:%M")
     except ValueError: pass
-logline_re = re.compile(r'\[?([0-9: ]*)\]? *<[@+]?([^>]+)> *(.*)')
-loglineAction_re = re.compile(r'\[?([0-9: ]*)\]? *\* *([^ ]+) *(.*)')
+logline_re = re.compile(r'\[?([0-9: ]*)]? *<[@+]?([^>]+)> *(.*)')
+loglineAction_re = re.compile(r'\[?([0-9: ]*)]? *\* *([^ ]+) *(.*)')
 
 
 def process_meeting(contents, channel, filename,
-                    extraConfig = {},
+                    extraConfig=None,
                     dontSave=False,
                     safeMode=True):
+    if extraConfig is None:
+        extraConfig = {}
     M = Meeting(channel=channel, owner=None,
                 filename=filename, writeRawLog=False, safeMode=safeMode,
                 extraConfig=extraConfig)
@@ -650,7 +646,7 @@ if __name__ == '__main__':
 
         M = Meeting(channel=channel, owner=None,
                     filename=filename, writeRawLog=False)
-        for line in file(sys.argv[2]):
+        for line in open(sys.argv[2]):
             # match regular spoken lines:
             m = logline_re.match(line)
             if m:
