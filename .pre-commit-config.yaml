@@ -45,13 +45,6 @@ repos:
   - repo: local
     hooks:
       - id: system
-        name: MyPy
-        entry: poetry run mypy
-        pass_filenames: false
-        language: system
-  - repo: local
-    hooks:
-      - id: system
         name: Pylint
         entry: poetry run pylint -j 0 src/HcoopMeetbot tests
         pass_filenames: false

@@ -51,18 +51,7 @@ run_pylint() {
 
 # Run the MyPy code checker
 run_mypy() {
-   echo "Running mypy checks..."
-
-   poetry run which mypy > /dev/null
-   if [ $? != 0 ]; then
-      run_install
-   fi
-
-   poetry run mypy
-   if [ $? != 0 ]; then
-      exit 1
-   fi
-
+   echo "There are no MyPy checks for this project"
    echo "done"
 }
 
@@ -366,8 +355,6 @@ case $1 in
       run_isort --check-only
       echo ""
       run_safety --bare
-      echo ""
-      run_mypy
       echo ""
       run_pylint
       ;;

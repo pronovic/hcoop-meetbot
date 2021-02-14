@@ -8,7 +8,6 @@
 HcoopMeetbot: Plugin for Limnoria to help run IRC meetings
 """
 from importlib import reload
-from typing import Any, Dict
 
 from supybot import Author, world
 
@@ -16,7 +15,7 @@ from . import config, plugin
 
 __version__ = "0.1.0"
 __author__ = Author(name="Kenneth J. Pronovici", email="pronovic@ieee.org")
-__contributors__ = {}  # type: Dict[Any, Any]
+__contributors__ = {}
 __url__ = "https://pypi.org/project/hcoop-meetbot/"
 
 reload(config)

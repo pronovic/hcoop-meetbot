@@ -22,7 +22,7 @@ except ImportError:
     _ = lambda x: x
 
 
-class HcoopMeetbot(callbacks.Plugin):  # type: ignore
+class HcoopMeetbot(callbacks.Plugin):
     """This plugin provides a few random number commands and some
     commands for getting random samples.  Use the "seed" command to seed
     the plugin's random number generator if you like, though it is
@@ -31,12 +31,12 @@ class HcoopMeetbot(callbacks.Plugin):  # type: ignore
     there are a number of other useful commands in this plugin.  Use
     'list random' to check them out."""
 
-    def __init__(self, irc):  # type: ignore
+    def __init__(self, irc):
         super().__init__(irc)
         self.rng = random.Random()  # create our rng
         self.rng.seed()  # automatically seeds with current time
 
-    def random(self, irc, msg, args):  # type: ignore
+    def random(self, irc, msg, args):
         """takes no arguments
 
         Returns the next random number from the random number generator.
@@ -45,7 +45,7 @@ class HcoopMeetbot(callbacks.Plugin):  # type: ignore
 
     random = wrap(random)
 
-    def seed(self, irc, msg, args, seed):  # type: ignore
+    def seed(self, irc, msg, args, seed):
         """<seed>
 
         Sets the internal RNG's seed value to <seed>.  <seed> must be a
@@ -56,7 +56,7 @@ class HcoopMeetbot(callbacks.Plugin):  # type: ignore
 
     seed = wrap(seed, ["float"])
 
-    def sample(self, irc, msg, args, n, items):  # type: ignore
+    def sample(self, irc, msg, args, n, items):
         """<number of items> <item1> [<item2> ...]
 
         Returns a sample of the <number of items> taken from the remaining
@@ -72,7 +72,7 @@ class HcoopMeetbot(callbacks.Plugin):  # type: ignore
 
     sample = wrap(sample, ["int", many("anything")])
 
-    def diceroll(self, irc, msg, args, n):  # type: ignore
+    def diceroll(self, irc, msg, args, n):
         """[<number of sides>]
 
         Rolls a die with <number of sides> sides.  The default number of sides

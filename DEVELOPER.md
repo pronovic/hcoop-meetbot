@@ -8,7 +8,7 @@ This plugin was written and tested on Debian GNU/Linux, but should also work on 
 
 This project uses [Poetry](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.  
 
-A coding standard is enforced using [Black](https://github.com/psf/black), [isort](https://pypi.org/project/isort/) and [Pylint](https://www.pylint.org/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  Additional code security standards are enforced [Safety](https://github.com/pyupio/safety).
+A coding standard is enforced using [Black](https://github.com/psf/black), [isort](https://pypi.org/project/isort/) and [Pylint](https://www.pylint.org/).  Additional code security standards are enforced [Safety](https://github.com/pyupio/safety).
 
 ## Pre-Commit Hooks
 
@@ -201,7 +201,7 @@ Go to settings and find the `hcoop-meetbot` project.  Under **Python Interpreter
 Under **Project Structure**, mark both `src` and `tests` as source folders.  In the **Exclude Files** box, enter the following:
 
 ```
-CREDITS;LICENSE;PyPI.md;.coverage;.coveragerc;.github;.gitignore;.gitattributes;.htmlcov;.idea;.isort.cfg;.mypy.ini;.mypy_cache;.pre-commit-config.yaml;.pylintrc;.pytest.ini;.pytest_cache;.readthedocs.yml;.tox;.toxrc;build;dist;docs/_build;out;poetry.lock;run;.tabignore
+CREDITS;LICENSE;PyPI.md;.coverage;.coveragerc;.github;.gitignore;.gitattributes;.htmlcov;.idea;.isort.cfg;.pre-commit-config.yaml;.pylintrc;.pytest.ini;.pytest_cache;.readthedocs.yml;.tox;.toxrc;build;dist;docs/_build;out;poetry.lock;run;.tabignore
 ```
 
 Finally, go to the gear icon in the project panel, and uncheck **Show Excluded Files**.  This will hide the files and directories that were excluded above.
@@ -218,7 +218,7 @@ Right-click on the `tests` folder in the project explorer and choose **Run 'pyte
 
 ### External Tools
 
-Optionally, you might want to set up external tools in PyCharm for some of common developer tasks: code reformatting and the PyLint and MyPy checks.  One nice advantage of doing this is that you can configure an output filter, which makes the Pylint and MyPy errors clickable in IntelliJ.  To set up external tools, go to PyCharm settings and find **Tools > External Tools**.  Add the tools as described below. 
+Optionally, you might want to set up external tools in PyCharm for some of common developer tasks: code reformatting and the PyLint checks.  One nice advantage of doing this is that you can configure an output filter, which makes the Pylint errors clickable in IntelliJ.  To set up external tools, go to PyCharm settings and find **Tools > External Tools**.  Add the tools as described below. 
 
 #### Shell Environment
 
@@ -245,22 +245,6 @@ source ~/.bash_profile
 |Make console active on message in stdout|_Unchecked_|
 |Make console active on message in stderr|_Unchecked_|
 |Output filters|_Empty_|
-
-##### Run MyPy Checks
-
-|Field|Value|
-|-----|-----|
-|Name|`Run MyPy Checks`|
-|Description|`Run the MyPy code checks`|
-|Group|`Developer Tools`|
-|Program|`$ProjectFileDir$/run`|
-|Arguments|`mypy`|
-|Working directory|`$ProjectFileDir$`|
-|Synchronize files after execution|_Unchecked_|
-|Open console for tool outout|_Checked_|
-|Make console active on message in stdout|_Checked_|
-|Make console active on message in stderr|_Checked_|
-|Output filters|`$FILE_PATH$:$LINE$:$COLUMN$:.*`|
 
 ##### Run Pylint Checks
 

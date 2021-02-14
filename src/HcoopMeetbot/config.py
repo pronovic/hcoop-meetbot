@@ -16,7 +16,7 @@ except:  # pylint: disable=bare-except:
     _ = lambda x: x
 
 
-def configure(advanced):  # type: ignore
+def configure(advanced):
     conf.registerPlugin("HcoopMeetbot", True)
 
 
