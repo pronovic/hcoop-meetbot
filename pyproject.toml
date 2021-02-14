@@ -21,7 +21,7 @@ classifiers=[
 ]
 
 [tool.poetry.plugins."limnoria.plugins"]
-"Meetbot" = "LimnoriaMeetbot:plugin"
+"LimnoriaMeetbot" = "LimnoriaMeetbot:plugin"
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4"

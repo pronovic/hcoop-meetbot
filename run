@@ -321,6 +321,13 @@ run_publish() {
    git push --follow-tags
 }
 
+# Run the localbot, configured to connect to an IRC server on localhost
+run_bot() {
+   echo "Running the local bot..."
+   run_install  # always reinstall so the bot has access to the latest plugin code
+   poetry run supybot localbot/localbot.conf
+}
+
 # Execute one of the developer tasks
 case $1 in
    install|setup)
@@ -381,6 +388,9 @@ case $1 in
    publish)
       run_publish
       ;;
+   bot)
+      run_bot
+      ;;
    *)
       echo ""
       echo "------------------------------------"
@@ -402,6 +412,7 @@ case $1 in
       echo "- run tox: Run the Tox test suite used by the GitHub CI action"
       echo "- run release: Release a specific version and tag the code"
       echo "- run publish: Publish the current code to PyPI and push to GitHub"
+      echo "- run bot: Run a bot connected to an IRC server on localhost"
       echo ""
       exit 1
 esac

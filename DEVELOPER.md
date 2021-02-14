@@ -1,5 +1,9 @@
 # Developer Notes
 
+## Supported Platforms
+
+This plugin was written and tested on Debian GNU/Linux, but should also work on MacOS.  The code itself is portable, but Limnoria (Supybot) doesn't always work as expected on Windows, so it's best not to try.
+
 ## Packaging and Dependencies
 
 This project uses [Poetry](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.  
@@ -48,16 +52,6 @@ Then, install Poetry in your home directory:
 ```
 $ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 ```
-
-### Windows
-
-First, install Python 3 from your preferred source, either a standard installer or a meta-installer like Chocolatey.  Then, install Poetry in your home directory:
-
-```
-$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-```
-
-The development environment (with the `run` script, etc.) expects a bash shell to be available.  It works fine with the standard Git bash.
 
 ## Configure Poetry's Python Interpreter
 
@@ -112,15 +106,65 @@ Usage: run <command>
 - run requirements: Regenerate the docs/requirements.txt file
 - run format: Run the code formatters
 - run checks: Run the code checkers
-- run test: Run the unit tests
-- run test -c: Run the unit tests with coverage
-- run test -ch: Run the unit tests with coverage and open the HTML report
-- run docs: Build the Spinx documentation for readthedocs.io
+- run test: Run the unit and supybot tests
+- run test -c: Run the unit and supybot tests with coverage
+- run test -ch: Run the tests with coverage and open the HTML report
+- run docs: Build the Spinx documentation for limnoriameetbot.readthedocs.io
 - run docs -o: Build the Spinx documentation and open in a browser
-- run tox: Run the broader Tox test suite used by the GitHub CI action
+- run tox: Run the Tox test suite used by the GitHub CI action
 - run release: Release a specific version and tag the code
 - run publish: Publish the current code to PyPI and push to GitHub
+- run bot: Run a bot connected to an IRC server on localhost
 ```
+
+## Local Testing
+
+Local testing is straightforward.  Instructions below are for Debian, but setup should be similar on other platforms.
+
+First, install an IRC server.  The [InspIRCd](https://www.inspircd.org/) server works well and there are are Debian-specific install [instructions](https://wiki.debian.org/InspIRCd) if you need more help:
+
+```
+$ sudo apt-get install inspircd
+```
+
+Next, install an IRC client.  Any client is ok, but [Irssi](https://irssi.org/) works well:
+
+```
+$ sudo apt-get install irssi
+```
+
+Once the IRC server is up, make sure you can connect with the client:
+
+```
+$ irssi --nick=ken --connect=localhost
+```
+
+Once you are connected, join the testing channel with `/join #localtest`.
+
+Finally, open another terminal window and run the bot:
+
+```
+$ run bot
+Running the local bot...
+INFO 2021-02-14T17:06:34 Connecting to localhost:6667.
+WARNING 2021-02-14T17:06:34 Error connecting to localhost:6667: ConnectionRefusedError: [Errno 111] Connection refused
+INFO 2021-02-14T17:06:34 Reconnecting to LocalNet at 2021-02-14T17:06:44.
+INFO 2021-02-14T17:06:44 Connecting to localhost:6667.
+INFO 2021-02-14T17:06:50 Server irc.local has version InspIRCd-2.0
+INFO 2021-02-14T17:06:50 Got start of MOTD from irc.local
+INFO 2021-02-14T17:06:50 Got end of MOTD from irc.local
+INFO 2021-02-14T17:06:54 Join to #localtest on LocalNet synced in 4.01 seconds.
+```
+
+Notice that this takes a few seconds to complete.  Once it's done, if you look over in your IRC window, you should see a notification that the local bot has joined the `#localtest` channel:
+
+```
+17:09 -!- localbot [limnoria@127.0.0.1] has joined #localtest
+```
+
+You can now interact with the local bot using `localbot: <command>`, or using `@<command>` as a shortcut.  
+
+The `LimnoriaMeetbot` plugin is automatically available in the bot.  If you make changes to the code, you need to stop the bot with CTRL-C and restart it.
 
 ## Integration with PyCharm
 
@@ -148,9 +192,6 @@ Run the following to find the location of the Python virtualenv managed by Poetr
 $ poetry run which python
 ```
 
-> _Note:_ On Windows, remember that Git Bash is is going to give you the translated UNIX-like path.  Work backwards to find the real Windows path. 
-
-
 #### PyCharm
 
 Go to settings and find the `limnoria-meetbot` project.  Under **Python Interpreter**, select the Python virtualenv from above.
@@ -177,11 +218,7 @@ Right-click on the `tests` folder in the project explorer and choose **Run 'pyte
 
 Optionally, you might want to set up external tools in PyCharm for some of common developer tasks: code reformatting and the PyLint and MyPy checks.  One nice advantage of doing this is that you can configure an output filter, which makes the Pylint and MyPy errors clickable in IntelliJ.  To set up external tools, go to PyCharm settings and find **Tools > External Tools**.  Add the tools as described below. 
 
-#### Linux or MacOS
-
-On Linux or MacOS, you can set up the external tools to invoke the `run` script directly.
-
-##### Shell Environment
+#### Shell Environment
 
 For this to work, it's important that tools like `poetry` are on the system path used by PyCharm.  On Linux, depending on how you start PyCharm, your normal shell environment may or may not be inherited.  For instance, I had to adjust the target of my LXDE desktop shortcut to be the script below, which sources my profile before running the `pycharm.sh` shell script:
 
@@ -191,7 +228,7 @@ source ~/.bash_profile
 /opt/local/lib/pycharm/pycharm-community-2020.3.2/bin/pycharm.sh
 ```
 
-##### Format Code
+#### Format Code
 
 |Field|Value|
 |-----|-----|
@@ -248,74 +285,6 @@ source ~/.bash_profile
 |Group|`Developer Tools`|
 |Program|`$ProjectFileDir$/run`|
 |Arguments|`safety`|
-|Working directory|`$ProjectFileDir$`|
-|Synchronize files after execution|_Checked_|
-|Open console for tool outout|_Checked_|
-|Make console active on message in stdout|_Unchecked_|
-|Make console active on message in stderr|_Unchecked_|
-|Output filters|_Empty_|
-
-#### Windows
-
-On Windows, PyCharm has problems invoking the `run` script, even via the Git Bash interpreter.  I have created a Powershell script `utils/tools.ps1` that can be used instead.
-
-##### Format Code
-
-|Field|Value|
-|-----|-----|
-|Name|`Format Code`|
-|Description|`Run the Black and isort code formatters`|
-|Group|`Developer Tools`|
-|Program|`powershell.exe`|
-|Arguments|`-executionpolicy bypass -File utils\tools.ps1 format`|
-|Working directory|`$ProjectFileDir$`|
-|Synchronize files after execution|_Checked_|
-|Open console for tool outout|_Checked_|
-|Make console active on message in stdout|_Unchecked_|
-|Make console active on message in stderr|_Unchecked_|
-|Output filters|_Empty_|
-
-##### Run MyPy Checks
-
-|Field|Value|
-|-----|-----|
-|Name|`Run MyPy Checks`|
-|Description|`Run the MyPy code checks`|
-|Group|`Developer Tools`|
-|Program|`powershell.exe`|
-|Arguments|`-executionpolicy bypass -File utils\tools.ps1 mypy`|
-|Working directory|`$ProjectFileDir$`|
-|Synchronize files after execution|_Unchecked_|
-|Open console for tool outout|_Checked_|
-|Make console active on message in stdout|_Checked_|
-|Make console active on message in stderr|_Checked_|
-|Output filters|`$FILE_PATH$:$LINE$:$COLUMN$:.*`|
-
-##### Run Pylint Checks
-
-|Field|Value|
-|-----|-----|
-|Name|`Run Pylint Checks`|
-|Description|`Run the Pylint code checks`|
-|Group|`Developer Tools`|
-|Program|`powershell.exe`|
-|Arguments|`-executionpolicy bypass -File utils\tools.ps1 pylint`|
-|Working directory|`$ProjectFileDir$`|
-|Synchronize files after execution|_Unchecked_|
-|Open console for tool outout|_Checked_|
-|Make console active on message in stdout|_Checked_|
-|Make console active on message in stderr|_Checked_|
-|Output filters|`$FILE_PATH$:$LINE$:$COLUMN.*`|
-
-##### Run Safety Checks
-
-|Field|Value|
-|-----|-----|
-|Name|`Run Safety Checks`|
-|Description|`Run the Safety code checks`|
-|Group|`Developer Tools`|
-|Program|`powershell.exe`|
-|Arguments|`-executionpolicy bypass -File utils\tools.ps1 safety`|
 |Working directory|`$ProjectFileDir$`|
 |Synchronize files after execution|_Checked_|
 |Open console for tool outout|_Checked_|
