@@ -8,15 +8,10 @@
 # cases, warnings have been ignored because it's not viable to enforce my modern
 # coding standard on this old code.
 
-# import os
 import re
 import time
 
 from . import writers
-
-# from writers import html, rst
-# import itertools
-
 
 def inbase(i, chars="abcdefghijklmnopqrstuvwxyz", place=0):
     """Converts an integer into a postfix in base 26 using ascii chars.
