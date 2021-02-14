@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+# vim: set ft=python ts=4 sw=4 expandtab:
+# pylint: disable=invalid-name,unused-argument,protected-access,attribute-defined-outside-init,multiple-statements,redefined-outer-name,import-outside-toplevel,too-many-arguments,too-many-lines,too-many-locals,too-many-branches,too-many-public-methods,too-many-instance-attributes,too-many-statements,unused-variable,line-too-long:
+
+# This code was originally taken from the ircmeeting package in Meetbot.  It
+# was converted to Python 3, adjusted to fix PyCharm and pylint warnings, and
+# reformatted to match my coding standard with black and isort.  In a lot of
+# cases, warnings have been ignored because it's not viable to enforce my modern
+# coding standard on this old code.
+
 #import os
 import re
 import time
@@ -26,7 +36,7 @@ def inbase(i, chars='abcdefghijklmnopqrstuvwxyz', place=0):
 # These are objects which we can add to the meeting minutes.  Mainly
 # they exist to aid in HTML-formatting.
 #
-class _BaseItem(object):
+class _BaseItem():
     itemtype = None
     starthtml = ''
     endhtml = ''

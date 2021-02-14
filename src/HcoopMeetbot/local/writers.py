@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+# vim: set ft=python ts=4 sw=4 expandtab:
+# pylint: disable=invalid-name,unused-argument,protected-access,attribute-defined-outside-init,multiple-statements,redefined-outer-name,import-outside-toplevel,too-many-arguments,too-many-lines,too-many-locals,too-many-branches,too-many-public-methods,too-many-instance-attributes,too-many-statements,unused-variable,line-too-long:
+
+# This code was originally taken from the ircmeeting package in Meetbot.  It
+# was converted to Python 3, adjusted to fix PyCharm and pylint warnings, and
+# reformatted to match my coding standard with black and isort.  In a lot of
+# cases, warnings have been ignored because it's not viable to enforce my modern
+# coding standard on this old code.
+
 import os
 import re
 import textwrap
@@ -49,7 +59,7 @@ def MeetBotVersion():
         return ''
 
 
-class _BaseWriter(object):
+class _BaseWriter:
     def __init__(self, M, **kwargs):
         self.M = M
 
@@ -90,7 +100,7 @@ class _BaseWriter(object):
                 'MeetBotVersion':MeetBotVersion(),
              }
     def iterNickCounts(self):
-        nicks = [ (n,c) for (n,c) in self.M.attendees.items() ]
+        nicks = [ (n,c) for (n,c) in self.M.attendees.items() ] # pylint: disable=unnecessary-comprehension:
         nicks.sort(key=lambda x: x[1], reverse=True)
         return nicks
 
@@ -222,9 +232,9 @@ class _BaseWriter(object):
         repl = {
         'time':           { 'start': repl['starttime'], 'end': repl['endtime'], 'timezone': repl['timeZone'] },
         'meeting':        { 'title': repl['pageTitle'], 'owner': repl['owner'], 'logs': repl['fullLogs'], 'logsFullURL': repl['fullLogsFullURL'] },
-        'attendees':      [ person for person in repl['PeoplePresent'] ],
+        'attendees':      [ person for person in repl['PeoplePresent'] ],   # pylint: disable=unnecessary-comprehension:
         'agenda':         [ { 'topic': item['topic'], 'notes': item['items'] } for item in repl['MeetingItems'] ],
-        'actions':        [ action for action in repl['ActionItems'] ],
+        'actions':        [ action for action in repl['ActionItems'] ],  # pylint: disable=unnecessary-comprehension:
         'actions_person': [ { 'nick': attendee['nick'], 'actions': attendee['items'] } for attendee in repl['ActionItemsPerson'] ],
         'meetbot':        { 'version': repl['MeetBotVersion'], 'url': repl['MeetBotInfoURL'] },
         }
@@ -247,7 +257,9 @@ class Template(_BaseWriter):
     If a template ends in .txt, parse with a text-based genshi
     templater.  Otherwise, parse with a HTML-based genshi templater.
     """
-    def format(self, extension=None, template='+template.html'):
+
+    # KJP: this doens't have the same syntax as the parent class, so I'm not sure how it's supposed to work
+    def format(self, extension=None, template='+template.html'): # pylint: disable=arguments-differ:
         repl = self.get_template2()
 
         # Do we want to use a text template or HTML ?
@@ -280,7 +292,8 @@ class Template(_BaseWriter):
 #      be merged into a single class.
 
 # noinspection PyUnresolvedReferences
-class _CSSmanager(object):
+# pylint: disable=no-member:
+class _CSSmanager:
     _css_head = textwrap.dedent('''\
         <style type="text/css">
         %s
@@ -310,7 +323,7 @@ class _CSSmanager(object):
                 css_head = ('''<link rel="stylesheet" type="text/css" '''
                             '''href="%s">'''%cssfile)
                 return css_head
-        except Exception as exc:
+        except Exception as exc: # pylint: disable=broad-except:
             if not self.M.config.safeMode:
                 raise
             import traceback
@@ -321,7 +334,7 @@ class _CSSmanager(object):
                                          'css-'+name+'-default.css')
                 css = open(css_fname).read()
                 return self._css_head%css
-            except:
+            except: # pylint: disable=bare-except,broad-except:
                 if not self.M.config.safeMode:
                     raise
                 import traceback
@@ -331,8 +344,8 @@ class _CSSmanager(object):
 
 class TextLog(_BaseWriter):
     def format(self, extension=None, **kwargs):
-        M = self.M
         """Write raw text logs."""
+        M = self.M
         return "\n".join(M.lines)
     update_realtime = True
 
@@ -607,7 +620,7 @@ class HTML2(_BaseWriter, _CSSmanager):
                     inSublist = False
                 if haveTopic:
                     MeetingItems.append("<br></li>")
-                item = item
+                #item = item
                 haveTopic = True
             else:
                 if not inSublist:
@@ -1166,7 +1179,7 @@ class MediaWiki(_BaseWriter):
 
         return body
 
-class PmWiki(MediaWiki, object):
+class PmWiki(MediaWiki):
     def heading(self, name, level=1):
         return '%s %s\n'%('!'*(level+1), name)
     def replacements(self):
@@ -1175,5 +1188,3 @@ class PmWiki(MediaWiki, object):
         repl = super().replacements()
         repl['pageTitleHeading'] = self.heading(repl['pageTitle'],level=0)
         return repl
-
-

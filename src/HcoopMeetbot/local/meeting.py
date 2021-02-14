@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+# vim: set ft=python ts=4 sw=4 expandtab:
+# pylint: disable=invalid-name,unused-argument,protected-access,attribute-defined-outside-init,multiple-statements,redefined-outer-name,import-outside-toplevel,too-many-arguments,too-many-lines,too-many-locals,too-many-branches,too-many-public-methods,too-many-instance-attributes,too-many-statements,unused-variable,line-too-long:
+
+# This code was originally taken from the ircmeeting package in Meetbot.  It
+# was converted to Python 3, adjusted to fix PyCharm and pylint warnings, and
+# reformatted to match my coding standard with black and isort.  In a lot of
+# cases, warnings have been ignored because it's not viable to enforce my modern
+# coding standard on this old code.
+
 import time
 import os
 import re
@@ -11,7 +21,8 @@ importlib.reload(items)
 
 __version__ = "0.1.4"
 
-class Config(object):
+# pylint: disable=no-member:
+class Config:
     #
     # Throw any overrides into meetingLocalConfig.py in this directory:
     #
@@ -147,14 +158,16 @@ class Config(object):
         If `realtime_update` is true, then this isn't a complete save,
         it will only update those writers with the update_realtime
         attribute true.  (default update_realtime=False for this method)"""
+        results = {}
+
         if realtime_update and not hasattr(self.M, 'starttime'):
-            return
+            return results
         rawname = self.filename()
         # We want to write the rawlog (.log.txt) first in case the
         # other methods break.  That way, we have saved enough to
         # replay.
         writer_names = list(self.writers.keys())
-        results = { }
+
         if '.log.txt' in writer_names:
             writer_names.remove('.log.txt')
             writer_names = ['.log.txt'] + writer_names
@@ -248,7 +261,7 @@ LocalConfig = None
 try:
     # noinspection PyUnresolvedReferences
     import __main__
-except:
+except: # pylint: disable=broad-except,bare-except:
     __main__ = None
 
 # Two conditions where we do NOT load any local configuration files
@@ -270,7 +283,10 @@ else:
             fname = os.path.join(dirname, "meetingLocalConfig.py")
             if os.access(fname, os.F_OK):
                 meetingLocalConfig = { }
-                exec(compile(open(fname, "rb").read(), fname, 'exec'), meetingLocalConfig)
+
+                # KJP: yikes, this isn't really safe, is it?  we're executing untrusted code?
+                exec(compile(open(fname, "rb").read(), fname, 'exec'), meetingLocalConfig) # pylint: disable=exec-used
+
                 LocalConfig = meetingLocalConfig["Config"]
                 break
     if LocalConfig is not None:
@@ -284,7 +300,8 @@ else:
 #     merged.
 
 # noinspection PyUnresolvedReferences
-class MeetingCommands(object):
+# pylint: disable=no-member:
+class MeetingCommands:
     # Command Definitions
     # generic parameters to these functions:
     #  nick=
@@ -388,8 +405,9 @@ class MeetingCommands(object):
         """When saved, remove permissions from the files."""
         if not self.isChair(nick): return
         self._restrictlogs = True
-        self.reply("Restricting permissions on minutes: -%s on next #save"%\
-                   oct(RestrictPerm))
+        # KJP: I have no idea what this is supposed to do, but it can't work as written
+        # self.reply("Restricting permissions on minutes: -%s on next #save"%oct(RestrictPerm))
+        self.reply("Restricting permissions on minutes on next #save")
     def do_lurk(self, nick, **kwargs):
         """Don't interact in the channel."""
         if not self.isChair(nick): return
@@ -430,6 +448,8 @@ class MeetingCommands(object):
         m = items.Help(**kwargs)
         self.additem(m)
     do_halp = do_help
+
+    # pylint: disable=redefined-argument-from-local
     def do_nick(self, nick, line, **kwargs):
         """Make meetbot aware of a nick which hasn't said anything.
 
@@ -450,7 +470,7 @@ class MeetingCommands(object):
             
 
 
-class Meeting(MeetingCommands, object):
+class Meeting(MeetingCommands):
     _lurk = False
     _restrictlogs = False
     def __init__(self, channel, owner, oldtopic=None,
@@ -636,7 +656,7 @@ if __name__ == '__main__':
     import sys
     if sys.argv[1] == 'replay':
         fname = sys.argv[2]
-        m = re.match('(.*)\.log\.txt', fname)
+        m = re.match(r'(.*)\.log\.txt', fname)
         if m:
             filename = m.group(1)
         else:
@@ -666,4 +686,3 @@ if __name__ == '__main__':
         #M.save() # should be done by #endmeeting in the logs!
     else:
         print('Command "%s" not found.'%sys.argv[1])
-
