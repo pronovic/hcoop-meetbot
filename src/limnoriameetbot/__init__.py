@@ -9,7 +9,7 @@ Meetbot: Plugin for Limnoria to help run IRC meetings
 
 from importlib import reload
 
-# from supybot import world
+from supybot import world
 from typing import Dict
 
 from . import config, plugin
@@ -24,8 +24,8 @@ for module in [config, plugin]:
     # noinspection PyTypeChecker
     reload(module)
 
-# if world.testing:
-#     from . import test
+if world.testing:
+    from . import test
 
 Class = plugin.Class
 configure = config.configure
