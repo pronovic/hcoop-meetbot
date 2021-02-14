@@ -9,8 +9,8 @@
 from supybot.test import PluginTestCase
 
 
-class LimnoriaMeetbotTestCase(PluginTestCase):  # type: ignore
-    plugins = ("LimnoriaMeetbot",)
+class HcoopMeetbotTestCase(PluginTestCase):  # type: ignore
+    plugins = ("HcoopMeetbot",)
 
     def test_random(self) -> None:
         # difficult to test, let's just make sure it works

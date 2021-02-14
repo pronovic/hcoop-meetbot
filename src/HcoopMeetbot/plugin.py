@@ -14,14 +14,14 @@ from supybot.commands import additional, many, wrap
 try:
     from supybot.i18n import PluginInternationalization
 
-    _ = PluginInternationalization("LimnoriaMeetbot")
+    _ = PluginInternationalization("HcoopMeetbot")
 except ImportError:
     # Placeholder that allows to run the plugin on a bot
     # without the i18n module
     _ = lambda x: x
 
 
-class LimnoriaMeetbot(callbacks.Plugin):  # type: ignore
+class HcoopMeetbot(callbacks.Plugin):  # type: ignore
     """This plugin provides a few random number commands and some
     commands for getting random samples.  Use the "seed" command to seed
     the plugin's random number generator if you like, though it is
@@ -83,4 +83,4 @@ class LimnoriaMeetbot(callbacks.Plugin):  # type: ignore
     diceroll = wrap(diceroll, [additional(("int", "number of sides"), 6)])
 
 
-Class = LimnoriaMeetbot
+Class = HcoopMeetbot

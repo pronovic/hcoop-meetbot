@@ -2,7 +2,7 @@ This code is based in large part on the MeetBot plugin, found at GitHub:
 
    https://github.com/rkdarst/MeetBot/
 
-The code was converted to modern limnoria packaging standards, updated to
+The code was converted to modern Limnoria packaging standards, updated to
 support Python 3, and enhanced in other ways.
 
 The original license was:

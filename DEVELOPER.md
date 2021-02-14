@@ -109,7 +109,7 @@ Usage: run <command>
 - run test: Run the unit and supybot tests
 - run test -c: Run the unit and supybot tests with coverage
 - run test -ch: Run the tests with coverage and open the HTML report
-- run docs: Build the Spinx documentation for limnoria-meetbot.readthedocs.io
+- run docs: Build the Spinx documentation for hcoop-meetbot.readthedocs.io
 - run docs -o: Build the Spinx documentation and open in a browser
 - run tox: Run the Tox test suite used by the GitHub CI action
 - run release: Release a specific version and tag the code
@@ -164,7 +164,7 @@ Notice that this takes a few seconds to complete.  Once it's done, if you look o
 
 You can now interact with the local bot using `localbot: <command>`, or using `@<command>` as a shortcut.  
 
-The `LimnoriaMeetbot` plugin is automatically available in the bot.  If you make changes to the code, you need to stop the bot with CTRL-C and restart it.
+The `HcoopMeetbot` plugin is automatically available in the bot.  If you make changes to the code, you need to stop the bot with CTRL-C and restart it.
 
 ## Integration with PyCharm
 
@@ -182,7 +182,7 @@ $ run test
 $ run checks
 ```
 
-Once you have a working shell development environment, **Open** (do not **Import**) the `limnoria-meetbot` directory in PyCharm and follow the remaining instructions below.  (By using **Open**, the existing `.idea` directory will be retained.)  
+Once you have a working shell development environment, **Open** (do not **Import**) the `hcoop-meetbot` directory in PyCharm and follow the remaining instructions below.  (By using **Open**, the existing `.idea` directory will be retained.)  
 
 ### Project and Module Setup
 
@@ -194,7 +194,7 @@ $ poetry run which python
 
 #### PyCharm
 
-Go to settings and find the `limnoria-meetbot` project.  Under **Python Interpreter**, select the Python virtualenv from above.
+Go to settings and find the `hcoop-meetbot` project.  Under **Python Interpreter**, select the Python virtualenv from above.
 
 Under **Project Structure**, mark both `src` and `tests` as source folders.  In the **Exclude Files** box, enter the following:
 
@@ -296,11 +296,11 @@ source ~/.bash_profile
 
 ### Documentation
 
-Documentation at [Read the Docs](https://limnoria-meetbot.readthedocs.io/en/stable/) is generated via a GitHub hook each time code is pushed to master.  So, there is no formal release process for the documentation.
+Documentation at [Read the Docs](https://hcoop-meetbot.readthedocs.io/en/stable/) is generated via a GitHub hook each time code is pushed to master.  So, there is no formal release process for the documentation.
 
 ### Code
 
-Code is released to [PyPI](https://pypi.org/project/limnoria-meetbot/).  There is a partially-automated process to publish a new release.  
+Code is released to [PyPI](https://pypi.org/project/hcoop-meetbot/).  There is a partially-automated process to publish a new release.  
 
 > _Note:_ In order to publish code, you must must have push permissions to the GitHub repo and be a collaborator on the PyPI project.  Before running this process for the first time, you must set up a PyPI API token and configure Poetry to use it.  (See notes below.)
 
@@ -330,7 +330,7 @@ This builds the deployment artifacts, publishes the artifacts to PyPI, and pushe
 
 ### Configuring the PyPI API Token
 
-First, in your PyPI [account settings](https://pypi.org/manage/account/), create an API token with upload permissions for the limnoria-meetbot project.
+First, in your PyPI [account settings](https://pypi.org/manage/account/), create an API token with upload permissions for the hcoop-meetbot project.
 
 Once you have the token, you will configure Poetry to use it.  Poetry relies on the Python keyring to store this secret.  On MacOS, it will use the system keyring, and no other setup is required.  
 

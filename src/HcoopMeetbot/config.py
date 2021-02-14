@@ -9,7 +9,7 @@ from supybot import conf
 try:
     from supybot.i18n import PluginInternationalization
 
-    _ = PluginInternationalization("LimnoriaMeetbot")
+    _ = PluginInternationalization("HcoopMeetbot")
 except:  # pylint: disable=bare-except:
     # Placeholder that allows to run the plugin on a bot
     # without the i18n module
@@ -17,7 +17,7 @@ except:  # pylint: disable=bare-except:
 
 
 def configure(advanced):  # type: ignore
-    conf.registerPlugin("LimnoriaMeetbot", True)
+    conf.registerPlugin("HcoopMeetbot", True)
 
 
-limnoriaMeetbot = conf.registerPlugin("LimnoriaMeetbot")
+hcoopMeetbot = conf.registerPlugin("HcoopMeetbot")
