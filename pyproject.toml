@@ -7,7 +7,8 @@ license = "Apache-2.0"
 readme = "PyPI.md"
 homepage = "https://pypi.org/project/limnoria-meetbot/"
 include = [ "Changelog", "LICENSE", "CREDITS", "README.md", "docs", "tests" ]
-packages = [ { include = "limnoriameetbot", from = "src" } ]
+exclude = [ "LimnoriaMeetbot/test.py" ] # annoyingly, bot tests must live in the source tree
+packages = [ { include = "LimnoriaMeetbot", from = "src" } ]
 classifiers=[
    "Programming Language :: Python :: 3",
    "License :: OSI Approved :: Apache Software License",
@@ -18,6 +19,9 @@ classifiers=[
    "Topic :: Utilities",
    "Topic :: Communications :: Chat :: Internet Relay Chat"
 ]
+
+[tool.poetry.plugins."limnoria.plugins"]
+"Meetbot" = "LimnoriaMeetbot:plugin"
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4"

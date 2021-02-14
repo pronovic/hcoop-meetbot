@@ -24,7 +24,7 @@ import toml
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('.'))
 
-# Insert limnoriameetbot path into the system.
+# Insert LimnoriaMeetbot path into the system.
 sys.path.insert(0, os.path.abspath("../src"))
 sys.path.insert(0, os.path.abspath("_themes"))
 

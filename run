@@ -117,8 +117,8 @@ run_isort() {
    echo "done"
 }
 
-# Run the unit tests, optionally with coverage
-run_pytest() {
+# Run the unit tests and supybot tests, optionally with coverage
+run_test() {
    coverage="no"
    html="no"
 
@@ -143,8 +143,15 @@ run_pytest() {
    fi
 
    if [ $coverage == "yes" ]; then
-      poetry run coverage run -m pytest tests
-      if [ $? != 0 ]; then
+#      poetry run coverage run -m pytest tests
+#      if [ $? != 0 ]; then
+#         exit 1
+#      fi
+
+      poetry run coverage run $(poetry run which supybot-test) --clean --plugins-dir=src LimnoriaMeetbot
+      result=$?
+      rm -rf web tmp backup test-data test-conf  # supybot-test leaves around a lot of junk
+      if [ $result != 0 ]; then
          exit 1
       fi
 
@@ -154,8 +161,15 @@ run_pytest() {
          $(which start || which open) .htmlcov/index.html 2>/dev/null  # start on Windows, open on MacOS
       fi
    else
-      poetry run pytest tests
-      if [ $? != 0 ]; then
+#      poetry run pytest tests
+#      if [ $? != 0 ]; then
+#         exit 1
+#      fi
+
+      poetry run supybot-test --clean --plugins-dir=src LimnoriaMeetbot
+      result=$?
+      rm -rf web tmp backup test-data test-conf  # supybot-test leaves around a lot of junk
+      if [ $result != 0 ]; then
          exit 1
       fi
    fi
@@ -349,9 +363,9 @@ case $1 in
       echo ""
       run_pylint
       ;;
-   pytest|test*)
+   test*)
       shift 1
-      run_pytest $*
+      run_test $*
       ;;
    tox)
       run_tox
@@ -380,9 +394,9 @@ case $1 in
       echo "- run requirements: Regenerate the docs/requirements.txt file"
       echo "- run format: Run the code formatters"
       echo "- run checks: Run the code checkers"
-      echo "- run test: Run the unit tests"
-      echo "- run test -c: Run the unit tests with coverage"
-      echo "- run test -ch: Run the unit tests with coverage and open the HTML report"
+      echo "- run test: Run the unit and supybot tests"
+      echo "- run test -c: Run the unit and supybot tests with coverage"
+      echo "- run test -ch: Run the tests with coverage and open the HTML report"
       echo "- run docs: Build the Spinx documentation for limnoriameetbot.readthedocs.io"
       echo "- run docs -o: Build the Spinx documentation and open in a browser"
       echo "- run tox: Run the Tox test suite used by the GitHub CI action"
