@@ -98,11 +98,8 @@ class Config:
     # This tells which writers write out which to extensions.
     writer_map = {
         ".log.html": writers.HTMLlog,
-        #'.1.html': writers.HTML,
         ".html": writers.HTML,
-        #'.rst': writers.ReST,
         ".txt": writers.Text,
-        #'.rst.html':writers.HTMLfromReST,
     }
 
     def __init__(self, M, writeRawLog=False, safeMode=False, extraConfig=None):

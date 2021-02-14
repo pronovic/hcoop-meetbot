@@ -14,21 +14,6 @@ import time
 from . import writers
 
 
-def inbase(i, chars="abcdefghijklmnopqrstuvwxyz", place=0):
-    """Converts an integer into a postfix in base 26 using ascii chars.
-
-    This is used to make a unique postfix for ReStructured Text URL
-    references, which must be unique.  (Yes, this is over-engineering,
-    but keeps it short and nicely arranged, and I want practice
-    writing recursive functions.)
-    """
-    div, mod = divmod(i, len(chars) ** (place + 1))
-    if div == 0:
-        return chars[mod]
-    else:
-        return inbase(div, chars=chars, place=place + 1) + chars[mod]  # KJP original code had inbase2 here, no idea why
-
-
 #
 # These are objects which we can add to the meeting minutes.  Mainly
 # they exist to aid in HTML-formatting.
@@ -37,8 +22,6 @@ class _BaseItem:
     itemtype = None
     starthtml = ""
     endhtml = ""
-    startrst = ""
-    endrst = ""
     starttext = ""
     endtext = ""
     url = ""
@@ -70,20 +53,6 @@ class _BaseItem:
             template[k] = v
         return template
 
-    def makeRSTref(self, M):
-        if self.nick[-1] == "_":
-            rstref = rstref_orig = "%s%s" % (self.nick, self.time)
-        else:
-            rstref = rstref_orig = "%s-%s" % (self.nick, self.time)
-        count = 0
-        while rstref in M.rst_refs:
-            rstref = rstref_orig + inbase(count)
-            count += 1
-        link = self.logURL(M)
-        M.rst_urls.append(".. _%s: %s" % (rstref, link + "#" + self.anchor))
-        M.rst_refs[rstref] = True
-        return rstref
-
     @property
     def anchor(self):
         return "l-" + str(self.linenum)
@@ -101,10 +70,7 @@ class Topic(_BaseItem):
         """%(time)s)"""
         """</span>"""
     )
-    rst_template = """%(startrst)s%(topic)s%(endrst)s  (%(rstref)s_)"""
     text_template = """%(starttext)s%(topic)s%(endtext)s  (%(nick)s, %(time)s)"""
-    startrst = "**"
-    endrst = "**"
     starthtml = '<b class="TOPIC">'
     endhtml = "</b>"
 
@@ -121,14 +87,6 @@ class Topic(_BaseItem):
 
     def html(self, M):
         return self.html_template % self._htmlrepl(M)
-
-    def rst(self, M):
-        self.rstref = self.makeRSTref(M)
-        repl = self.get_replacements(M, escapewith=writers.rst)
-        if repl["topic"] == "":
-            repl["topic"] = " "
-        repl["link"] = self.logURL(M)
-        return self.rst_template % repl
 
     def text(self, M):
         repl = self.get_replacements(M, escapewith=writers.text)
@@ -147,7 +105,6 @@ class GenericItem(_BaseItem):
         """%(time)s)"""
         """</span>"""
     )
-    rst_template = """*%(itemtype)s*: %(startrst)s%(line)s%(endrst)s  (%(rstref)s_)"""
     text_template = """%(itemtype)s: %(starttext)s%(line)s%(endtext)s  (%(nick)s, %(time)s)"""
 
     def __init__(self, nick, line, linenum, time_):
@@ -163,12 +120,6 @@ class GenericItem(_BaseItem):
 
     def html(self, M):
         return self.html_template % self._htmlrepl(M)
-
-    def rst(self, M):
-        self.rstref = self.makeRSTref(M)
-        repl = self.get_replacements(M, escapewith=writers.rst)
-        repl["link"] = self.logURL(M)
-        return self.rst_template % repl
 
     def text(self, M):
         repl = self.get_replacements(M, escapewith=writers.text)
@@ -186,7 +137,6 @@ class Info(GenericItem):
         """%(time)s)"""
         """</span>"""
     )
-    rst_template = """%(startrst)s%(line)s%(endrst)s  (%(rstref)s_)"""
     text_template = """%(starttext)s%(line)s%(endtext)s  (%(nick)s, %(time)s)"""
 
 
@@ -227,7 +177,6 @@ class Link(_BaseItem):
         """%(time)s)"""
         """</span>"""
     )
-    rst_template = """*%(itemtype)s*: %(startrst)s%(prefix)s%(url)s%(suffix)s%(endrst)s  (%(rstref)s_)"""
     text_template = """%(itemtype)s: %(starttext)s%(prefix)s%(url)s%(suffix)s%(endtext)s  (%(nick)s, %(time)s)"""
 
     def __init__(self, nick, line, linenum, time_, M):
@@ -270,13 +219,6 @@ class Link(_BaseItem):
 
     def html(self, M):
         return self.html_template % self._htmlrepl(M)
-
-    def rst(self, M):
-        self.rstref = self.makeRSTref(M)
-        repl = self.get_replacements(M, escapewith=writers.rst)
-        repl["link"] = self.logURL(M)
-        # repl['url'] = writers.rst(self.url)
-        return self.rst_template % repl
 
     def text(self, M):
         repl = self.get_replacements(M, escapewith=writers.text)
