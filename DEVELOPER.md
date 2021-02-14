@@ -166,6 +166,8 @@ You can now interact with the local bot using `localbot: <command>`, or using `@
 
 The `HcoopMeetbot` plugin is automatically available in the bot.  If you make changes to the code, you need to stop the bot with CTRL-C and restart it.
 
+> _Note:_ Annoyingly, Limnoria rewrites `localbot/localbot.conf` config file at runtime, and various keys in the file are wrewritten in an arbitrary order.  So, Git constantly shows differences in the checked-in file.  The `run bot` command discards changes when it completes, but don't be surprised if you see this while the bot is running.
+
 ## Integration with PyCharm
 
 By integrating Black and Pylint, most everything important that can be done from a shell environment can also be done right in PyCharm.

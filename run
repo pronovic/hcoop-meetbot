@@ -326,6 +326,7 @@ run_bot() {
    echo "Running the local bot..."
    poetry install -q  # always reinstall so the bot has access to the latest plugin code
    poetry run supybot localbot/localbot.conf
+   git checkout -- localbot/localbot.conf  # bot rewrites file with arbitrary ordering when it exits
 }
 
 # Execute one of the developer tasks
