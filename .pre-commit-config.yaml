@@ -53,6 +53,6 @@ repos:
     hooks:
       - id: system
         name: Pylint
-        entry: poetry run pylint -j 0 src/limnoriameetbot tests
+        entry: poetry run pylint -j 0 src/LimnoriaMeetbot tests
         pass_filenames: false
         language: system

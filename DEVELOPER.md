@@ -109,7 +109,7 @@ Usage: run <command>
 - run test: Run the unit and supybot tests
 - run test -c: Run the unit and supybot tests with coverage
 - run test -ch: Run the tests with coverage and open the HTML report
-- run docs: Build the Spinx documentation for limnoriameetbot.readthedocs.io
+- run docs: Build the Spinx documentation for limnoria-meetbot.readthedocs.io
 - run docs -o: Build the Spinx documentation and open in a browser
 - run tox: Run the Tox test suite used by the GitHub CI action
 - run release: Release a specific version and tag the code
