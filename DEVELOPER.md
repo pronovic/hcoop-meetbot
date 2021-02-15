@@ -119,6 +119,8 @@ Usage: run <command>
 
 ## Local Testing
 
+TODO: need to come up with a way to template-ize the localbot.conf file, since it contains absolute paths
+
 Local testing is straightforward.  Instructions below are for Debian, but setup should be similar on other platforms.
 
 First, install an IRC server.  The [InspIRCd](https://www.inspircd.org/) server works well and there are are Debian-specific install [instructions](https://wiki.debian.org/InspIRCd) if you need more help:

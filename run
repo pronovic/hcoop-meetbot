@@ -323,8 +323,8 @@ run_publish() {
 
 # Run the localbot, configured to connect to an IRC server on localhost
 run_bot() {
+   # The local bot runs out of the source tree
    echo "Running the local bot..."
-   poetry install -q  # always reinstall so the bot has access to the latest plugin code
    poetry run supybot localbot/localbot.conf
 }
 
