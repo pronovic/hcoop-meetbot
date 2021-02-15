@@ -21,6 +21,3 @@ def configure(advanced):
 
 
 hcoopMeetbot = conf.registerPlugin("HcoopMeetbot")
-conf.registerGlobalValue(
-    hcoopMeetbot, "enableSupybotBasedConfig", registry.Boolean(False, "Enable configuration via the supybot config mechanism.")
-)

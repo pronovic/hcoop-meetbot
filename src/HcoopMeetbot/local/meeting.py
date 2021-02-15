@@ -14,12 +14,11 @@ import re
 import stat
 import time
 
+from HcoopMeetbot import __version__
 from . import items, writers
 
 importlib.reload(writers)
 importlib.reload(items)
-
-__version__ = "0.1.4"
 
 # pylint: disable=no-member:
 class Config:
@@ -250,54 +249,6 @@ class Config:
 # Set the timezone, using the variable above
 os.environ["TZ"] = Config.timeZone
 time.tzset()
-
-# load custom local configurations
-LocalConfig = None
-
-# KJP: I am not sure how this is supposed to work.  There is no __main__ to
-#      import.  I think that maybe __main__ exists when running the unit test,
-#      but I don't understand how this code can work the rest of the time.
-#      I added the try/except to make sure that we can move on succesfully
-#      when it's not there.
-
-# noinspection PyBroadException
-try:
-    # noinspection PyUnresolvedReferences
-    import __main__
-except:  # pylint: disable=broad-except,bare-except:
-    __main__ = None
-
-# Two conditions where we do NOT load any local configuration files
-if __main__ and getattr(__main__, "running_tests", False):
-    pass
-elif "MEETBOT_RUNNING_TESTS" in os.environ:
-    pass
-else:
-
-    # First source of config: try just plain importing it
-    try:
-        # noinspection PyUnresolvedReferences
-        import meetingLocalConfig
-
-        meetingLocalConfig = importlib.reload(meetingLocalConfig)
-        if hasattr(meetingLocalConfig, "Config"):
-            LocalConfig = meetingLocalConfig.Config
-    except ImportError:
-        LocalConfig = None
-    if LocalConfig is None:
-        for dirname in (os.path.dirname("__file__"), "."):
-            fname = os.path.join(dirname, "meetingLocalConfig.py")
-            if os.access(fname, os.F_OK):
-                meetingLocalConfig = {}
-
-                # KJP: yikes, this isn't really safe, is it?  we're executing untrusted code?
-                exec(compile(open(fname, "rb").read(), fname, "exec"), meetingLocalConfig)  # pylint: disable=exec-used
-
-                LocalConfig = meetingLocalConfig["Config"]
-                break
-    if LocalConfig is not None:
-        # Subclass Config and LocalConfig, new type overrides Config.
-        Config = type("Config", (LocalConfig, Config), {})
 
 # KJP: the object design here is unconventional.  The MeetingCommands object
 #      often refers to members that only exist in the child class, like

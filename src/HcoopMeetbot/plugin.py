@@ -8,24 +8,16 @@
 # cases, warnings have been ignored rather than introducing the risk of trying
 # to fix them.
 
-import supybot.utils as utils
 from supybot.commands import *
-import supybot.plugins as plugins
-import supybot.ircutils as ircutils
 import supybot.callbacks as callbacks
 import supybot.ircmsgs as ircmsgs
 
 import time
 import local.meeting as meeting
-from . import supybotconfig
+
 import importlib
 # Because of the way we override names, we need to reload these in order.
 meeting = importlib.reload(meeting)
-supybotconfig = importlib.reload(supybotconfig)
-
-if supybotconfig.is_supybotconfig_enabled(meeting.Config):
-    supybotconfig.setup_config(meeting.Config)
-    meeting.Config = supybotconfig.get_config_proxy(meeting.Config)
 
 # By doing this, we can not lose all of our meetings across plugin
 # reloads.  But, of course, you can't change the source too
@@ -48,8 +40,7 @@ try:
 
     _ = PluginInternationalization("HcoopMeetbot")
 except ImportError:
-    # Placeholder that allows to run the plugin on a bot
-    # without the i18n module
+    # Placeholder that allows to run the plugin on a bot without the i18n module
     _ = lambda x: x
 
 
@@ -129,8 +120,9 @@ class HcoopMeetbot(callbacks.Plugin):
         # Catch supybot's own outgoing messages to log them.  Run the
         # whole thing in a try: block to prevent all output from
         # getting clobbered.
+        # noinspection PyBroadException
         try:
-            if msg.command in ('PRIVMSG'):
+            if msg.command in ('PRIVMSG', ):
                 # Note that we have to get our nick and network parameters
                 # in a slightly different way here, compared to doPrivmsg.
                 nick = irc.nick
@@ -161,6 +153,7 @@ class HcoopMeetbot(callbacks.Plugin):
 
     listmeetings = wrap(listmeetings, ['admin'])
 
+    # noinspection PyUnresolvedReferences
     def savemeetings(self, irc, msg, args):
         """
 
@@ -266,47 +259,5 @@ class HcoopMeetbot(callbacks.Plugin):
         irc.sendMsg(ircmsgs.privmsg(channel, message))
 
     pingall = wrap(pingall, [optional('text', None)])
-
-    def __getattr__(self, name):
-        """Proxy between proper supybot commands and # HcoopMeetbot commands.
-
-        This allows you to use HcoopMeetbot: <command> <line of the command>
-        instead of the typical #command version.  However, it's disabled
-        by default as there are some possible unresolved issues with it.
-
-        To enable this, you must comment out a line in the main code.
-        It may be enabled in a future version.
-        """
-        # First, proxy to our parent classes (__parent__ set in __init__)
-        try:
-            return self.__parent.__getattr__(name)
-        except AttributeError:
-            pass
-        # Disabled for now.  Uncomment this if you want to use this.
-        raise AttributeError
-
-        if not hasattr(meeting.Meeting, "do_" + name):
-            raise AttributeError
-
-        def wrapped_function(self, irc, msg, args, message):
-            channel = msg.args[0]
-            payload = msg.args[1]
-
-            # from fitz import interactnow ; reload(interactnow)
-
-            # print type(payload)
-            payload = "#%s %s" % (name, message)
-            # print payload
-            import copy
-            msg = copy.copy(msg)
-            msg.args = (channel, payload)
-
-            self.doPrivmsg(irc, msg)
-
-        # Give it the signature we need to be a callable supybot
-        # command (it does check more than I'd like).  Heavy Wizardry.
-        instancemethod = type(self.__getattr__)
-        wrapped_function = wrap(wrapped_function, [optional('text', '')])
-        return instancemethod(wrapped_function, self, HcoopMeetbot)
 
 Class = HcoopMeetbot
