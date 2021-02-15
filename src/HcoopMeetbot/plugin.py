@@ -8,18 +8,15 @@
 # cases, warnings have been ignored rather than introducing the risk of trying
 # to fix them.
 
+import importlib
 import time
 import traceback
-import importlib
 
 import supybot.callbacks as callbacks
 import supybot.ircmsgs as ircmsgs
-
-from supybot.commands import wrap, optional
+from supybot.commands import optional, wrap
 
 import HcoopMeetbot.local.meeting as meeting
-
-
 
 meeting = importlib.reload(meeting)
 
@@ -36,7 +33,7 @@ try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
     recent_meetings
 except NameError:
-    recent_meetings = [ ]
+    recent_meetings = []
 
 
 class HcoopMeetbot(callbacks.Plugin):
@@ -53,7 +50,7 @@ class HcoopMeetbot(callbacks.Plugin):
         nick = msg.nick
         channel = msg.args[0]
         payload = msg.args[1]
-        network = irc.msg.tags['receivedOn']
+        network = irc.msg.tags["receivedOn"]
 
         # The following is for debugging.  It's excellent to get an
         # interactive interperter inside of the live bot.  use
@@ -69,7 +66,7 @@ class HcoopMeetbot(callbacks.Plugin):
         M = meeting_cache.get(Mkey, None)
 
         # Start meeting if we are requested
-        if payload[:13] == '#startmeeting':
+        if payload[:13] == "#startmeeting":
             if M is not None:
                 irc.error("Can't start another meeting, one is in progress.")
                 return
@@ -84,21 +81,25 @@ class HcoopMeetbot(callbacks.Plugin):
             def _channelNicks():
                 return irc.state.channels[channel].users
 
-            M = meeting.Meeting(channel=channel, owner=nick,
-                                oldtopic=irc.state.channels[channel].topic,
-                                writeRawLog=True,
-                                setTopic=_setTopic, sendReply=_sendReply,
-                                getRegistryValue=self.registryValue,
-                                safeMode=True, channelNicks=_channelNicks,
-                                network=network,
-                                )
+            M = meeting.Meeting(
+                channel=channel,
+                owner=nick,
+                oldtopic=irc.state.channels[channel].topic,
+                writeRawLog=True,
+                setTopic=_setTopic,
+                sendReply=_sendReply,
+                getRegistryValue=self.registryValue,
+                safeMode=True,
+                channelNicks=_channelNicks,
+                network=network,
+            )
             meeting_cache[Mkey] = M
-            recent_meetings.append(
-                (channel, network, time.ctime()))
+            recent_meetings.append((channel, network, time.ctime()))
             if len(recent_meetings) > 10:
                 del recent_meetings[0]
         # If there is no meeting going on, then we quit
-        if M is None: return
+        if M is None:
+            return
         # Add line to our meeting buffer.
         M.addline(nick, payload)
         # End meeting if requested:
@@ -107,14 +108,13 @@ class HcoopMeetbot(callbacks.Plugin):
             del meeting_cache[Mkey]
 
     def outFilter(self, irc, msg):
-        """Log outgoing messages from supybot.
-        """
+        """Log outgoing messages from supybot."""
         # Catch supybot's own outgoing messages to log them.  Run the
         # whole thing in a try: block to prevent all output from
         # getting clobbered.
         # noinspection PyBroadException
         try:
-            if msg.command in ('PRIVMSG', ):
+            if msg.command in ("PRIVMSG",):
                 # Note that we have to get our nick and network parameters
                 # in a slightly different way here, compared to doPrivmsg.
                 nick = irc.nick
@@ -124,7 +124,7 @@ class HcoopMeetbot(callbacks.Plugin):
                 M = meeting_cache.get(Mkey, None)
                 if M is not None:
                     M.addrawline(nick, payload)
-        except: # pylint: disable=bare-except:
+        except:  # pylint: disable=bare-except:
             print(traceback.print_exc())
             print("(above exception in outFilter, ignoring)")
         return msg
@@ -137,12 +137,12 @@ class HcoopMeetbot(callbacks.Plugin):
         List all currently-active meetings."""
         reply = ""
         reply = ", ".join(str(x) for x in sorted(meeting_cache.keys()))
-        if reply.strip() == '':
+        if reply.strip() == "":
             irc.reply("No currently active meetings.")
         else:
             irc.reply(reply)
 
-    listmeetings = wrap(listmeetings, ['admin'])
+    listmeetings = wrap(listmeetings, ["admin"])
 
     # noinspection PyUnresolvedReferences
     def savemeetings(self, irc, msg, args):
@@ -154,7 +154,7 @@ class HcoopMeetbot(callbacks.Plugin):
             M.config.save()
         irc.reply("Saved %d meetings." % numSaved)
 
-    savemeetings = wrap(savemeetings, ['admin'])
+    savemeetings = wrap(savemeetings, ["admin"])
 
     def addchair(self, irc, msg, args, channel, network, nick):
         """<channel> <network> <nick>
@@ -163,13 +163,12 @@ class HcoopMeetbot(callbacks.Plugin):
         Mkey = (channel, network)
         M = meeting_cache.get(Mkey, None)
         if not M:
-            irc.reply("Meeting on channel %s, network %s not found" % (
-                channel, network))
+            irc.reply("Meeting on channel %s, network %s not found" % (channel, network))
             return
         M.chairs.setdefault(nick, True)
         irc.reply("Chair added: %s on (%s, %s)." % (nick, channel, network))
 
-    addchair = wrap(addchair, ['admin', "channel", "something", "nick"])
+    addchair = wrap(addchair, ["admin", "channel", "something", "nick"])
 
     def deletemeeting(self, irc, msg, args, channel, network, save):
         """<channel> <network> <saveit=True>
@@ -178,8 +177,7 @@ class HcoopMeetbot(callbacks.Plugin):
         meeting first, defaults to saving."""
         Mkey = (channel, network)
         if Mkey not in meeting_cache:
-            irc.reply("Meeting on channel %s, network %s not found" % (
-                channel, network))
+            irc.reply("Meeting on channel %s, network %s not found" % (channel, network))
             return
         if save:
             M = meeting_cache.get(Mkey, None)
@@ -188,8 +186,7 @@ class HcoopMeetbot(callbacks.Plugin):
         del meeting_cache[Mkey]
         irc.reply("Deleted: meeting on (%s, %s)." % (channel, network))
 
-    deletemeeting = wrap(deletemeeting, ['admin', "channel", "something",
-                                         optional("boolean", True)])
+    deletemeeting = wrap(deletemeeting, ["admin", "channel", "something", optional("boolean", True)])
 
     def recent(self, irc, msg, args):
         """
@@ -209,7 +206,7 @@ class HcoopMeetbot(callbacks.Plugin):
         else:
             irc.reply("No recent meetings in internal state.")
 
-    recent = wrap(recent, ['admin'])
+    recent = wrap(recent, ["admin"])
 
     def pingall(self, irc, msg, args, message):
         """<text>
@@ -225,29 +222,28 @@ class HcoopMeetbot(callbacks.Plugin):
 
         # We require a message to go out with the ping, we don't want
         # to waste people's time:
-        if channel[0] != '#':
+        if channel[0] != "#":
             irc.reply("Not joined to any channel.")
             return
         if message is None:
-            irc.reply(
-                "You must supply a description with the `pingall` command.")
+            irc.reply("You must supply a description with the `pingall` command.")
             return
 
         # Send announcement message
         irc.sendMsg(ircmsgs.privmsg(channel, message))
         # ping all nicks in lines of about 256
-        nickline = ''
-        nicks = sorted(irc.state.channels[channel].users,
-                       key=lambda x: x.lower())
+        nickline = ""
+        nicks = sorted(irc.state.channels[channel].users, key=lambda x: x.lower())
         for nick in nicks:
-            nickline = nickline + nick + ' '
+            nickline = nickline + nick + " "
             if len(nickline) > 256:
                 irc.sendMsg(ircmsgs.privmsg(channel, nickline))
-                nickline = ''
+                nickline = ""
         irc.sendMsg(ircmsgs.privmsg(channel, nickline))
         # Send announcement message
         irc.sendMsg(ircmsgs.privmsg(channel, message))
 
-    pingall = wrap(pingall, [optional('text', None)])
+    pingall = wrap(pingall, [optional("text", None)])
+
 
 Class = HcoopMeetbot
