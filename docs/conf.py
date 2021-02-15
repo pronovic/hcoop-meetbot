@@ -82,6 +82,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "HCOOP Meetbot"
+# noinspection PyShadowingBuiltins
 copyright = "2021 Kenneth J. Pronovici"
 author = "Kenneth J. Pronovici"
 

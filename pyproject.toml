@@ -26,6 +26,7 @@ classifiers=[
 [tool.poetry.dependencies]
 python = ">=3.7,<4"
 limnoria = "^2021.01.15"
+attrs = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"

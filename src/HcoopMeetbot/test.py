@@ -6,35 +6,14 @@
 # Unfortunately, tests must live alongside the source code for supybot-test to execute them.
 # So, this lives here rather than in the tests modules with all of the other unit tests.
 
+# TODO: either remove this or turn it into something useful
+
 from supybot.test import PluginTestCase
 
 
 class HcoopMeetbotTestCase(PluginTestCase):  # type: ignore
     plugins = ("HcoopMeetbot",)
 
-    def test_random(self) -> None:
-        # difficult to test, let's just make sure it works
-        self.assertNotError("random")
-
-    def test_seed(self) -> None:
-        # just make sure it works
-        self.assertNotError("seed 20")
-
-    def test_sample(self) -> None:
-        self.assertError("sample 20 foo")
-        self.assertResponse("sample 1 foo", "foo")
-        self.assertRegexp("sample 2 foo bar", "... and ...")
-        self.assertRegexp("sample 3 foo bar baz", "..., ..., and ...")
-
-    def test_dice_roll(self) -> None:
-        self.assertActionRegexp("diceroll", r"rolls a \d")
-
-    def test_seed_actually_seeds(self) -> None:
-        # now to make sure things work repeatably
-        self.assertNotError("seed 20")
-        message1 = self.getMsg("random")
-        self.assertNotError("seed 20")
-        message2 = self.getMsg("random")
-        self.assertEqual(message1, message2)
-        message3 = self.getMsg("random")
-        self.assertNotEqual(message2, message3)
+    # def test_random(self) -> None:
+    #     # difficult to test, let's just make sure it works
+    #     self.assertNotError("random")

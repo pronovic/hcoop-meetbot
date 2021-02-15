@@ -6,17 +6,16 @@
 
 from supybot import conf
 
+# noinspection PyBroadException
 try:
     from supybot.i18n import PluginInternationalization
 
     _ = PluginInternationalization("HcoopMeetbot")
 except:  # pylint: disable=bare-except:
-    # Placeholder that allows to run the plugin on a bot
-    # without the i18n module
-    _ = lambda x: x
+    _ = lambda x: x  # placeholder that allows to run the plugin on a bot without the il8n module
 
 
-def configure(advanced):  # type: ignore
+def configure(advanced):
     conf.registerPlugin("HcoopMeetbot", True)
 
 
