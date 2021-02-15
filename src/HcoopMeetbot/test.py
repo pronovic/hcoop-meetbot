@@ -9,7 +9,7 @@
 from supybot.test import PluginTestCase
 
 
-class HcoopMeetbotTestCase(PluginTestCase):
+class HcoopMeetbotTestCase(PluginTestCase):  # type: ignore
     plugins = ("HcoopMeetbot",)
 
     def test_random(self) -> None:

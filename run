@@ -51,7 +51,18 @@ run_pylint() {
 
 # Run the MyPy code checker
 run_mypy() {
-   echo "There are no MyPy checks for this project"
+   echo "Running mypy checks..."
+
+   poetry run which mypy > /dev/null
+   if [ $? != 0 ]; then
+      run_install
+   fi
+
+   poetry run mypy
+   if [ $? != 0 ]; then
+      exit 1
+   fi
+
    echo "done"
 }
 
@@ -315,7 +326,6 @@ run_bot() {
    echo "Running the local bot..."
    poetry install -q  # always reinstall so the bot has access to the latest plugin code
    poetry run supybot localbot/localbot.conf
-   git checkout -- localbot/localbot.conf  # bot rewrites file with arbitrary ordering when it exits
 }
 
 # Execute one of the developer tasks
@@ -355,6 +365,8 @@ case $1 in
       run_isort --check-only
       echo ""
       run_safety --bare
+      echo ""
+      run_mypy
       echo ""
       run_pylint
       ;;

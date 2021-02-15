@@ -21,12 +21,13 @@ Switch ($command)
     }
 
     mypy {
-      Write-Output "There are no MyPy checks for this project"
+      Write-Output "Running mypy checks..." 
+      poetry run mypy
     }
 
     pylint {
       Write-Output "Running pylint checks..." 
-      poetry run pylint -j 0 src/HcoopMeetbot
+      poetry run pylint -j 0 src/HcoopMeetbot tests
     }
 
     safety {
