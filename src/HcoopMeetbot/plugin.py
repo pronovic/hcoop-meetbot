@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
-# pylint: disable=too-many-ancestors,unused-argument,invalid-name:
+# pylint: disable=too-many-ancestors,unused-argument,invalid-name,protected-access,unused-variable:
 
 # This code was originally taken from the MeetBot package in MeetBot.  It
 # was converted to Python 3, adjusted to address PyCharm and pylint warnings, and
@@ -8,15 +8,19 @@
 # cases, warnings have been ignored rather than introducing the risk of trying
 # to fix them.
 
-from supybot.commands import *
+import time
+import traceback
+import importlib
+
 import supybot.callbacks as callbacks
 import supybot.ircmsgs as ircmsgs
 
-import time
-import local.meeting as meeting
+from supybot.commands import wrap, optional
 
-import importlib
-# Because of the way we override names, we need to reload these in order.
+import HcoopMeetbot.local.meeting as meeting
+
+
+
 meeting = importlib.reload(meeting)
 
 # By doing this, we can not lose all of our meetings across plugin
@@ -34,21 +38,9 @@ try:
 except NameError:
     recent_meetings = [ ]
 
-try:
-    # noinspection PyUnresolvedReferences
-    from supybot.i18n import PluginInternationalization
-
-    _ = PluginInternationalization("HcoopMeetbot")
-except ImportError:
-    # Placeholder that allows to run the plugin on a bot without the i18n module
-    _ = lambda x: x
-
 
 class HcoopMeetbot(callbacks.Plugin):
     """-- help goes here --"""
-
-    def __init__(self, irc):
-        super().__init__(irc)
 
     # Instead of using real supybot commands, I just listen to ALL
     # messages coming in and respond to those beginning with our
@@ -132,8 +124,7 @@ class HcoopMeetbot(callbacks.Plugin):
                 M = meeting_cache.get(Mkey, None)
                 if M is not None:
                     M.addrawline(nick, payload)
-        except:
-            import traceback
+        except: # pylint: disable=bare-except:
             print(traceback.print_exc())
             print("(above exception in outFilter, ignoring)")
         return msg
@@ -192,7 +183,6 @@ class HcoopMeetbot(callbacks.Plugin):
             return
         if save:
             M = meeting_cache.get(Mkey, None)
-            import time
             M.endtime = time.localtime()
             M.config.save()
         del meeting_cache[Mkey]
@@ -240,7 +230,7 @@ class HcoopMeetbot(callbacks.Plugin):
             return
         if message is None:
             irc.reply(
-                "You must supply a description with the `pingall` command.  We don't want to go wasting people's times looking for why they are pinged.")
+                "You must supply a description with the `pingall` command.")
             return
 
         # Send announcement message
