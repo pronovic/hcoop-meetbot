@@ -1,9 +1,10 @@
-This code is based in large part on the MeetBot plugin, found at GitHub:
+The code is based in part on the MeetBot plugin for Supybot written by Richard
+Darst:
 
    https://github.com/rkdarst/MeetBot/
 
-The code was converted to modern limnoria packaging standards, updated to
-support Python 3, and enhanced in other ways.
+For this version, much of the plugin was rewritten using Python 3 and modern
+code-management practices, following the patterns in Richard's original code.
 
 The original license was:
 

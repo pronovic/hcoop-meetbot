@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: skip-file
 #
-# Limnoria Meetbot documentation build configuration file, based on existing
+# HCOOP Meetbot documentation build configuration file, based on existing
 # documentation for Requests (https://github.com/psf/requests).
 #
 # This file is execfile()d with the current directory set to its
@@ -24,7 +24,7 @@ import toml
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('.'))
 
-# Insert limnoriameetbot path into the system.
+# Insert HcoopMeetbot path into the system.
 sys.path.insert(0, os.path.abspath("../src"))
 sys.path.insert(0, os.path.abspath("_themes"))
 
@@ -81,7 +81,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "Limnoria Meetbot"
+project = "HCOOP Meetbot"
+# noinspection PyShadowingBuiltins
 copyright = "2021 Kenneth J. Pronovici"
 author = "Kenneth J. Pronovici"
 
@@ -150,7 +151,7 @@ html_theme = "alabaster"
 html_theme_options = {
     "show_powered_by": False,
     "github_user": "pronovic",
-    "github_repo": "limnoria-meetbot",
+    "github_repo": "hcoopmeetbotlogic",
     "github_banner": True,
     "show_related": False,
     "note_bg": "#FFF59C",
@@ -241,7 +242,7 @@ html_show_copyright = True
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "LimnoriaMeetbotDoc"
+htmlhelp_basename = "HcoopMeetbotDoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -259,7 +260,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [(master_doc, "LimnoriaMeetbot.tex", "Limnoria Meetbot Documentation", "Kenneth J. Pronovici", "manual")]
+latex_documents = [(master_doc, "HcoopMeetbot.tex", "HCOOP Meetbot Documentation", "Kenneth J. Pronovici", "manual")]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -286,7 +287,7 @@ latex_documents = [(master_doc, "LimnoriaMeetbot.tex", "Limnoria Meetbot Documen
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "limnoria-meetbot", "Limnoria Meetbot Documentation", [author], 1)]
+man_pages = [(master_doc, "hcoopmeetbotlogic", "HCOOP Meetbot Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -300,10 +301,10 @@ man_pages = [(master_doc, "limnoria-meetbot", "Limnoria Meetbot Documentation", 
 texinfo_documents = [
     (
         master_doc,
-        "Limnoria Meetbot",
-        "Limnoria Meetbot Documentation",
+        "HCOOP Meetbot",
+        "HCOOP Meetbot Documentation",
         author,
-        "Limnoria Meetbot",
+        "HCOOP Meetbot",
         "Plugin for Limnoria to help run IRC meetings",
         "Miscellaneous",
     )

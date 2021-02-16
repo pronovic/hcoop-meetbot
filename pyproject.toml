@@ -1,13 +1,15 @@
 [tool.poetry]
-name = "limnoria-meetbot"
+name = "hcoop-meetbot"
 version = "0.1.0"
 description = "Plugin for Limnoria to help run IRC meetings"
 authors = ["Kenneth J. Pronovici <pronovic@ieee.org>"]
 license = "Apache-2.0"
 readme = "PyPI.md"
-homepage = "https://pypi.org/project/limnoria-meetbot/"
+homepage = "https://pypi.org/project/hcoop-meetbot/"
 include = [ "Changelog", "LICENSE", "CREDITS", "README.md", "docs", "tests" ]
-packages = [ { include = "limnoriameetbot", from = "src" } ]
+exclude = [ "HcoopMeetbot/test.py" ] # annoyingly, bot tests must live in the source tree
+packages = [ { include = "HcoopMeetbot", from = "src" },
+             { include = "hcoopmeetbotlogic", from = "src" } ]
 classifiers=[
    "Programming Language :: Python :: 3",
    "License :: OSI Approved :: Apache Software License",
@@ -19,9 +21,13 @@ classifiers=[
    "Topic :: Communications :: Chat :: Internet Relay Chat"
 ]
 
+[tool.poetry.plugins."limnoria.plugins"]
+"HcoopMeetbot" = "HcoopMeetbot:plugin"
+
 [tool.poetry.dependencies]
 python = ">=3.7,<4"
 limnoria = "^2021.01.15"
+attrs = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
