@@ -15,11 +15,12 @@ commands =
 
 [testenv:coverage]
 whitelist_externals = poetry
+passenv = *
 commands =
    poetry --version
    poetry version
    poetry run coverage erase
-   poetry run coverage run {posargs} --clean --plugins-dir=src HcoopMeetbot
+   poetry run coverage run {env:SUPYBOT_TEST} --clean --plugins-dir=src HcoopMeetbot
    poetry run coverage run -a -m pytest tests
    poetry run coverage report
 
