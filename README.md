@@ -36,5 +36,5 @@ Start Limnoria (probably with `supybot ./meetbot.conf`) and ensure that it conne
 
 Open a query to talk privately with the bot, using `/q meetbot`.  Identify yourself to the bot with `identify <user> <password>`, using the username and password you configured above via `supybot-wizard` &mdash; or use some other mechanism to identify yourself.  At this point, you have the rights to make adminstrative changes in the bot.
 
-Install the plugin using `load HcoopMeetbot`.  You should see a response `The operation succeeded.`  At this point, you can use the `meetversion` command to confirm which version of the plugin you are using and `help HcoopMeetbot` to see information about available commands.
+Install the plugin using `load HcoopMeetbot`.  You should see a response `The operation succeeded.`  At this point, you can use the `meetversion` command to confirm which version of the plugin you are using and `list HcoopMeetbot` to see information about available commands.
 

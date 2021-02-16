@@ -6,6 +6,7 @@ IRC request and message handlers.
 """
 
 from .interface import Context, Message
+from .release import DATE, VERSION
 
 
 def irc_message(context: Context, message: Message) -> None:
@@ -28,6 +29,11 @@ def outbound_message(context: Context, message: Message) -> None:
         message(Message): Message to handle
     """
     context.logger.info("Received message: %s", message)
+
+
+def meetversion(context: Context) -> None:
+    """Reply with a string describing the version of the plugin."""
+    context.send_reply("HcoopMeetbot v%s, released %s" % (VERSION, DATE))
 
 
 def listmeetings(context: Context) -> None:

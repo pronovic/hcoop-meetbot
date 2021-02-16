@@ -64,6 +64,17 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
         privmsg.assert_called_once_with("channel", "provided-message")
         irc.sendMsg.assert_has_calls([call("generated-topic"), call("generated-message")])
 
+    @patch("HcoopMeetbot.plugin.handler.meetversion")
+    @patch("HcoopMeetbot.plugin.handler.outbound_message")
+    @patch("HcoopMeetbot.plugin.handler.irc_message")
+    def test_meetversion(self, irc_message, outbound_message, meetversion) -> None:
+        """Test the listmeetings command"""
+        meetversion.side_effect = _stub
+        self.assertNotError("meetversion")
+        irc_message.assert_called_once_with(context=ANY, message=_inbound("meetversion"))
+        outbound_message.assert_called_once_with(context=ANY, message=_outbound())
+        meetversion.assert_called_once_with(context=ANY)
+
     @patch("HcoopMeetbot.plugin.handler.listmeetings")
     @patch("HcoopMeetbot.plugin.handler.outbound_message")
     @patch("HcoopMeetbot.plugin.handler.irc_message")

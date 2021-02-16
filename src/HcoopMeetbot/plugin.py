@@ -63,6 +63,13 @@ class HcoopMeetbot(callbacks.Plugin):
             self.log.exception("Discarded error in outFilter")
         return msg
 
+    def meetversion(self, irc, msg, args):
+        """Get the current plugin version."""
+        context = _context(self, irc, msg)
+        handler.meetversion(context=context)
+
+    meetversion = wrap(meetversion)
+
     def listmeetings(self, irc, msg, args):
         """List all currently-active meetings."""
         context = _context(self, irc, msg)

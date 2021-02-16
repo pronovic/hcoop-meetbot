@@ -41,7 +41,7 @@ run_pylint() {
       run_install
    fi
 
-   poetry run pylint -j 0 src/HcoopMeetbot tests
+   poetry run pylint -j 0 src/HcoopMeetbot src/hcoopmeetbotlogic tests
    if [ $? != 0 ]; then
       exit 1
    fi
@@ -228,10 +228,10 @@ run_release() {
    fi
 
    VERSION=$(echo "$1" | sed 's/^v//') # so you can use "0.1.5 or "v0.1.5"
-   COPYRIGHT="2020-$(date +'%Y')"
+   COPYRIGHT="2021$(date +'-%Y' | sed 's/-2021//')"
    DATE=$(date +'%d %b %Y')
    TAG="v$VERSION" # follow PEP 440 naming convention
-   FILES="pyproject.toml Changelog"
+   FILES="pyproject.toml Changelog src/hcoopmeetbotlogic/release.py"
    MESSAGE="Release v$VERSION to PyPI"
 
    if [ "$(git branch -a | grep '^\*' | sed 's/^\* //')" != "master" ]; then
@@ -268,18 +268,16 @@ run_release() {
    sed --version 2>&1 | grep -iq "GNU sed"
    if [ $? = 0 ]; then
       # GNU sed accepts a bare -i and assumes no backup file
+      sed -i "s/^COPYRIGHT = .*$/COPYRIGHT = \"$COPYRIGHT\"/g" src/hcoopmeetbotlogic/release.py
+      sed -i "s/^VERSION = .*$/VERSION = \"$VERSION\"/g" src/hcoopmeetbotlogic/release.py
+      sed -i "s/^DATE = .*$/DATE = \"$DATE\"/g" src/hcoopmeetbotlogic/release.py
       sed -i "s/^Version $VERSION\s\s*unreleased/Version $VERSION     $DATE/g" Changelog
-      if [ $? != 0 ]; then
-         echo "*** Failed to update changelog"
-         exit 1
-      fi
    else
-      # BSD set requires you to set an empty backup file extension
+      # BSD sed requires you to set an empty backup file extension
+      sed -i "" "s/^COPYRIGHT = .*$/COPYRIGHT = \"$COPYRIGHT\"/g" src/hcoopmeetbotlogic/release.py
+      sed -i "" "s/^VERSION = .*$/VERSION = \"$VERSION\"/g" src/hcoopmeetbotlogic/release.py
+      sed -i "" "s/^DATE = .*$/DATE = \"$DATE\"/g" src/hcoopmeetbotlogic/release.py
       sed -i "" "s/^Version $VERSION\s\s*unreleased/Version $VERSION     $DATE/g" Changelog
-      if [ $? != 0 ]; then
-         echo "*** Failed to update changelog"
-         exit 1
-      fi
    fi
 
    git diff $FILES
