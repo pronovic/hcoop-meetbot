@@ -44,4 +44,5 @@ jobs:
       - name: Run Tox test suite
         run: |
           source .testenv
-          poetry run tox -c .toxrc -e "checks,coverage" -- ${{ env.SUPYBOT_TEST }}
+          cat .testenv
+          poetry run tox -c .toxrc -e "checks,coverage" -- "${{ env.SUPYBOT_TEST }}"
