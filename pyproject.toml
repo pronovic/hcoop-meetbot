@@ -8,7 +8,8 @@ readme = "PyPI.md"
 homepage = "https://pypi.org/project/hcoop-meetbot/"
 include = [ "Changelog", "LICENSE", "CREDITS", "README.md", "docs", "tests" ]
 exclude = [ "HcoopMeetbot/test.py" ] # annoyingly, bot tests must live in the source tree
-packages = [ { include = "HcoopMeetbot", from = "src" } ]
+packages = [ { include = "HcoopMeetbot", from = "src" },
+             { include = "hcoopmeetbotlogic", from = "src" } ]
 classifiers=[
    "Programming Language :: Python :: 3",
    "License :: OSI Approved :: Apache Software License",

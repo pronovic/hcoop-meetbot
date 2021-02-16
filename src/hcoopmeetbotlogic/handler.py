@@ -10,7 +10,7 @@ from .interface import Context, Message
 
 def ircmessage(context: Context, message: Message, bypass: bool = False) -> None:
     """
-    Handle a message from the supybot.
+    Handle a message from the bot.
 
     Args:
         context(Context): Context for the message

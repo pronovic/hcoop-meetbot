@@ -22,5 +22,8 @@ __author__ = Author(name="Kenneth J. Pronovici", email="pronovic@ieee.org")
 __contributors__ = {}  # type: Dict[str, str]
 __url__ = "https://pypi.org/project/hcoop-meetbot/"
 
+if world.testing:
+    from . import test
+
 Class = plugin.Class
 configure = config.configure

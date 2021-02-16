@@ -166,6 +166,7 @@ run_test() {
 #         exit 1
 #      fi
 
+      rm -rf src/HcoopMeetbot/__pycache__   # cache somehow screws up the context on 2nd run
       poetry run supybot-test --clean --plugins-dir=src HcoopMeetbot
       result=$?
       rm -rf web tmp backup test-data test-conf  # supybot-test leaves around a lot of junk

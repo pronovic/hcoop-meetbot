@@ -1,30 +1,27 @@
 # -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
-# pylint: disable=ungrouped-imports:
+# pylint: disable=ungrouped-imports,disable=unused-argument,broad-except,too-many-ancestors,invalid-name:
 
 """
 Implement the HcoopMeetbot plugin in terms of Limnoria functionality.
 """
 
-# This code is intentionally very thin.  All of the real functionality lives in the local package.
-# All this code does is set up the right data to invoke the backend functionality.  This is done
-# mainly for legibility, since it keeps the plugin-specific processing code separate from the
-# business logic.  However, it also simplifies MyPy type checking.  Limnoria has no type hints,
-# so by restricting its use to this module, the rest of the code can be more easily type checked.
+# This is a very thin implementation.  Most business logic lives in
+# the hcoopmeetbotlogic package where it can be unit-tested outside
+# of supybot-test, fully type-checked with MyPy, etc.
 
 import importlib
 
 import supybot.ircmsgs as ircmsgs
-from supybot import callbacks
+from supybot import callbacks, world
 from supybot.commands import optional, wrap
 
-from .local import handler
-from .local import interface
+from hcoopmeetbotlogic import handler, interface
 
-# reload these modules when the plugin is reloaded
-handler = importlib.reload(handler)
-interface = importlib.reload(interface)
-
+if not world.testing:
+    # something about reload screws up the unittest patch process
+    handler = importlib.reload(handler)
+    interface = importlib.reload(interface)
 
 def _context(plugin, irc, msg) -> interface.Context:
     """Create context for a command or message."""
@@ -37,7 +34,6 @@ def _context(plugin, irc, msg) -> interface.Context:
     )
 
 
-# pylint: disable=too-many-ancestors,invalid-name:
 class HcoopMeetbot(callbacks.Plugin):
     """Helps run IRC meetings."""
 
@@ -61,40 +57,40 @@ class HcoopMeetbot(callbacks.Plugin):
                 context = _context(self, irc, msg)
                 message = interface.Message(nick=irc.nick, channel=msg.args[0], network=irc.network, payload=msg.args[1])
                 handler.ircmessage(context=context, message=message, bypass=True)
-        except Exception:  # pylint: disable=broad-except:
+        except Exception:
             # Per original MeetBot, catch errors to prevent all output from being clobbered
             self.log.exception("Discarded error in outFilter")
         return msg
 
-    def listmeetings(self, irc, msg, args):  # pylint: disable=unused-argument:
+    def listmeetings(self, irc, msg, args):
         """List all currently-active meetings."""
         context = _context(self, irc, msg)
         handler.listmeetings(context=context)
 
     listmeetings = wrap(listmeetings, ["admin"])
 
-    def savemeetings(self, irc, msg, args):  # pylint: disable=unused-argument:
+    def savemeetings(self, irc, msg, args):
         """Save all currently active meetings"""
         context = _context(self, irc, msg)
         handler.savemeetings(context=context)
 
     savemeetings = wrap(savemeetings, ["admin"])
 
-    def addchair(self, irc, msg, args, channel, network, nick):  # pylint: disable=unused-argument:
+    def addchair(self, irc, msg, args, channel, network, nick):
         """Add a nickname as a chair to the meeting: addchair <channel> <nick>."""
         context = _context(self, irc, msg)
         handler.addchair(context=context, channel=channel, network=network, nick=nick)
 
     addchair = wrap(addchair, ["admin", "channel", "something", "nick"])
 
-    def deletemeeting(self, irc, msg, args, channel, network, save):  # pylint: disable=unused-argument:
+    def deletemeeting(self, irc, msg, args, channel, network, save):
         """Delete a meeting from the cache: deletemeeting <meeting> <save=true/false>"""
         context = _context(self, irc, msg)
         handler.deletemeeting(context=context, channel=channel, network=network, save=save)
 
     deletemeeting = wrap(deletemeeting, ["admin", "channel", "something", optional("boolean", True)])
 
-    def recent(self, irc, msg, args):  # pylint: disable=unused-argument:
+    def recent(self, irc, msg, args):
         """List recent meetings for admin purposes."""
         context = _context(self, irc, msg)
         handler.recent(context=context)
