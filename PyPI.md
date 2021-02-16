@@ -37,3 +37,4 @@ Open a query to talk privately with the bot, using `/q meetbot`.  Identify yours
 
 Install the plugin using `load HcoopMeetbot`.  You should see a response `The operation succeeded.`  At this point, you can use the `meetversion` command to confirm which version of the plugin you are using and `list HcoopMeetbot` to see information about available commands.
 
+Later, if you update the plugin, you can either stop and start the bot process, or use `@reload HcoopMeetbot` from within IRC (after you identify yourself, if necessary).

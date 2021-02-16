@@ -33,7 +33,7 @@ Using the Plugin
 
 This plugin is distributed as a PyPI package. 
 
-First, install Limnoria following the _instructions.  There are also more details under getting-started_.
+First, install Limnoria following the instructions_.  There are also more details under getting-started_.
 
 Choose a directory and run ``supybot-wizard`` to initialize a bot called ``meetbot``.  Make sure to select ``y`` for the the question **Would you like to add an owner user for your bot?**.  You will need to identify yourself to the bot to install the plugin.  
 
@@ -45,9 +45,11 @@ Make sure to use ``pip`` (or ``pip3``) for the same Python 3 installation that r
 
 Start Limnoria (probably with ``supybot ./meetbot.conf``) and ensure that it connects to your IRC server.
 
-Open a query to talk privately with the bot, using ``/q meetbot``.  Identify yourself to the bot with ``identify <user> <password>``, using the username and password you configured above via ``supybot-wizard`` &mdash; or use some other mechanism to identify yourself.  At this point, you have the rights to make adminstrative changes in the bot.
+Open a query to talk privately with the bot, using ``/q meetbot``.  Identify yourself to the bot with ``identify <user> <password>``, using the username and password you configured above via ``supybot-wizard`` - or use some other mechanism to identify yourself.  At this point, you have the rights to make adminstrative changes in the bot.
 
 Install the plugin using ``load HcoopMeetbot``.  You should see a response ``The operation succeeded.``  At this point, you can use the ``meetversion`` command to confirm which version of the plugin you are using and ``list HcoopMeetbot`` to see information about available commands.
+
+Later, if you update the plugin, you can either stop and start the bot process, or use ``@reload HcoopMeetbot`` from within IRC (after you identify yourself, if necessary).
 
 
 Developer Documentation
