@@ -40,4 +40,4 @@ jobs:
         run: |
           echo "::set-output name=SUPYBOT_TEST::$(poetry run which supybot-test)"
       - name: Run Tox test suite
-        run: poetry run tox -c .toxrc -e "precommit,{py}-{coverage,nocoverage}" -- ${{ env.SUPYBOT_TEST }}
+        run: poetry run tox -c .toxrc -e "checks,coverage" -- ${{ env.SUPYBOT_TEST }}
