@@ -143,34 +143,33 @@ run_test() {
    fi
 
    if [ $coverage == "yes" ]; then
-#      poetry run coverage run -m pytest tests
-#      if [ $? != 0 ]; then
-#         exit 1
-#      fi
-
       poetry run coverage run $(poetry run which supybot-test) --clean --plugins-dir=src HcoopMeetbot
       result=$?
-      rm -rf web tmp backup test-data test-conf  # supybot-test leaves around a lot of junk
+      rm -rf logs web tmp backup test-data test-conf  # supybot-test leaves around a lot of junk
       if [ $result != 0 ]; then
+         exit 1
+      fi
+
+      poetry run coverage run -a -m pytest tests
+      if [ $? != 0 ]; then
          exit 1
       fi
 
       poetry run coverage report
       if [ $html == "yes" ]; then
          poetry run coverage html -d .htmlcov
-         $(which start || which open) .htmlcov/index.html 2>/dev/null  # start on Windows, open on MacOS
+         $(which start || which open || which sensible-browser) .htmlcov/index.html 2>/dev/null  # start on Windows, open on MacOS
       fi
    else
-#      poetry run pytest tests
-#      if [ $? != 0 ]; then
-#         exit 1
-#      fi
-
-      rm -rf src/HcoopMeetbot/__pycache__   # cache somehow screws up the context on 2nd run
       poetry run supybot-test --clean --plugins-dir=src HcoopMeetbot
       result=$?
-      rm -rf web tmp backup test-data test-conf  # supybot-test leaves around a lot of junk
+      rm -rf logs web tmp backup test-data test-conf  # supybot-test leaves around a lot of junk
       if [ $result != 0 ]; then
+         exit 1
+      fi
+
+      poetry run pytest tests
+      if [ $? != 0 ]; then
          exit 1
       fi
    fi
@@ -217,7 +216,7 @@ run_docs() {
    fi
 
    if [ $open == "yes" ]; then
-      $(which start || which open) _build/html/index.html 2>/dev/null  # start on Windows, open on MacOS
+      $(which start || which open || which sensible-browser) _build/html/index.html 2>/dev/null  # start on Windows, open on MacOS
    fi
 }
 

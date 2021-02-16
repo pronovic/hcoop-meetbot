@@ -8,16 +8,26 @@ IRC request and message handlers.
 from .interface import Context, Message
 
 
-def ircmessage(context: Context, message: Message, bypass: bool = False) -> None:
+def irc_message(context: Context, message: Message) -> None:
     """
-    Handle a message from the bot.
+    Handle an IRC message from the bot.
 
     Args:
         context(Context): Context for the message
         message(Message): Message to handle
-        bypass(bool): Whether to bypass message processing
     """
-    context.logger.info("Received message%s: %s", " (bypassed)" if bypass else "", message)
+    context.logger.info("Received message: %s", message)
+
+
+def outbound_message(context: Context, message: Message) -> None:
+    """
+    Handle an outbound message from the bot.
+
+    Args:
+        context(Context): Context for the message
+        message(Message): Message to handle
+    """
+    context.logger.info("Received message: %s", message)
 
 
 def listmeetings(context: Context) -> None:

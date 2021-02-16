@@ -3,7 +3,8 @@ source = src
 
 [run]
 branch = true
-source = src/HcoopMeetbot
+source = src
+omit = src/HcoopMeetbot/test.py
 
 [report]
 show_missing = false

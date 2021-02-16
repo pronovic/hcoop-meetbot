@@ -18,10 +18,11 @@ from supybot.commands import optional, wrap
 
 from hcoopmeetbotlogic import handler, interface
 
+# this messes up unit test stubbing and patching
 if not world.testing:
-    # something about reload screws up the unittest patch process
     handler = importlib.reload(handler)
     interface = importlib.reload(interface)
+
 
 def _context(plugin, irc, msg) -> interface.Context:
     """Create context for a command or message."""
@@ -46,9 +47,9 @@ class HcoopMeetbot(callbacks.Plugin):
             network=irc.msg.tags["receivedOn"],
             payload=msg.args[1],
             topic=irc.state.channels[msg.args[0]].topic,
-            channel_nicks=irc.state.channels[msg.args[0]].users,
+            channel_nicks=["%s" % n for n in irc.state.channels[msg.args[0]].users],
         )
-        handler.ircmessage(context=context, message=message)
+        handler.irc_message(context=context, message=message)
 
     def outFilter(self, irc, msg):
         """Log outgoing messages from supybot."""
@@ -56,7 +57,7 @@ class HcoopMeetbot(callbacks.Plugin):
             if msg.command in ("PRIVMSG",):
                 context = _context(self, irc, msg)
                 message = interface.Message(nick=irc.nick, channel=msg.args[0], network=irc.network, payload=msg.args[1])
-                handler.ircmessage(context=context, message=message, bypass=True)
+                handler.outbound_message(context=context, message=message)
         except Exception:
             # Per original MeetBot, catch errors to prevent all output from being clobbered
             self.log.exception("Discarded error in outFilter")
@@ -76,19 +77,21 @@ class HcoopMeetbot(callbacks.Plugin):
 
     savemeetings = wrap(savemeetings, ["admin"])
 
-    def addchair(self, irc, msg, args, channel, network, nick):
-        """Add a nickname as a chair to the meeting: addchair <channel> <nick>."""
+    def addchair(self, irc, msg, args, channel, nick):
+        """Add a nickname as a chair to the meeting in this channel: addchair <nick>."""
         context = _context(self, irc, msg)
+        network = irc.msg.tags["receivedOn"]
         handler.addchair(context=context, channel=channel, network=network, nick=nick)
 
-    addchair = wrap(addchair, ["admin", "channel", "something", "nick"])
+    addchair = wrap(addchair, ["admin", "channel", "nick"])
 
-    def deletemeeting(self, irc, msg, args, channel, network, save):
-        """Delete a meeting from the cache: deletemeeting <meeting> <save=true/false>"""
+    def deletemeeting(self, irc, msg, args, channel, save):
+        """Delete a meeting from the cache: deletemeeting <save=true/false>"""
         context = _context(self, irc, msg)
+        network = irc.msg.tags["receivedOn"]
         handler.deletemeeting(context=context, channel=channel, network=network, save=save)
 
-    deletemeeting = wrap(deletemeeting, ["admin", "channel", "something", optional("boolean", True)])
+    deletemeeting = wrap(deletemeeting, ["admin", "channel", optional("boolean", True)])
 
     def recent(self, irc, msg, args):
         """List recent meetings for admin purposes."""
