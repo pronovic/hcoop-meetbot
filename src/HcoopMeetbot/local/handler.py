@@ -5,10 +5,10 @@
 IRC request and message handlers.
 """
 
-from HcoopMeetbot.local.interface import Context, Message
+from .interface import Context, Message
 
 
-def handle_message(context: Context, message: Message, bypass: bool = False) -> None:
+def ircmessage(context: Context, message: Message, bypass: bool = False) -> None:
     """
     Handle a message from the supybot.
 
@@ -20,7 +20,7 @@ def handle_message(context: Context, message: Message, bypass: bool = False) -> 
     context.logger.info("Received message%s: %s", " (bypassed)" if bypass else "", message)
 
 
-def handle_listmeetings(context: Context) -> None:
+def listmeetings(context: Context) -> None:
     """
     List all currently-active meetings.
 
@@ -30,7 +30,7 @@ def handle_listmeetings(context: Context) -> None:
     context.logger.info("Handled listmeetings")
 
 
-def handle_savemeetings(context: Context) -> None:
+def savemeetings(context: Context) -> None:
     """
     Save all currently active meetings.
 
@@ -40,7 +40,7 @@ def handle_savemeetings(context: Context) -> None:
     context.logger.info("Handled savemeetings")
 
 
-def handle_addchair(context: Context, channel: str, network: str, nick: str) -> None:
+def addchair(context: Context, channel: str, network: str, nick: str) -> None:
     """
     Add a nickname as a chair to the meeting.
 
@@ -53,7 +53,7 @@ def handle_addchair(context: Context, channel: str, network: str, nick: str) -> 
     context.logger.info("Handled addchair for [%s] [%s] [%s]", channel, network, nick)
 
 
-def handle_deletemeeting(context: Context, channel: str, network: str, save: bool) -> None:
+def deletemeeting(context: Context, channel: str, network: str, save: bool) -> None:
     """
     Delete a meeting from the cache.
 
@@ -66,7 +66,7 @@ def handle_deletemeeting(context: Context, channel: str, network: str, save: boo
     context.logger.info("Handled deletemeeting for [%s] [%s] [%s]", channel, network, save)
 
 
-def handle_recent(context: Context) -> None:
+def recent(context: Context) -> None:
     """
     List recent meetings for admin purposes."
 
