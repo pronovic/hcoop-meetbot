@@ -125,8 +125,6 @@ Usage: run <command>
 
 ## Local Testing
 
-TODO: need to come up with a way to template-ize the localbot.conf file, since it contains absolute paths
-
 Local testing is straightforward.  Instructions below are for Debian, but setup should be similar on other platforms.
 
 First, install an IRC server.  The [InspIRCd](https://www.inspircd.org/) server works well and there are are Debian-specific install [instructions](https://wiki.debian.org/InspIRCd) if you need more help:
@@ -164,15 +162,17 @@ INFO 2021-02-14T17:06:50 Got end of MOTD from irc.local
 INFO 2021-02-14T17:06:54 Join to #localtest on LocalNet synced in 4.01 seconds.
 ```
 
-Notice that this takes a few seconds to complete.  Once it's done, if you look over in your IRC window, you should see a notification that the local bot has joined the `#localtest` channel:
+Notice that this takes a few seconds to complete, and there's always an initial `ConnectionRefusedError`.  Once it's done, if you look over in your IRC window, you should see a notification that the local bot has joined the `#localtest` channel:
 
 ```
-17:09 -!- localbot [limnoria@127.0.0.1] has joined #localtest
+17:06 -!- localbot [limnoria@127.0.0.1] has joined #localtest
 ```
 
 You can now interact with the local bot using `localbot: <command>`, or using `@<command>` as a shortcut.  
 
-The `HcoopMeetbot` plugin is automatically available in the bot.  If you make changes to the code, you need to stop the bot with CTRL-C and restart it.
+The `HcoopMeetbot` plugin is automatically available in the bot, running out of the source tree.  If you make changes to the code, you can either reload using `@reload HcoopMeetbot` or just CTRL-C the bot and restart it.  If reload doesn't seem to work as expected, just use CTRL-C.
+
+> `Note:` The first time you use `run bot`, a `localbot` directory is create with a `localbot.conf` file based on the original template in `util/localbot.conf.template`.  If something gets screwed up and you want to start over, just blow away the `localbot` directory and it will be recreated by `run bot`.  
 
 ## Integration with PyCharm
 

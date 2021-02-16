@@ -321,10 +321,21 @@ run_publish() {
    git push --follow-tags
 }
 
-# Run the localbot, configured to connect to an IRC server on localhost
+# Run the localbot out of the source tree, configured to connect to localhost
 run_bot() {
-   # The local bot runs out of the source tree
    echo "Running the local bot..."
+
+   if [ ! -d localbot ]; then
+      mkdir -p localbot
+      cat utils/localbot.conf.template | sed "s|%%WORKDIR%%|$(pwd)|" > localbot/localbot.conf
+
+      mkdir -p localbot/conf
+      touch localbot/conf/channels.conf
+      touch localbot/conf/ignores.conf
+      touch localbot/conf/networks.conf
+      touch localbot/conf/users.conf
+   fi
+
    poetry run supybot localbot/localbot.conf
 }
 
