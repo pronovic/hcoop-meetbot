@@ -26,9 +26,7 @@ Release v\ |version|
 
 This is a plugin for Limnoria_, a bot framework for IRC.  It is designed to help run meetings on IRC.  At HCOOP_, we use it to run our quarterly board meetings.
 
-The code is based in large part on the MeetBot_ plugin for Supybot written by Richard Darst. Supybot is the predecessor to Limnoria.  Richard's MeetBot was "inspired by the original MeetBot, by Holger Levsen, which was itself a derivative of Mootbot by the Ubuntu Scribes team".  So, this code has a relatively long history.  For this version, the code was converted to modern Limnoria packaging standards, updated to support Python 3, and enhanced in other ways.
-
-To use the plugin, first make sure that your Limnoria installation is working properly, following the instructions_.  Next, install the plugin via pip (``pip3 install hcoop-meetbot``).  Finally, load the plugin into your Limnoria installation using ``load @Meetbot``.  
+The code is based in part on the MeetBot_ plugin for Supybot written by Richard Darst. Supybot is the predecessor to Limnoria.  Richard's MeetBot was "inspired by the original MeetBot, by Holger Levsen, which was itself a derivative of Mootbot by the Ubuntu Scribes team".  So, this code has a relatively long history.  For this version, much of the plugin was rewritten using Python 3, but it generally follows the pattern set by Richard's original code.
 
 Developer Documentation
 -----------------------
@@ -40,6 +38,4 @@ Developer Documentation
 .. _Limnoria: https://github.com/ProgVal/Limnoria
 .. _HCOOP: https://hcoop.net/
 .. _MeetBot: https://github.com/rkdarst/MeetBot/
-.. _instructions: https://docs.limnoria.net/index.html
-.. _PyPI: https://pypi.org/project/hcoop-meetbot/#files
 

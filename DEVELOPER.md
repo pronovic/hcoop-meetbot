@@ -4,6 +4,12 @@
 
 This plugin was written and tested on Debian GNU/Linux, but should also work on MacOS.  The code itself is portable, but Limnoria (Supybot) doesn't always work as expected on Windows, so it's best not to try.
 
+## Architecture and Test Design
+
+Limnoria (Supybot) plugins are quite specialized, with a standard code structure and a dedicated test framework.  For this implementation, I have chosen to make the Limnoria plugin in [`HcoopMeetbot`](src/HcoopMeetbot) as a very thin wrapper over functionality implemented in the companion [`hcoopmeetbotlogic`](src/hcoopmeetbotlogic) package.  The interface has been abstracted, and the backend logic is not even aware of Limnoria.  By using this design, we can minimize the testing needed to prove that the plugin is wired up properly.  It's also easier to unit test the business logic, and easier to apply code checks like MyPy.  
+
+There are two different test suites.  The first, in [`src/HcoopMeetbot/test.py`](src/HcoopMeetbot/test.py), is the Limnoria test suite.  This must be executed via `supybot-test` &mdash; you can't run it any other way.  The second, in the [`tests`](tests) package, is a standard Pytest suite.  The `run test` task (discussed below) executes both suites and combines the coverage results together into a single report.
+
 ## Packaging and Dependencies
 
 This project uses [Poetry](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.  
