@@ -182,7 +182,7 @@ run_tox() {
       run_install
    fi
 
-   SUPYBOT_TEST=$(poetry run which supybot-test) poetry run tox -c .toxrc -e "checks,docs,coverage"
+   SUPYBOT_TEST="$(poetry run which supybot-test)" poetry run tox -c .toxrc -e "checks,docs,coverage"
    if [ $? != 0 ]; then
       exit 1
    fi
