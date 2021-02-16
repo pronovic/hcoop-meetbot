@@ -36,8 +36,7 @@ jobs:
       - name: Install Dependencies
         run: poetry install -v
         if: steps.cached-poetry.outputs.cache-hit != 'true'
-      - name: Find supybot-test
+      - name: Run Tox test suite
         run: |
           echo "::set-output name=SUPYBOT_TEST::$(poetry run which supybot-test)"
-      - name: Run Tox test suite
-        run: poetry run tox -c .toxrc -e "checks,coverage" -- ${{ env.SUPYBOT_TEST }}
+          poetry run tox -c .toxrc -e "checks,coverage" -- ${{ env.SUPYBOT_TEST }}
