@@ -323,15 +323,20 @@ run_publish() {
 run_bot() {
    echo "Running the local bot..."
 
-   if [ ! -d localbot ]; then
-      mkdir -p localbot
-      cat utils/localbot.conf.template | sed "s|%%WORKDIR%%|$(pwd)|" > localbot/localbot.conf
+   if [ ! -d meetings ]; then
+      mkdir -p meetings
+   fi
 
+   if [ ! -d localbot ]; then
       mkdir -p localbot/conf
+
       touch localbot/conf/channels.conf
       touch localbot/conf/ignores.conf
       touch localbot/conf/networks.conf
       touch localbot/conf/users.conf
+
+      cat utils/localbot.conf.template | sed "s|%%WORKDIR%%|$(pwd)|" > localbot/localbot.conf
+      cat utils/HcoopMeetbot.conf.template | sed "s|%%WORKDIR%%|$(pwd)|" > localbot/conf/HcoopMeetbot.conf
    fi
 
    poetry run supybot localbot/localbot.conf

@@ -4,30 +4,52 @@
 """
 Object interface used by plugin to access code in the local package.
 """
-from logging import Logger
+
 from typing import Callable, Iterable, Optional
 
 import attr
 
 
+# noinspection PyUnresolvedReferences
+@attr.s
+class Config:
+    """
+    Configuration for the plugin.
+
+    Attributes:
+        conf_file(Optional[str]): Path to the file where configuration was sourced from
+        log_dir(str): Absolute path where meeting logs will be written
+        url_prefix(str): URL prefix to place on generated links to logfiles
+        pattern(str): Pattern for files generated in logFileDir
+        timezone(str): Timezone string, any value valid for pytz
+    """
+
+    conf_file = attr.ib(type=Optional[str])
+    log_dir = attr.ib(type=str)
+    url_prefix = attr.ib(type=str)
+    pattern = attr.ib(type=str)
+    timezone = attr.ib(type=str)
+
+
+# noinspection PyUnresolvedReferences
 @attr.s
 class Context:
     """
     Context for a message or command, including callbacks that can be invoked.
 
     Attributes:
-        logger(Logger): Python logger instance that should be used during processing
+        logger(Logger):
         set_topic(Callable[[str], None]): Set a topic in the correct context
         send_reply(Callable[[str], None]): Send a reply in the current context
         send_message(Callable[[str], None]): Send a message to the server immediately
     """
 
-    logger = attr.ib(type=Logger)
     set_topic = attr.ib(type=Callable[[str], None])
     send_reply = attr.ib(type=Callable[[str], None])
     send_message = attr.ib(type=Callable[[str], None])
 
 
+# noinspection PyUnresolvedReferences
 @attr.s
 class Message:
     """

@@ -1,0 +1,5 @@
+[HcoopMeetbot]
+logDir = %%WORKDIR%%/meetings
+urlPrefix = https://example.com/meetings
+pattern = %%Y/%(channel)s.%%Y%%m%%d.%%H%%M
+timezone = UTC

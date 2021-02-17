@@ -13,14 +13,16 @@ Implement the HcoopMeetbot plugin in terms of Limnoria functionality.
 import importlib
 
 import supybot.ircmsgs as ircmsgs
-from supybot import callbacks, world
+from supybot import callbacks, conf, world
 from supybot.commands import optional, wrap
 
 from hcoopmeetbotlogic import handler, interface
 
 # this messes up unit test stubbing and patching
 if not world.testing:
+    # noinspection PyTypeChecker
     handler = importlib.reload(handler)
+    # noinspection PyTypeChecker
     interface = importlib.reload(interface)
 
 
@@ -28,7 +30,6 @@ def _context(plugin, irc, msg) -> interface.Context:
     """Create context for a command or message."""
     channel = msg.args[0]
     return interface.Context(
-        logger=plugin.log,
         set_topic=lambda topic: irc.sendMsg(ircmsgs.topic(channel, topic)),
         send_reply=irc.reply if hasattr(irc, "reply") and callable(irc.reply) else lambda x: None,
         send_message=lambda message: irc.sendMsg(ircmsgs.privmsg(channel, message)),
@@ -37,6 +38,11 @@ def _context(plugin, irc, msg) -> interface.Context:
 
 class HcoopMeetbot(callbacks.Plugin):
     """Helps run IRC meetings."""
+
+    def __init__(self, irc):
+        """Initialize the plugin with our custom configuration."""
+        super().__init__(irc)
+        handler.configure(self.log, "%s" % conf.supybot.directories.conf)
 
     def doPrivmsg(self, irc, msg):
         """Capture all messages from supybot."""

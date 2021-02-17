@@ -59,7 +59,6 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
         result.send_reply("provided-reply")
         result.send_message("provided-message")
 
-        assert result.logger is plugin.log
         topic.assert_called_once_with("channel", "provided-topic")
         privmsg.assert_called_once_with("channel", "provided-message")
         irc.sendMsg.assert_has_calls([call("generated-topic"), call("generated-message")])

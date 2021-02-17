@@ -16,7 +16,9 @@ from hcoopmeetbotlogic import release
 
 from . import config, plugin
 
+# noinspection PyTypeChecker
 reload(config)
+# noinspection PyTypeChecker
 reload(plugin)
 
 __version__ = release.VERSION
