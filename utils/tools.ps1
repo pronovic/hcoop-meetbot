@@ -27,7 +27,7 @@ Switch ($command)
 
     pylint {
       Write-Output "Running pylint checks..." 
-      poetry run pylint -j 0 src/HcoopMeetbot tests
+      poetry run pylint -j 0 src/HcoopMeetbot src/hcoopmeetbotlogic tests
     }
 
     safety {

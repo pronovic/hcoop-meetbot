@@ -3,8 +3,8 @@ Darst:
 
    https://github.com/rkdarst/MeetBot/
 
-For this version, much of the plugin was rewritten using Python 3 and modern
-code-management practices, following the patterns in Richard's original code.
+For this version, much of the plugin was rewritten using Python 3, but it
+generally follows the pattern set by Richard's original code.
 
 The original license was:
 

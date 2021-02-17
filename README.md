@@ -12,4 +12,6 @@ This is a plugin for [Limnoria](https://github.com/ProgVal/Limnoria), a bot fram
 
 The code is based in part on the [MeetBot](https://github.com/rkdarst/MeetBot/) plugin for Supybot written by Richard Darst. Supybot is the predecessor to Limnoria.  Richard's MeetBot was "inspired by the original MeetBot, by Holger Levsen, which was itself a derivative of Mootbot by the Ubuntu Scribes team".  So, this code has a relatively long history.  For this version, much of the plugin was rewritten using Python 3, but it generally follows the pattern set by Richard's original code.  See [CREDITS](CREDITS) for Richard's original license.
 
+See the [user documentation](https://hcoop-meetbot.readthedocs.io/en/stable/) for more information about how to use the plugin, including installation instructions.
+
 Developer documentation is found in [DEVELOPER.md](DEVELOPER.md).  See that file for notes about how the code is structured, how to set up a development environment, etc.

@@ -10,7 +10,7 @@
 
 This is a plugin for [Limnoria](https://github.com/ProgVal/Limnoria), a bot framework for IRC.  It is designed to help run meetings on IRC.  At [HCOOP](https://hcoop.net), we use it to run our quarterly board meetings.
 
-The code is based in part on the [MeetBot](https://github.com/rkdarst/MeetBot/) plugin for Supybot written by Richard Darst. Supybot
- is the predecessor to Limnoria.  Richard's MeetBot was "inspired by the original MeetBot, by Holger Levsen, which was itself a deri
-vative of Mootbot by the Ubuntu Scribes team".  So, this code has a relatively long history.  For this version, much of the plugin w
-as rewritten using Python 3, but it generally follows the pattern set by Richard's original code.  See [CREDITS](CREDITS) for Richard's original license.
+The code is based in part on the [MeetBot](https://github.com/rkdarst/MeetBot/) plugin for Supybot written by Richard Darst. Supybot is the predecessor to Limnoria.  Richard's MeetBot was "inspired by the original MeetBot, by Holger Levsen, which was itself a deri vative of Mootbot by the Ubuntu Scribes team".  So, this code has a relatively long history.  For this version, much of the plugin was rewritten using Python 3, but it generally follows the pattern set by Richard's original code.  
+
+See the [user documentation](https://hcoop-meetbot.readthedocs.io/en/stable/) for more information about how to use the plugin, including installation instructions.
+
