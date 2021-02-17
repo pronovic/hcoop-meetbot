@@ -31,25 +31,75 @@ The code is based in part on the MeetBot_ plugin for Supybot written by Richard 
 Using the Plugin
 ----------------
 
-This plugin is distributed as a PyPI package. 
+The plugin is distributed as a PyPI package.  This mechanism makes it very easy to install the plugin, but prevents us from using the standard Limnoria configuration mechanism.  This is because the ``supybot-wizard`` command is not aware of the ``HcoopMeetbot`` plugin.  Instead, you have to create a small ``.conf`` file on disk to configure the plugin.
+
+Install and Configure Limnoria
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First, install Limnoria following the instructions_.  There are also more details under getting-started_.
 
-Choose a directory and run ``supybot-wizard`` to initialize a bot called ``meetbot``.  Make sure to select ``y`` for the the question **Would you like to add an owner user for your bot?**.  You will need to identify yourself to the bot to install the plugin.  
+Choose a directory and run ``supybot-wizard`` to initialize a bot called ``meetbot``.  Make sure to select ``y`` for the the question **Would you like to add an owner user for your bot?**  You will need to identify yourself to the bot to install the plugin.  
 
-Next, install the package from PyPI::
+Install and Configure HcoopMeetbot
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Install the package from PyPI::
 
    $ pip install hcoop-meetbot
 
 Make sure to use ``pip`` (or ``pip3``) for the same Python 3 installation that runs Limnoria, otherwise Limnoria won't be able to find the package.
 
-Start Limnoria (probably with ``supybot ./meetbot.conf``) and ensure that it connects to your IRC server.
+Next, add configuration.  Create a file ``HcoopMeetbot.conf`` in the ``conf`` directory for your Limnoria bot.  Fill four values into the file::
+
+   [HcoopMeetbot]
+   logDir = /home/myuser/meetings
+   urlPrefix = https://example.com/meetings
+   pattern = %%Y/%(channel)s.%%Y%%m%%d.%%H%%M
+   timezone = UTC
+
+If you skip this step and don't create a config file, the plugin will try to use sensible defaults as shown below.
+
++---------------+----------------------------------------+---------------------------------------------------------------------+
+| Parameter     | Default Value                          | Description                                                         |
++===============+========================================+=====================================================================+
+| ``logDir``    | ``$HOME/hcoop-meetbot``                | Absolute path where meeting logs will be written.                   |
++---------------+----------------------------------------+---------------------------------------------------------------------+
+| ``urlPrefix`` | ``/``                                  | URL prefix to place on generated links to logfiles.                 |
++---------------+----------------------------------------+---------------------------------------------------------------------+
+| ``pattern``   | ``%%Y/%(channel)s.%%Y%%m%%d.%%H%%M``   | Pattern for files generated in ``logFileDir``.  Use ``%(channel)s`` |
+|               |                                        | for the channel name and strftime_ format codes for dates.  If      |
+|               |                                        | you use strftime format codes, you must double the ``%%``.          |
++---------------+----------------------------------------+---------------------------------------------------------------------+
+| ``timezone``  | ``UTC``                                | Any timezone valid for pytz_, like ``UTC``,                         |
+|               |                                        | ``US/Eastern``, or ``America/Chicago``.                             |
++---------------+----------------------------------------+---------------------------------------------------------------------+
+
+Run the Bot
+~~~~~~~~~~~
+
+Start Limnoria (for instance with ``supybot ./meetbot.conf``) and ensure that it connects to your IRC server.
 
 Open a query to talk privately with the bot, using ``/q meetbot``.  Identify yourself to the bot with ``identify <user> <password>``, using the username and password you configured above via ``supybot-wizard`` - or use some other mechanism to identify yourself.  At this point, you have the rights to make adminstrative changes in the bot.
 
-Install the plugin using ``load HcoopMeetbot``.  You should see a response ``The operation succeeded.``  At this point, you can use the ``meetversion`` command to confirm which version of the plugin you are using and ``list HcoopMeetbot`` to see information about available commands.
+Install the plugin using ``load HcoopMeetbot``.  You should see a response ``The operation succeeded.``  At this point, you can use the ``meetversion`` command to confirm which version of the plugin you are using and ``list HcoopMeetbot`` to see information about available commands::
 
-Later, if you update the plugin, you can either stop and start the bot process, or use ``@reload HcoopMeetbot`` from within IRC (after you identify yourself, if necessary).
+   (localhost)
+   02:22 -!- Irssi: Starting query in localhost with meetbot
+   02:22 <ken> identify ken thesecret
+   02:22 -meetbot(limnoria@127.0.0.1)- The operation succeeded.
+   02:22 <ken> load HcoopMeetbot
+   02:22 -meetbot(limnoria@127.0.0.1)- The operation succeeded.
+   02:22 <ken> meetversion
+   02:22 -meetbot(limnoria@127.0.0.1)- HcoopMeetbot v0.1.0, released 16 Feb 2021
+   02:22 <ken> list HcoopMeetbot
+   02:22 -meetbot(limnoria@127.0.0.1)- addchair, deletemeeting, listmeetings, meetversion, recent, and savemeetings
+
+   [02:22] [ken(+i)] [2:localhost/meetbot]
+   [meetbot]
+
+Then you can join any channel that the Limnoria bot is configured to join, and start using the plugin immediately.
+
+Later, if you update the plugin (``pip install --upgrade``), you can either stop and start the bot process, or use ``@reload HcoopMeetbot`` from within IRC.  You may need to identify yourself to Limnoria before doing this.
 
 
 Developer Documentation
@@ -64,4 +114,6 @@ Developer Documentation
 .. _MeetBot: https://github.com/rkdarst/MeetBot/
 .. _instructions: https://limnoria-doc.readthedocs.io/en/latest/use/install.html
 .. _getting-started: https://docs.limnoria.net/use/getting_started.html
+.. _strftime: https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+.. _pytz: https://pypi.org/project/pytz/
 
