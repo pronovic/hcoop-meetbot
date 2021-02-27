@@ -150,7 +150,7 @@ run_test() {
          exit 1
       fi
 
-      poetry run coverage run -a -m pytest tests
+      poetry run coverage run -a -m pytest --testdox tests
       if [ $? != 0 ]; then
          exit 1
       fi
@@ -168,7 +168,7 @@ run_test() {
          exit 1
       fi
 
-      poetry run pytest tests
+      poetry run pytest --testdox tests
       if [ $? != 0 ]; then
          exit 1
       fi
