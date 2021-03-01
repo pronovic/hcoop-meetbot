@@ -122,6 +122,7 @@ class Meeting:
         """Track a message, optionally dispatching any embedded commands."""
         payload = message.payload.strip(" \x01")  # \x01 is present in actions
         message_type = TrackedMessageType.ACTION if payload[:6] == "ACTION" else TrackedMessageType.MESSAGE
+        payload = payload[7:].strip() if message_type == TrackedMessageType.ACTION else payload.strip()
         tracked = TrackedMessage(type=message_type, sender=message.nick, payload=payload)
         self.messages.append(tracked)
         if dispatch:
