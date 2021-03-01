@@ -45,7 +45,7 @@ class TestConfig:
 class TestHandlers:
     def test_irc_message(self, logger, context):
         """Test the irc_message handler."""
-        message = MagicMock()
+        message = MagicMock(payload="XXX")
         irc_message(context, message)  # just make sure it doesn't blow up
 
     def test_outbound_message(self, logger, context):

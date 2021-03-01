@@ -139,3 +139,14 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
         irc_message.assert_called_once_with(context=ANY, message=_inbound("recent"))
         outbound_message.assert_called_once_with(context=ANY, message=_outbound())
         recent.assert_called_once_with(context=ANY)
+
+    @patch("HcoopMeetbot.plugin.handler.commands")
+    @patch("HcoopMeetbot.plugin.handler.outbound_message")
+    @patch("HcoopMeetbot.plugin.handler.irc_message")
+    def test_commands(self, irc_message, outbound_message, commands) -> None:
+        """Test the commands command"""
+        commands.side_effect = _stub
+        self.assertNotError("commands")
+        irc_message.assert_called_once_with(context=ANY, message=_inbound("commands"))
+        outbound_message.assert_called_once_with(context=ANY, message=_outbound())
+        commands.assert_called_once_with(context=ANY)

@@ -1,9 +1,13 @@
 Remaining tasks for this PR:
 
 [ ] Unit test state.py
-[ ] Unit test handler.py in terms of stubbed state and message interfaces
-[ ] Unit tests the parts of message.py that are implemented (dispatch and save will remain unimplemented)
-[ ] Figure out a way to maintain state on reload (I couldn't get Richard's original pattern to work)
+[ ] Unit test meeting.py
+[ ] Unit test handler.py in terms of stubbed interfaces
+
+Tasks for future PRs:
+
+[ ] Implement and test command.py
+[ ] Implement and test writer.py
 
 Tasks prior to release:
 

@@ -26,8 +26,8 @@ URL_PREFIX_DEFAULT = ""
 PATTERN_DEFAULT = "%%Y/%(channel)s.%%Y%%m%%d.%%H%%M"
 TIMEZONE_DEFAULT = "UTC"
 
-# noinspection PyUnresolvedReferences
-@attr.s
+
+@attr.s(frozen=True)
 class Config:
     """
     Configuration for the plugin.

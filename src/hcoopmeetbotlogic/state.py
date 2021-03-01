@@ -17,8 +17,25 @@ _COMPLETED_SIZE = 16  # size of the _COMPLETED deque
 
 _LOGGER: Logger
 _CONFIG: Config
-_ACTIVE: Dict[str, Meeting] = {}
-_COMPLETED: Deque[Meeting] = deque([], _COMPLETED_SIZE)
+
+# Following the pattern from the original MeetBot, global variables
+# that need to be initialized are defined in a try/except block.  This is
+# done to avoid wiping out state across plugin reloads.  If the variable
+# is already defined, it will be unchanged.  If it's not defined, it will
+# be initialized. This looks a little odd, but does seem to work.
+
+try:
+    # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
+    _ACTIVE  # type: Dict[str, Meeting]
+except NameError:
+    _ACTIVE: Dict[str, Meeting] = {}
+
+try:
+    # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
+    _COMPLETED  # type: Deque[Meeting]
+except NameError:
+    _COMPLETED: Deque[Meeting] = deque([], _COMPLETED_SIZE)
+
 
 # noinspection PyShadowingNames
 def set_logger(logger: Logger) -> None:  # pylint: disable=redefined-outer-name:
@@ -44,7 +61,24 @@ def config() -> Config:
     return _CONFIG
 
 
+def add_meeting(nick: str, channel: str, network: str) -> Meeting:
+    """Add a new active meeting."""
+    meeting = Meeting(founder=nick, channel=channel, network=network)
+    _ACTIVE[meeting.key()] = meeting
+    return meeting
+
+
+def deactivate_meeting(meeting: Meeting, retain: bool = True) -> None:
+    """Move a meeting out of the active list, optionally retaining it in the completed list."""
+    key = meeting.key()
+    popped = _ACTIVE.pop(key)
+    assert popped is meeting  # if they're not the same, something is screwed up
+    if retain:
+        _COMPLETED.append(popped)  # will potentially roll off an older meeting
+
+
 def get_meeting(channel: str, network: str) -> Optional[Meeting]:
+    """Get a meeting for the channel and network."""
     try:
         key = Meeting.meeting_key(channel, network)
         return _ACTIVE[key]
@@ -52,7 +86,7 @@ def get_meeting(channel: str, network: str) -> Optional[Meeting]:
         return None
 
 
-def get_meetings(active: bool, completed: bool) -> List[Meeting]:
+def get_meetings(active: bool = True, completed: bool = True) -> List[Meeting]:
     """Return a list of tracked meetings, optionally filtering out active or completed meetings."""
     meetings: List[Meeting] = []
     if active:
@@ -61,11 +95,3 @@ def get_meetings(active: bool, completed: bool) -> List[Meeting]:
         meetings += _COMPLETED
     meetings.sort(key=operator.itemgetter("end_date", "start_date"))
     return meetings
-
-
-def move_to_complete(meeting: Meeting) -> None:
-    """Move a meeting from active to completed."""
-    key = meeting.key()
-    popped = _ACTIVE.pop(key)
-    assert popped is meeting  # if they're not the same, something is broken
-    _COMPLETED.append(popped)  # will potentially roll off an older meeting
