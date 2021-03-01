@@ -67,7 +67,7 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
     @patch("HcoopMeetbot.plugin.handler.outbound_message")
     @patch("HcoopMeetbot.plugin.handler.irc_message")
     def test_meetversion(self, irc_message, outbound_message, meetversion) -> None:
-        """Test the listmeetings command"""
+        """Test the meetversion command"""
         meetversion.side_effect = _stub
         self.assertNotError("meetversion")
         irc_message.assert_called_once_with(context=ANY, message=_inbound("meetversion"))
