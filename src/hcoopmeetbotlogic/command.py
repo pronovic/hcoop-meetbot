@@ -34,8 +34,8 @@ class CommandDispatcher:
     """
     Identify and dispatch meeting commands.
 
-    This is maintained as a class rather than as function in this module because
-    having a class makes certain operations - like for list_command() - easier.
+    This is maintained as a class rather than as a set of functions because having
+    a class makes certain operations easier - for example, the list_commands() method.
     """
 
     def list_commands(self) -> List[str]:
