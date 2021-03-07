@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
-from pendulum import datetime, now
+
+from datetime import datetime
+
+from pytz import utc
 
 from hcoopmeetbotlogic.interface import Message
 from hcoopmeetbotlogic.meeting import Meeting, TrackedMessage
@@ -8,7 +11,7 @@ from hcoopmeetbotlogic.meeting import Meeting, TrackedMessage
 
 class TestTrackedMessage:
     def test_constructor(self):
-        before = now()
+        before = datetime.now(utc)
         message = TrackedMessage("sender", "payload", False)
         assert message.sender == "sender"
         assert message.payload == "payload"
@@ -18,7 +21,7 @@ class TestTrackedMessage:
 
 class TestMeeting:
     def test_constructor(self):
-        before = now()
+        before = datetime.now(utc)
         meeting = Meeting("nick", "channel", "network")
         assert meeting.id is not None
         assert meeting.founder == "nick"
