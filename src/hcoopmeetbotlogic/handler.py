@@ -5,42 +5,25 @@
 IRC request and message handlers.
 """
 
-import configparser
-import os
 from logging import Logger
-from pathlib import Path
 
-from .interface import Config, Context, Message
+from hcoopmeetbotlogic.command import dispatch, is_startmeeting, list_commands
+from hcoopmeetbotlogic.writer import write_meeting
+
+from .config import load_config
+from .interface import Context, Message
 from .release import DATE, VERSION
-
-CONF_FILE = "HcoopMeetbot.conf"
-CONF_SECTION = "HcoopMeetbot"
-
-CONF_LOG_DIR_KEY = "logDir"
-CONF_URL_PREFIX_KEY = "urlPrefix"
-CONF_PATTERN_KEY = "pattern"
-CONF_TIMEZONE_KEY = "timezone"
-
-CONF_LOG_DIR_DEFAULT = os.path.join(Path.home(), "hcoop-meetbot")
-CONF_URL_PREFIX_DEFAULT = ""
-CONF_PATTERN_DEFAULT = "%%Y/%(channel)s.%%Y%%m%%d.%%H%%M"
-CONF_TIMEZONE_DEFAULT = "UTC"
-
-_LOGGER: Logger
-_CONFIG: Config
+from .state import add_meeting, config, deactivate_meeting, get_meeting, get_meetings, logger, set_config, set_logger
 
 
-def _logger() -> Logger:
-    """Give unit tests access"""
-    return _LOGGER  # for some reason, global doesn't do what we expect
+def _send_reply(context: Context, reply: str) -> None:
+    """Send a reply to a context, logging it at DEBUG level first."""
+    logger().debug(reply)
+    context.send_reply(reply)
 
 
-def _config() -> Config:
-    """Give unit tests access"""
-    return _CONFIG  # for some reason, global doesn't do what we expect
-
-
-def configure(logger: Logger, conf_dir: str) -> None:
+# noinspection PyShadowingNames
+def configure(logger: Logger, conf_dir: str) -> None:  # pylint: disable=redefined-outer-name:
     """
     Configure the plugin.
 
@@ -48,33 +31,10 @@ def configure(logger: Logger, conf_dir: str) -> None:
         logger(Logger): Python logger instance that should be used during processing
         conf_dir(str): Limnoria bot conf directory to load configuration from
     """
-    global _LOGGER  # pylint: disable=global-statement:
-    global _CONFIG  # pylint: disable=global-statement:
-    _LOGGER = logger
-    _CONFIG = None  # type: ignore
-    conf_file = os.path.join(conf_dir, CONF_FILE)
-    if os.path.isfile(conf_file):
-        try:
-            parser = configparser.ConfigParser(interpolation=None)
-            parser.read([conf_file], encoding="utf-8")
-            _CONFIG = Config(
-                conf_file=conf_file,
-                log_dir=parser[CONF_SECTION][CONF_LOG_DIR_KEY],
-                url_prefix=parser[CONF_SECTION][CONF_URL_PREFIX_KEY],
-                pattern=parser[CONF_SECTION][CONF_PATTERN_KEY],
-                timezone=parser[CONF_SECTION][CONF_TIMEZONE_KEY],
-            )
-        except Exception:  # pylint: disable=broad-except:
-            _LOGGER.exception("Failed to parse %s; using defaults", conf_file)
-    if not _CONFIG:
-        _CONFIG = Config(
-            conf_file=None,
-            log_dir=CONF_LOG_DIR_DEFAULT,
-            url_prefix=CONF_URL_PREFIX_DEFAULT,
-            pattern=CONF_PATTERN_DEFAULT,
-            timezone=CONF_TIMEZONE_DEFAULT,
-        )
-    _LOGGER.info("HcoopMeetbot config: %s", _CONFIG)
+    logger.debug("Configuring plugin")
+    config = load_config(logger, conf_dir)  # pylint: disable=redefined-outer-name:
+    set_logger(logger)
+    set_config(config)
 
 
 def irc_message(context: Context, message: Message) -> None:  # pylint: disable=unused-argument:
@@ -85,7 +45,15 @@ def irc_message(context: Context, message: Message) -> None:  # pylint: disable=
         context(Context): Context for the message
         message(Message): Message to handle
     """
-    _LOGGER.info("Received message: %s", message)
+    logger().debug("Handled IRC message: %s", message)
+    meeting = get_meeting(message.channel, message.network)
+    if meeting:
+        tracked = meeting.track_message(message)
+        dispatch(meeting, tracked)
+    elif is_startmeeting(message):
+        meeting = add_meeting(nick=message.nick, channel=message.channel, network=message.network)
+        tracked = meeting.track_message(message)
+        dispatch(meeting, tracked)
 
 
 def outbound_message(context: Context, message: Message) -> None:  # pylint: disable=unused-argument:
@@ -96,35 +64,50 @@ def outbound_message(context: Context, message: Message) -> None:  # pylint: dis
         context(Context): Context for the message
         message(Message): Message to handle
     """
-    _LOGGER.info("Received message: %s", message)
+    logger().debug("Handled outbound message: %s", message)
+    meeting = get_meeting(message.channel, message.network)
+    if meeting:
+        # note that outbound messages are never dispatched, even if they contain a command
+        meeting.track_message(message)
 
 
 def meetversion(context: Context) -> None:  # pylint: disable=unused-argument:
     """Reply with a string describing the version of the plugin."""
-    context.send_reply("HcoopMeetbot v%s, released %s" % (VERSION, DATE))
+    logger().debug("Handled 'meetversion'")
+    _send_reply(context, "HcoopMeetbot v%s, released %s" % (VERSION, DATE))
 
 
-def listmeetings(context: Context) -> None:  # pylint: disable=unused-argument:
+def listmeetings(context: Context) -> None:
     """
     List all currently-active meetings.
 
     Args:
         context(Context): Context for a message or command
     """
-    _LOGGER.info("Handled listmeetings")
+    logger().debug("Handled 'listmeetings'")
+    meetings = get_meetings(active=True, completed=False)
+    _send_reply(context, "No active meetings" if not meetings else ", ".join([m.display_name() for m in meetings]))
 
 
-def savemeetings(context: Context) -> None:  # pylint: disable=unused-argument:
+def savemeetings(context: Context) -> None:
     """
     Save all currently active meetings.
 
     Args:
         context(Context): Context for a message or command
     """
-    _LOGGER.info("Handled savemeetings")
+    logger().debug("Handled 'savemeetings'")
+    meetings = get_meetings(active=True, completed=False)
+    if not meetings:
+        reply = "No meetings to save"
+    else:
+        for meeting in meetings:
+            write_meeting(config=config(), meeting=meeting)
+        reply = "Saved %d meeting%s" % (len(meetings), "s" if len(meetings) > 1 else "")
+    _send_reply(context, reply)
 
 
-def addchair(context: Context, channel: str, network: str, nick: str) -> None:  # pylint: disable=unused-argument:
+def addchair(context: Context, channel: str, network: str, nick: str) -> None:
     """
     Add a nickname as a chair to the meeting.
 
@@ -134,27 +117,60 @@ def addchair(context: Context, channel: str, network: str, nick: str) -> None:  
         network(str): Network to add the chair for
         nick(str): Nickname to add as the chair
     """
-    _LOGGER.info("Handled addchair for [%s] [%s] [%s]", channel, network, nick)
+    logger().debug("Handled 'addchair' for %s/%s nick=%s", channel, network, nick)
+    meeting = get_meeting(channel, network)
+    if not meeting:
+        reply = "Meeting not found for %s/%s" % (channel, network)
+    else:
+        meeting.add_chair(nick, primary=True)
+        reply = "%s is now the primary chair for %s" % (meeting.chair, meeting.display_name())
+    _send_reply(context, reply)
 
 
-def deletemeeting(context: Context, channel: str, network: str, save: bool) -> None:  # pylint: disable=unused-argument:
+def deletemeeting(context: Context, channel: str, network: str, save: bool) -> None:
     """
-    Delete a meeting from the cache.
+    Delete a meeting, moving it out of active state without actually completing it.
+
+    The meeting will not be maintained in the list of recent meetings, since it
+    isn't technically completed.
 
     Args:
         context(Context): Context for a message or command
         channel(str): Channel to delete the meeting for
         network(str): Network to delete the meeting for
-        save(bool): Whether to save the meeting before deleting it
+        save(bool): Whether to save the meeting before deactivating it
     """
-    _LOGGER.info("Handled deletemeeting for [%s] [%s] [%s]", channel, network, save)
+    logger().debug("Handled 'deletemeeting' for %s/%s save=%s", channel, network, save)
+    meeting = get_meeting(channel, network)
+    if not meeting:
+        reply = "Meeting not found for %s/%s" % (channel, network)
+    else:
+        if save:
+            write_meeting(config=config(), meeting=meeting)
+        deactivate_meeting(meeting, retain=False)
+        reply = "Meeting %s has been deleted%s" % (meeting.display_name(), " (saved first)" if save else "")
+    _send_reply(context, reply)
 
 
-def recent(context: Context) -> None:  # pylint: disable=unused-argument:
+def recent(context: Context) -> None:
     """
-    List recent meetings for admin purposes."
+    List recent meetings for admin purposes.
 
     Args:
         context(Context): Context for a message or command
     """
-    _LOGGER.info("Handled recent")
+    logger().debug("Handled 'recent'")
+    meetings = get_meetings(active=False, completed=True)
+    reply = "No recent meetings" if not meetings else ", ".join([m.display_name() for m in meetings])
+    _send_reply(context, reply)
+
+
+def commands(context: Context) -> None:
+    """
+    List available commands.
+
+    Args:
+        context(Context): Context for a message or command
+    """
+    logger().debug("Handled 'commands'")
+    _send_reply(context, "Available commands: %s" % ", ".join(list_commands()))

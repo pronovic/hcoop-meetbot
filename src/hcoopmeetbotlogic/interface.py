@@ -10,29 +10,7 @@ from typing import Callable, Iterable, Optional
 import attr
 
 
-# noinspection PyUnresolvedReferences
-@attr.s
-class Config:
-    """
-    Configuration for the plugin.
-
-    Attributes:
-        conf_file(Optional[str]): Path to the file where configuration was sourced from
-        log_dir(str): Absolute path where meeting logs will be written
-        url_prefix(str): URL prefix to place on generated links to logfiles
-        pattern(str): Pattern for files generated in logFileDir
-        timezone(str): Timezone string, any value valid for pytz
-    """
-
-    conf_file = attr.ib(type=Optional[str])
-    log_dir = attr.ib(type=str)
-    url_prefix = attr.ib(type=str)
-    pattern = attr.ib(type=str)
-    timezone = attr.ib(type=str)
-
-
-# noinspection PyUnresolvedReferences
-@attr.s
+@attr.s(frozen=True)
 class Context:
     """
     Context for a message or command, including callbacks that can be invoked.
@@ -49,8 +27,7 @@ class Context:
     send_message = attr.ib(type=Callable[[str], None])
 
 
-# noinspection PyUnresolvedReferences
-@attr.s
+@attr.s(frozen=True)
 class Message:
     """
     A message to be processed.

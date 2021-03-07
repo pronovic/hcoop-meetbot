@@ -67,11 +67,12 @@ If you skip this step and don't create a config file, the plugin will try to use
 | ``urlPrefix`` | ``/``                                  | URL prefix to place on generated links to logfiles.                 |
 +---------------+----------------------------------------+---------------------------------------------------------------------+
 | ``pattern``   | ``%%Y/%(channel)s.%%Y%%m%%d.%%H%%M``   | Pattern for files generated in ``logFileDir``.  Use ``%(channel)s`` |
-|               |                                        | for the channel name and strftime_ format codes for dates.  If      |
-|               |                                        | you use strftime format codes, you must double the ``%%``.          |
+|               |                                        | for the channel name and strftime_ format codes for date fields.    |
+|               |                                        | If you use strftime format codes, you must double the ``%%``.       |
 +---------------+----------------------------------------+---------------------------------------------------------------------+
-| ``timezone``  | ``UTC``                                | Any timezone valid for pytz_, like ``UTC``,                         |
-|               |                                        | ``US/Eastern``, or ``America/Chicago``.                             |
+| ``timezone``  | ``UTC``                                | The timezone to use for generated files and in generated reports.   |
+|               |                                        | May be any standard IANA_ value, like ``UTC``, ``US/Eastern``,      |
+|               |                                        | or ``America/Chicago``, etc.                                        |
 +---------------+----------------------------------------+---------------------------------------------------------------------+
 
 Run the Bot
@@ -115,5 +116,5 @@ Developer Documentation
 .. _instructions: https://limnoria-doc.readthedocs.io/en/latest/use/install.html
 .. _getting-started: https://docs.limnoria.net/use/getting_started.html
 .. _strftime: https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
-.. _pytz: https://pypi.org/project/pytz/
+.. _IANA: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 

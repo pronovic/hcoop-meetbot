@@ -2,7 +2,7 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 
 """
-Maintains version information.
+Version and release information.
 """
 
 AUTHOR = "Kenneth J. Pronovici"

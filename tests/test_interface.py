@@ -4,17 +4,7 @@
 
 from unittest.mock import MagicMock
 
-from hcoopmeetbotlogic.interface import Config, Context, Message
-
-
-class TestConfig:
-    def test_constructor(self):
-        config = Config("conf_file", "log_dir", "url_prefix", "pattern", "timezone")
-        assert config.conf_file == "conf_file"
-        assert config.log_dir == "log_dir"
-        assert config.url_prefix == "url_prefix"
-        assert config.pattern == "pattern"
-        assert config.timezone == "timezone"
+from hcoopmeetbotlogic.interface import Context, Message
 
 
 class TestContext:

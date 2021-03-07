@@ -113,5 +113,12 @@ class HcoopMeetbot(callbacks.Plugin):
 
     recent = wrap(recent, ["admin"])
 
+    def commands(self, irc, msg, args):
+        """List available commands."""
+        context = _context(self, irc, msg)
+        handler.commands(context=context)
+
+    commands = wrap(commands)
+
 
 Class = HcoopMeetbot
