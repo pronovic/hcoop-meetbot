@@ -67,8 +67,8 @@ def outbound_message(context: Context, message: Message) -> None:  # pylint: dis
     logger().debug("Handled outbound message: %s", message)
     meeting = get_meeting(message.channel, message.network)
     if meeting:
-        meeting.track_message(message)
         # note that outbound messages are never dispatched, even if they contain a command
+        meeting.track_message(message)
 
 
 def meetversion(context: Context) -> None:  # pylint: disable=unused-argument:
@@ -103,7 +103,7 @@ def savemeetings(context: Context) -> None:
     else:
         for meeting in meetings:
             write_meeting(config=config(), meeting=meeting)
-        reply = "Saved %d meetings" % len(meetings)
+        reply = "Saved %d meeting%s" % (len(meetings), "s" if len(meetings) > 1 else "")
     _send_reply(context, reply)
 
 

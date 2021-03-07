@@ -107,7 +107,6 @@ _DISPATCHER = CommandDispatcher()
 
 def list_commands() -> List[str]:
     """List available commands."""
-    # noinspection PyTypeChecker
     return _DISPATCHER.list_commands()
 
 
