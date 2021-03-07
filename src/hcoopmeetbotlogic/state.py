@@ -36,13 +36,13 @@ except NameError:
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _ACTIVE  # type: Dict[str, Meeting]
+    _ACTIVE
 except NameError:
     _ACTIVE: Dict[str, Meeting] = {}
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _COMPLETED  # type: Deque[Meeting]
+    _COMPLETED
 except NameError:
     _COMPLETED: Deque[Meeting] = deque([], _COMPLETED_SIZE)
 
