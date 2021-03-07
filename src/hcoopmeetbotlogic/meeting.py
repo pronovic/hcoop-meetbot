@@ -6,11 +6,11 @@ Meeting state.
 """
 
 import uuid
-from datetime import datetime, tzinfo
+from datetime import datetime
 from typing import List, Optional
 
 import attr
-from pytz import utc
+from pytz import timezone, utc
 
 from .interface import Message
 
@@ -21,10 +21,10 @@ class TrackedMessage:
     A message tracked as part of a meeting.
 
     Attributes:
-        timestamp(datetime): Message timestamp in UTC
         sender(str): IRC nick of the sender
         payload(str): Payload of the message
         action(bool): Whether this is an ACTION message
+        timestamp(datetime): Message timestamp in UTC
     """
 
     sender = attr.ib(type=str)
@@ -44,9 +44,9 @@ class Meeting:
 
     Attributes:
         id(str): Unique identifier for the meeting
+        founder(str): IRC nick of the meeting founder always a member of chairs
         channel(str): Channel the meeting is running on
         network(str): Network associated with the channel
-        founder(str): IRC nick of the meeting founder always a member of chairs
         chair(str): IRC nick of primary meeting chair, always a member of chairs
         chairs(List[str]): IRC nick of all meeting chairs, including the primary
         start_time(datetime): Start time of the meeting in UTC
@@ -54,9 +54,9 @@ class Meeting:
         messages(List[TrackedMessage]): List of all messages tracked as part of the meeting
     """
 
+    founder = attr.ib(type=str)
     channel = attr.ib(type=str)
     network = attr.ib(type=str)
-    founder = attr.ib(type=str)
     id = attr.ib(type=str)
     chair = attr.ib(type=str)
     chairs = attr.ib(type=List[str])
@@ -110,8 +110,9 @@ class Meeting:
 
     def track_message(self, message: Message) -> TrackedMessage:
         """Track a message associated with the meeting."""
-        # Per the IRC spec, actions start and end with \x01 (CTRL-A).  To generate
-        # an action in an IRC client like irssi, use /action.
+        # Per Wikipedia, actions start and end with \x01 (CTRL-A).
+        # See "DCC CHAT" under: https://en.wikipedia.org/wiki/Client-to-client_protocol
+        # To generate an action in an IRC client like irssi, use /action.
         payload = message.payload.strip(" \x01")
         action = payload[:6] == "ACTION"
         payload = payload[7:].strip() if action else payload.strip()
@@ -121,8 +122,8 @@ class Meeting:
 
     def active(self) -> bool:
         """Whether the meeting is active."""
-        return self.end_time is not None
+        return self.end_time is None
 
-    def display_name(self, zone: tzinfo = utc, fmt: str = "%Y-%m-%dT%H:%M%z") -> str:
+    def display_name(self, zone: str = "UTC", fmt: str = "%Y-%m-%dT%H:%M%z") -> str:
         """Get the meeting display name."""
-        return "%s/%s@%s" % (self.channel, self.network, self.start_time.astimezone(zone).strftime(fmt))
+        return "%s/%s@%s" % (self.channel, self.network, self.start_time.astimezone(timezone(zone)).strftime(fmt))
