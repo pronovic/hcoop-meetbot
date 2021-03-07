@@ -15,14 +15,24 @@ from .meeting import Meeting
 
 _COMPLETED_SIZE = 16  # size of the _COMPLETED deque
 
-_LOGGER: Logger
-_CONFIG: Config
 
 # Following the pattern from the original MeetBot, global variables
 # that need to be initialized are defined in a try/except block.  This is
 # done to avoid wiping out state across plugin reloads.  If the variable
 # is already defined, it will be unchanged.  If it's not defined, it will
 # be initialized. This looks a little odd, but does seem to work.
+
+try:
+    # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
+    _LOGGER  # type: ignore
+except NameError:
+    _LOGGER = None
+
+try:
+    # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
+    _CONFIG  # type: ignore
+except NameError:
+    _CONFIG = None
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -44,8 +54,11 @@ def set_logger(logger: Logger) -> None:  # pylint: disable=redefined-outer-name:
     _LOGGER = logger
 
 
+# noinspection PyTypeChecker
 def logger() -> Logger:
     """Give the rest of the plugin access to a shared logger instance."""
+    if _LOGGER is None:
+        raise RuntimeError("Plugin state not initialized; call set_logger() before logger()")
     return _LOGGER
 
 
@@ -56,8 +69,11 @@ def set_config(config: Config) -> None:  # pylint: disable=redefined-outer-name:
     _CONFIG = config
 
 
+# noinspection PyTypeChecker
 def config() -> Config:
     """Give the rest of the plugin access to shared configuration."""
+    if _CONFIG is None:
+        raise RuntimeError("Plugin state not initialized; call set_config() before config()")
     return _CONFIG
 
 
@@ -71,6 +87,7 @@ def add_meeting(nick: str, channel: str, network: str) -> Meeting:
 def deactivate_meeting(meeting: Meeting, retain: bool = True) -> None:
     """Move a meeting out of the active list, optionally retaining it in the completed list."""
     key = meeting.key()
+    assert key in _ACTIVE  # if the key is not tracked, something is screwed up
     popped = _ACTIVE.pop(key)
     assert popped is meeting  # if they're not the same, something is screwed up
     if retain:
@@ -93,5 +110,5 @@ def get_meetings(active: bool = True, completed: bool = True) -> List[Meeting]:
         meetings += _ACTIVE.values()
     if completed:
         meetings += _COMPLETED
-    meetings.sort(key=operator.itemgetter("end_date", "start_date"))
+    meetings.sort(key=operator.attrgetter("end_time", "start_time"))
     return meetings

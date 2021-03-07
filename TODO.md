@@ -1,6 +1,6 @@
 Remaining tasks for this PR:
 
-[ ] Unit test state.py
+[x] Unit test state.py
 [ ] Unit test meeting.py
 [x] Unit test handler.py in terms of stubbed interfaces
 [x] Unit test high-level dispatch behavior in command.py
