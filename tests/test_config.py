@@ -10,9 +10,9 @@ import pytest
 from hcoopmeetbotlogic.config import Config, load_config
 
 MISSING_DIR = "bogus"
-VALID_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_handler/valid")
-EMPTY_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_handler/empty")
-INVALID_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_handler/invalid")
+VALID_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/valid")
+EMPTY_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/empty")
+INVALID_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/invalid")
 
 
 @pytest.fixture
