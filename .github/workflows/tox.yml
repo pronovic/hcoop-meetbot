@@ -38,4 +38,5 @@ jobs:
         if: steps.cached-poetry.outputs.cache-hit != 'true'
       - name: Run Tox test suite
         run: |
+          poetry run which supybot-test  # this is the only way to run the true Limnoria tests
           SUPYBOT_TEST=$(poetry run which supybot-test) poetry run tox -c .toxrc -e "checks,coverage"
