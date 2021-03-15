@@ -9,10 +9,11 @@ from hcoopmeetbotlogic.interface import Context, Message
 
 class TestContext:
     def test_constructor(self):
+        get_topic = MagicMock()
         set_topic = MagicMock()
         send_reply = MagicMock()
         send_message = MagicMock
-        context = Context(set_topic, send_reply, send_message)
+        context = Context(get_topic, set_topic, send_reply, send_message)
         assert context.set_topic is set_topic
         assert context.send_reply is send_reply
         assert context.send_message is send_message

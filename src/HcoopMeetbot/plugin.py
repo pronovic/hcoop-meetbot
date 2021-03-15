@@ -29,7 +29,13 @@ if not world.testing:
 def _context(plugin, irc, msg) -> interface.Context:
     """Create context for a command or message."""
     channel = msg.args[0]
+
+    # noinspection PyShadowingNames
+    def get_topic(irc, channel):
+        return irc.state.channels[channel].topic
+
     return interface.Context(
+        get_topic=lambda: get_topic(irc, channel),
         set_topic=lambda topic: irc.sendMsg(ircmsgs.topic(channel, topic)),
         send_reply=irc.reply if hasattr(irc, "reply") and callable(irc.reply) else lambda x: None,
         send_message=lambda message: irc.sendMsg(ircmsgs.privmsg(channel, message)),
