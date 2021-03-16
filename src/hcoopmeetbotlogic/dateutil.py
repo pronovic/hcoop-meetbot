@@ -16,5 +16,5 @@ def now() -> datetime:
 
 
 def formatdate(timestamp: Optional[datetime], zone: str = "UTC", fmt: str = "%Y-%m-%dT%H:%M%z") -> str:
-    """Format a datetime for display in the user's configured time zone."""
+    """Format a datetime for display in a specific time zone."""
     return timestamp.astimezone(timezone(zone)).strftime(fmt) if timestamp else "None"
