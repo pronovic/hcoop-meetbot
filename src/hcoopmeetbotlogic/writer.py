@@ -6,9 +6,10 @@ Writes meeting log and minutes to disk.
 """
 
 # Note that we always use Genshi's Element object (via genshi.tag) rather than manually
-# generating HTML strings.  This helps avoid various kinds of injection vulnerabilities.
-# For instance, if someone pastes Javascript into an IRC conversation, that Javascript
-# will show up as literal text in the raw log - it won't be rendered or executed.
+# generating HTML strings.  This helps avoid problems with cross-site scripting and
+# similar vulnerabilities. For instance, if someone pastes Javascript into an IRC
+# conversation, that Javascript will show up as literal text in the raw log - it won't
+# be rendered or executed.
 
 from __future__ import annotations
 
@@ -30,12 +31,12 @@ _TEMPLATES = os.path.join(os.path.dirname(__file__), "templates")
 _LOADER = TemplateLoader(search_path=_TEMPLATES, auto_reload=False)
 
 # Identifies a message that contains an operation
-_OPERATION_REGEX = re.compile(r"(^\s*)(#)(\w+)(\s*)(.*$)", re.IGNORECASE)
-_OPERATION_GROUP = 3
-_OPERAND_GROUP = 5
+_OPERATION_REGEX = re.compile(r"(^\s*)(#\w+)(\s*)(.*$)", re.IGNORECASE)
+_OPERATION_GROUP = 2
+_OPERAND_GROUP = 4
 
 # Identifies a highlight within a message payload (finds cases of "nick:" to be highlighted)
-_HIGHLIGHT_REGEX = re.compile(r"[^\s]+:")
+_HIGHLIGHT_REGEX = re.compile(r"([^\s]+:(?!//))")
 
 
 @attr.s(frozen=True)
@@ -74,7 +75,7 @@ class _LogMessage:
     @staticmethod
     def _content(message: TrackedMessage) -> Element:
         if message.action:
-            return tag.span(message.payload, class_="ac")
+            return tag.span(_LogMessage._payload(message.payload), class_="ac")
         else:
             operation_match = _OPERATION_REGEX.match(message.payload)
             if operation_match:
@@ -93,7 +94,7 @@ class _LogMessage:
     def _payload(payload: str) -> Element:
         return tag.span(
             [
-                tag.span(element, class_="hi") if _HIGHLIGHT_REGEX.fullmatch(element) else tag.span(element.strip())
+                tag.span(element, class_="hi") if _HIGHLIGHT_REGEX.fullmatch(element) else tag.span(element)
                 for element in _HIGHLIGHT_REGEX.split(payload)
             ]
         )
