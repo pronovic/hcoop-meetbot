@@ -6,16 +6,16 @@ Implementation of meeting commands.
 """
 
 import re
+from datetime import datetime
 from typing import List, Optional
 
 import attr
 
-from hcoopmeetbotlogic.state import config
-from hcoopmeetbotlogic.writer import write_meeting
-
 from .dateutil import formatdate, now
 from .interface import Context, Message
 from .meeting import EventType, Meeting, TrackedMessage
+from .state import config
+from .writer import write_meeting
 
 # Regular expression to identify the startmeeting command
 _STARTMEETING_REGEX = re.compile(r"(^\s*)(#)(startmeeting)(\s*)(.*$)", re.IGNORECASE)
@@ -55,7 +55,7 @@ class CommandDispatcher:
             meeting.original_topic = context.get_topic()
             meeting.meeting_topic = operand
             self._set_channel_topic(meeting, context)
-            context.send_reply("Meeting started at %s" % formatdate(meeting.start_time))
+            context.send_reply("Meeting started at %s" % self._formatdate(meeting.start_time))
             context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
             context.send_reply("Useful commands: #action #agreed #help #info #idea #link #topic")
 
@@ -67,7 +67,7 @@ class CommandDispatcher:
             meeting.active = False
             self._set_channel_topic(meeting, context)
             locations = write_meeting(config=config(), meeting=meeting)
-            context.send_reply("Meeting ended at %s" % formatdate(meeting.end_time))
+            context.send_reply("Meeting ended at %s" % self._formatdate(meeting.end_time))
             context.send_reply("Raw log: %s" % locations.log.url)
             context.send_reply("Minutes: %s" % locations.minutes.url)
 
@@ -187,6 +187,10 @@ class CommandDispatcher:
     do_fail = do_failed
     do_reject = do_failed
     do_rejected = do_failed
+
+    def _formatdate(self, timestamp: Optional[datetime]) -> str:
+        """Format a date in the user's configured time zone."""
+        return formatdate(timestamp=timestamp, zone=config().timezone)
 
     def _tokenize(self, value: str, pattern: str = r"[\s,]+", limit: Optional[int] = None) -> List[str]:
         """Tokenize a value, splitting via a regular expression and returning all non-empty values up to a limit."""

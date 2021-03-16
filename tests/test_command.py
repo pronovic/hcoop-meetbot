@@ -161,13 +161,15 @@ class TestCommandDispatcher:
         return MagicMock(sender="nick")
 
     @patch("hcoopmeetbotlogic.command.formatdate")
-    def test_startmeeting_as_chair(self, formatdate, dispatcher, meeting, context, message):
+    @patch("hcoopmeetbotlogic.command.config")
+    def test_startmeeting_as_chair(self, config, formatdate, dispatcher, meeting, context, message):
         meeting.active = False
         meeting.original_topic = None
         meeting.meeting_topic = None
         meeting.is_chair.return_value = True
         meeting.chairs = ["x", "y"]
         meeting.start_time = datetime(2021, 3, 7, 13, 14, 0)
+        config.return_value = MagicMock(timezone="America/Chicago")
         formatdate.return_value = "11111"
         context.get_topic = MagicMock(return_value="original")
         dispatcher.do_startmeeting(meeting, context, "a", "b", message)
@@ -182,7 +184,7 @@ class TestCommandDispatcher:
         )
         assert meeting.original_topic == "original"
         assert meeting.meeting_topic == "b"
-        formatdate.assert_called_once_with(meeting.start_time)
+        formatdate.assert_called_once_with(timestamp=meeting.start_time, zone="America/Chicago")
 
     def test_startmeeting_as_chair_duplicated(self, dispatcher, meeting, context, message):
         meeting.active = True
@@ -218,7 +220,7 @@ class TestCommandDispatcher:
         meeting.end_time = None
         meeting.active = None
         meeting.original_topic = "original"
-        config.return_value = MagicMock()
+        config.return_value = MagicMock(timezone="America/Chicago")
         formatdate.return_value = "11111"
         now.return_value = datetime(2021, 3, 7, 13, 14, 0)
         meeting.is_chair.return_value = True
@@ -230,7 +232,7 @@ class TestCommandDispatcher:
         write_meeting.assert_called_once_with(config=config.return_value, meeting=meeting)
         context.send_reply.assert_has_calls([call("Meeting ended at 11111"), call("Raw log: logurl"), call("Minutes: minutesurl")])
         context.set_topic.assert_called_once_with("original")
-        formatdate.assert_called_once_with(now.return_value)
+        formatdate.assert_called_once_with(timestamp=now.return_value, zone="America/Chicago")
         assert meeting.end_time is now.return_value
         assert meeting.active is False
 

@@ -7,13 +7,12 @@ IRC request and message handlers.
 
 from logging import Logger
 
-from hcoopmeetbotlogic.command import dispatch, is_startmeeting, list_commands
-from hcoopmeetbotlogic.writer import write_meeting
-
+from .command import dispatch, is_startmeeting, list_commands
 from .config import load_config
 from .interface import Context, Message
 from .release import DATE, VERSION
 from .state import add_meeting, config, deactivate_meeting, get_meeting, get_meetings, logger, set_config, set_logger
+from .writer import write_meeting
 
 
 def _send_reply(context: Context, reply: str) -> None:

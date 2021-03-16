@@ -10,9 +10,8 @@ from pathlib import Path
 
 import attr
 
-from hcoopmeetbotlogic.dateutil import formatdate
-
 from .config import Config
+from .dateutil import formatdate
 from .meeting import Meeting
 
 

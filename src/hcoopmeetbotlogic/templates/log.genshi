@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:py="http://genshi.edgewall.org/">
 <head>
-    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-    <title>#hcoop Log</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8"/>
+    <title>${title}</title>
     <style type="text/css">
 pre { white-space: pre-wrap; }
 body { background: #f0f0f0; }
@@ -19,8 +19,8 @@ body .cmdline { font-weight: bold }
 </head>
 <body>
 <pre>
-<a name="id1"></a><span class="tm">13:14:00</span> <span class="nk">&lt;nick1&gt;</span> <span><span>stuff</span></span>
-
+<py:for each="message in messages">${message.id}${message.timestamp} ${message.nick} ${message.content}
+</py:for>
 </pre>
 </body>
 </html>
