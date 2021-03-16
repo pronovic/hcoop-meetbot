@@ -73,7 +73,7 @@ class TestMeeting:
         assert meeting.messages == []
         assert meeting.events == []
         assert meeting.key() == "channel/network"
-        assert meeting.active() is True
+        assert meeting.active is False
 
     def test_meeting_key(self):
         assert Meeting.meeting_key("channel", "network") == "channel/network"
@@ -85,12 +85,6 @@ class TestMeeting:
         meeting.start_time = datetime(2021, 3, 7, 13, 14, 0)  # in UTC by default
         assert meeting.display_name() == "c/n@11111"
         formatdate.assert_called_once_with(meeting.start_time)
-
-    def test_mark_completed(self):
-        meeting = Meeting("nick", "channel", "network")
-        meeting.mark_completed()
-        assert meeting.active() is False
-        assert meeting.end_time >= meeting.start_time
 
     # pylint: disable=too-many-statements:
     def test_chair_behavior(self):

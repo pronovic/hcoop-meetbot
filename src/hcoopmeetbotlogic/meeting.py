@@ -141,6 +141,7 @@ class Meeting:
     nicks = attr.ib(type=Dict[str, int])
     start_time = attr.ib(type=datetime)
     end_time = attr.ib(type=Optional[datetime])
+    active = attr.ib(type=bool, default=False)
     original_topic = attr.ib(type=Optional[str], default=None)
     meeting_topic = attr.ib(type=Optional[str], default=None)
     current_topic = attr.ib(type=Optional[str], default=None)
@@ -191,17 +192,9 @@ class Meeting:
     def key(self) -> str:
         return Meeting.meeting_key(self.channel, self.network)
 
-    def active(self) -> bool:
-        """Whether the meeting is active."""
-        return self.end_time is None
-
     def display_name(self) -> str:
         """Get the meeting display name."""
         return "%s/%s@%s" % (self.channel, self.network, formatdate(self.start_time))
-
-    def mark_completed(self) -> None:
-        """Mark the meeting as completed."""
-        self.end_time = now()
 
     def add_chair(self, nick: str, primary: bool = True) -> None:
         """Add a chair to a meeting, potentially making it the primary chair."""

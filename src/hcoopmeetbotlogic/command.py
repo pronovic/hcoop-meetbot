@@ -13,7 +13,7 @@ import attr
 from hcoopmeetbotlogic.state import config
 from hcoopmeetbotlogic.writer import write_meeting
 
-from .dateutil import formatdate
+from .dateutil import formatdate, now
 from .interface import Context, Message
 from .meeting import EventType, Meeting, TrackedMessage
 
@@ -49,19 +49,22 @@ class CommandDispatcher:
 
     def do_startmeeting(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Start a meeting"""
-        meeting.track_event(EventType.START_MEETING, message)
-        meeting.original_topic = context.get_topic()
-        meeting.meeting_topic = operand
-        self._set_channel_topic(meeting, context)
-        context.send_reply("Meeting started at %s" % formatdate(meeting.start_time))
-        context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
-        context.send_reply("Useful commands: #action #agreed #help #info #idea #link #topic")
+        if meeting.is_chair(message.sender) and not meeting.active:
+            meeting.active = True  # set this here so we can tell this is not a duplicated start meeting event
+            meeting.track_event(EventType.START_MEETING, message)
+            meeting.original_topic = context.get_topic()
+            meeting.meeting_topic = operand
+            self._set_channel_topic(meeting, context)
+            context.send_reply("Meeting started at %s" % formatdate(meeting.start_time))
+            context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
+            context.send_reply("Useful commands: #action #agreed #help #info #idea #link #topic")
 
     def do_endmeeting(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """End an active meeting and save to disk."""
         if meeting.is_chair(message.sender):
             meeting.track_event(EventType.END_MEETING, message)
-            meeting.mark_completed()
+            meeting.end_time = now()
+            meeting.active = False
             self._set_channel_topic(meeting, context)
             locations = write_meeting(config=config(), meeting=meeting)
             context.send_reply("Meeting ended at %s" % formatdate(meeting.end_time))
@@ -107,19 +110,21 @@ class CommandDispatcher:
         """Add a chair to the meeting."""
         if meeting.is_chair(message.sender):
             chairs = self._tokenize(operand)
-            meeting.track_event(EventType.ADD_CHAIR, message, chairs=chairs)
-            for nick in chairs:
-                meeting.add_chair(nick, primary=False)
-            context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
+            if chairs:
+                meeting.track_event(EventType.ADD_CHAIR, message, chairs=chairs)
+                for nick in chairs:
+                    meeting.add_chair(nick, primary=False)
+                context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
 
     def do_unchair(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Remove a chair from the meeting."""
         if meeting.is_chair(message.sender):
             chairs = self._tokenize(operand)
-            meeting.track_event(EventType.REMOVE_CHAIR, message, chairs=chairs)
-            for nick in chairs:
-                meeting.remove_chair(nick)
-            context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
+            if chairs:
+                meeting.track_event(EventType.REMOVE_CHAIR, message, chairs=chairs)
+                for nick in chairs:
+                    meeting.remove_chair(nick)
+                context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
 
     def do_nick(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Make the bot aware of a nick which hasn't said anything, for use with actions."""
@@ -133,9 +138,9 @@ class CommandDispatcher:
     def do_undo(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Remove the most recent item from the minutes."""
         if meeting.is_chair(message.sender):
-            meeting.track_event(EventType.UNDO, message)
             removed = meeting.pop_event()
             if removed:
+                meeting.track_event(EventType.UNDO, message, id=removed.id)
                 context.send_reply("Removed event: %s" % removed.display_name())
 
     def do_meetingname(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
@@ -183,7 +188,7 @@ class CommandDispatcher:
     do_reject = do_failed
     do_rejected = do_failed
 
-    def _tokenize(self, value: str, pattern: str = r"[\s]+", limit: Optional[int] = None) -> List[str]:
+    def _tokenize(self, value: str, pattern: str = r"[\s,]+", limit: Optional[int] = None) -> List[str]:
         """Tokenize a value, splitting via a regular expression and returning all non-empty values up to a limit."""
         if not value or not pattern:
             return []
@@ -202,7 +207,7 @@ class CommandDispatcher:
             else:
                 context.set_topic("%s" % meeting.display_name())
         else:
-            context.set_topic(meeting.original_topic)
+            context.set_topic(meeting.original_topic if meeting.original_topic else "")
 
 
 # Singleton command dispatcher
