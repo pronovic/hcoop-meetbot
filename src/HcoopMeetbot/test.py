@@ -50,11 +50,17 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
 
         msg = MagicMock(args=["channel"])
 
-        irc = MagicMock()
+        channel = MagicMock(topic="topic")
+        channels = {"channel": channel}
+        state = MagicMock(channels=channels)
+
+        irc = MagicMock(state=state)
         irc.sendMsg = MagicMock()
         irc.reply = MagicMock()
 
         result = _context(plugin, irc, msg)
+        assert result.get_topic() == "topic"
+
         result.set_topic("provided-topic")
         result.send_reply("provided-reply")
         result.send_message("provided-message")

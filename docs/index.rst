@@ -61,19 +61,30 @@ If you skip this step and don't create a config file, the plugin will try to use
 
 +---------------+----------------------------------------+---------------------------------------------------------------------+
 | Parameter     | Default Value                          | Description                                                         |
-+===============+========================================+=====================================================================+
-| ``logDir``    | ``$HOME/hcoop-meetbot``                | Absolute path where meeting logs will be written.                   |
-+---------------+----------------------------------------+---------------------------------------------------------------------+
-| ``urlPrefix`` | ``/``                                  | URL prefix to place on generated links to logfiles.                 |
-+---------------+----------------------------------------+---------------------------------------------------------------------+
-| ``pattern``   | ``%%Y/%(channel)s.%%Y%%m%%d.%%H%%M``   | Pattern for files generated in ``logFileDir``.  Use ``%(channel)s`` |
-|               |                                        | for the channel name and strftime_ format codes for date fields.    |
-|               |                                        | If you use strftime format codes, you must double the ``%%``.       |
-+---------------+----------------------------------------+---------------------------------------------------------------------+
-| ``timezone``  | ``UTC``                                | The timezone to use for generated files and in generated reports.   |
-|               |                                        | May be any standard IANA_ value, like ``UTC``, ``US/Eastern``,      |
-|               |                                        | or ``America/Chicago``, etc.                                        |
-+---------------+----------------------------------------+---------------------------------------------------------------------+
++===============+========================================+======================================================================+
+| ``logDir``    | ``$HOME/hcoop-meetbot``                | Absolute path where meeting logs will be written on disk.            |
++---------------+----------------------------------------+----------------------------------------------------------------------+
+| ``urlPrefix`` | ``/``                                  | URL prefix to place on generated links to logfiles that are reported |
+|               |                                        | when the meeting ends.  This can be a simple path, but it is more    |
+|               |                                        | useful if you set it to the base URL where the files will be served  |
+|               |                                        | from, so participants see the entire public URL.                     |
++---------------+----------------------------------------+----------------------------------------------------------------------+
+| ``pattern``   | ``%Y/{name}.%Y%m%d.%H%M``              | Pattern for files generated in ``logDir``. The following variables   |
+|               |                                        | may be used to substitute in attributes of the meeting: ``{id}``     |
+|               |                                        | ``{name}``, ``{channel}``, ``{network}``, and ``{founder}``.         |
+|               |                                        | Additionally, you may use strftime_ codes for date fields from the   |
+|               |                                        | meeting start date. *Unlike* with the original MeetBot, you do *not* |
+|               |                                        | need to double the ``%`` characters.  The meeting name defaults to   |
+|               |                                        | the channel.  Anywhere in the path, only ``./a-zA-Z0-9_-`` are       |
+|               |                                        | allowed, and any other character will be replaced with ``_``.  You   |
+|               |                                        | may imply a subdirectory by using the ``/`` character as a path      |
+|               |                                        | separator, but directory traversal is not allowed, and the resulting |
+|               |                                        | file must be within ``logDir``.                                      |
++---------------+----------------------------------------+----------------------------------------------------------------------+
+| ``timezone``  | ``UTC``                                | The timezone to use for files names and in generated content.        |
+|               |                                        | May be any standard IANA_ value, like ``UTC``, ``US/Eastern``,       |
+|               |                                        | or ``America/Chicago``, etc.                                         |
++---------------+----------------------------------------+----------------------------------------------------------------------+
 
 Run the Bot
 ~~~~~~~~~~~

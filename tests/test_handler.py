@@ -81,7 +81,7 @@ class TestHandlers:
         is_startmeeting.assert_not_called()
         add_meeting.assert_not_called()
         meeting.track_message.assert_called_once_with(message)
-        dispatch.assert_called_once_with(meeting, "xxx")
+        dispatch.assert_called_once_with(meeting, context, "xxx")
 
     @patch("hcoopmeetbotlogic.handler.dispatch")
     @patch("hcoopmeetbotlogic.handler.is_startmeeting")
@@ -98,7 +98,7 @@ class TestHandlers:
         is_startmeeting.assert_called_once_with(message)
         add_meeting.assert_called_once_with(nick="nick", channel="channel", network="network")
         meeting.track_message.assert_called_once_with(message)
-        dispatch.assert_called_once_with(meeting, "xxx")
+        dispatch.assert_called_once_with(meeting, context, "xxx")
 
     @patch("hcoopmeetbotlogic.handler.get_meeting")
     def test_outbound_message_no_meeting(self, get_meeting, logger, context):

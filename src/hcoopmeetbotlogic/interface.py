@@ -12,16 +12,18 @@ import attr
 
 @attr.s(frozen=True)
 class Context:
+    # noinspection PyUnresolvedReferences
     """
     Context for a message or command, including callbacks that can be invoked.
 
     Attributes:
-        logger(Logger):
+        get_topic(Callable[[], str]): Get the topic for the current context
         set_topic(Callable[[str], None]): Set a topic in the correct context
         send_reply(Callable[[str], None]): Send a reply in the current context
         send_message(Callable[[str], None]): Send a message to the server immediately
     """
 
+    get_topic = attr.ib(type=Callable[[], str])
     set_topic = attr.ib(type=Callable[[str], None])
     send_reply = attr.ib(type=Callable[[str], None])
     send_message = attr.ib(type=Callable[[str], None])
@@ -29,6 +31,7 @@ class Context:
 
 @attr.s(frozen=True)
 class Message:
+    # noinspection PyUnresolvedReferences
     """
     A message to be processed.
 

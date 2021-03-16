@@ -1,6 +1,5 @@
 Tasks for future PRs:
 
-[ ] Implement and test command.py
 [ ] Implement and test writer.py
 
 Tasks prior to release:

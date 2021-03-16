@@ -2,15 +2,15 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 
 """
-Meeting writers.
+Writes meeting log and minutes to disk.
 """
+from hcoopmeetbotlogic.config import Config
 
-from hcoopmeetbotlogic.meeting import Meeting
+from .location import Locations, derive_locations
+from .meeting import Meeting
 
-from .config import Config
 
-
-# TODO: remove pylint disable statement once method is implemented
-def write_meeting(config: Config, meeting: Meeting) -> None:  # pylint: disable=unused-argument:
-    """Write a meeting to disk."""
-    # TODO: implement code to write results to disk, HTML format only to start with
+def write_meeting(config: Config, meeting: Meeting) -> Locations:
+    """Write meeting files to disk, returning the file locations."""
+    # TODO: implement the real file save behavior
+    return derive_locations(config, meeting)
