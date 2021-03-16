@@ -19,7 +19,7 @@ body .cmdline { font-weight: bold }
 </head>
 <body>
 <pre>
-<a name="id1"></a><span class="tm">13:14:00</span> <span class="nk">&lt;nick1&gt;</span> <span><span>stuff</span></span>
+<a name="id1"></a><span class="tm">13:14:00</span> <span class="nk">&lt;nick&gt;</span> <span><span>stuff</span></span>
 
 </pre>
 </body>

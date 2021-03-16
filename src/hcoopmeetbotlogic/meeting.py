@@ -23,7 +23,7 @@ class EventType(Enum):
     END_MEETING = "END_MEETING"
     MEETING_NAME = "MEETING_NAME"
     MEETING_TOPIC = "MEETING_TOPIC"
-    CURRENT_TOPIC = "CURRENT_TOPIC"
+    TOPIC = "TOPIC"
     LURK = "LURK"
     UNLURK = "UNLURK"
     ADD_CHAIR = "ADD_CHAIR"
@@ -76,7 +76,7 @@ class TrackedMessage:
 class TrackedEvent:
     # noinspection PyUnresolvedReferences
     """
-    An event tracked as part of a meeting.
+    An event tracked as part of a meeting, always tied to a specific message.
 
     Attributes:
         id(str): The event identifier
@@ -93,7 +93,7 @@ class TrackedEvent:
 
     @id.default
     def _default_id(self) -> str:
-        return uuid.uuid4().hex
+        return self.message.id
 
     @timestamp.default
     def _default_timestamp(self) -> datetime:

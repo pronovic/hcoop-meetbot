@@ -69,6 +69,11 @@ profile = "black"
 line_length = 132
 skip_glob = [ "docs", "notes" ]
 
+[tool.pytest.ini_options]
+filterwarnings = [
+   'ignore:.*Flags not at the start of the expression.'  # Genshi does some deprecated things
+]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

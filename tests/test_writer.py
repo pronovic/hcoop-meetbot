@@ -9,12 +9,15 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from hcoopmeetbotlogic.location import Location, Locations
-from hcoopmeetbotlogic.meeting import TrackedMessage
+from hcoopmeetbotlogic.meeting import EventType, TrackedEvent, TrackedMessage
 from hcoopmeetbotlogic.writer import _LogMessage, write_meeting
 
 EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log.expected")
 EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/minutes.expected")
-TEST_DATE = datetime(2021, 3, 7, 13, 14, 0)
+
+TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0)
+START_TIME = datetime(2021, 4, 13, 2, 6, 12)
+END_TIME = datetime(2021, 5, 19, 23, 2)
 
 
 def _contents(path: str) -> str:
@@ -30,7 +33,7 @@ class TestLogMessage:
 
     @pytest.fixture
     def message(self):
-        return MagicMock(id="id", timestamp=TEST_DATE, sender="nick")
+        return MagicMock(id="id", timestamp=TIMESTAMP, sender="nick")
 
     def test_simple_payload(self, config, message):
         message.action = False
@@ -157,9 +160,22 @@ class TestRendering:
             config = MagicMock(timezone="UTC")
             meeting = MagicMock()
             meeting.name = "#hcoop"
-            meeting.messages = [TrackedMessage(id="id1", action=False, sender="nick1", timestamp=TEST_DATE, payload="stuff")]
+            meeting.start_time = START_TIME
+            meeting.end_time = END_TIME
+            meeting.founder = "founder"
+            meeting.nicks = {"someone": "333"}
+            meeting.messages = [TrackedMessage(id="id1", action=False, sender="nick", timestamp=TIMESTAMP, payload="stuff")]
+            meeting.events = [
+                TrackedEvent(
+                    id="id2",
+                    event_type=EventType.ACTION,
+                    timestamp=TIMESTAMP,
+                    message=meeting.messages[0],
+                    attributes={"text": "someone will do something"},
+                )
+            ]
             assert write_meeting(config, meeting) is locations
             derive_locations.assert_called_once_with(config, meeting)
-            print(_contents(log.path))
+            print(_contents(minutes.path))
             assert _contents(log.path) == _contents(EXPECTED_LOG)
             assert _contents(minutes.path) == _contents(EXPECTED_MINUTES)

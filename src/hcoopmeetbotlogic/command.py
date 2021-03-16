@@ -102,7 +102,7 @@ class CommandDispatcher:
     def do_topic(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Set a new topic in the channel."""
         if meeting.is_chair(message.sender):
-            meeting.track_event(EventType.CURRENT_TOPIC, message, topic=operand)
+            meeting.track_event(EventType.TOPIC, message, topic=operand)
             meeting.current_topic = operand
             self._set_channel_topic(meeting, context)
 

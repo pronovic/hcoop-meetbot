@@ -341,7 +341,7 @@ class TestCommandDispatcher:
         meeting.display_name = MagicMock(return_value="name")
         meeting.is_chair.return_value = True
         dispatcher.do_topic(meeting, context, "a", "", message)
-        meeting.track_event.assert_called_once_with(EventType.CURRENT_TOPIC, message, topic="")
+        meeting.track_event.assert_called_once_with(EventType.TOPIC, message, topic="")
         context.set_topic.assert_called_once_with("name")
         assert meeting.current_topic == ""
 
@@ -350,7 +350,7 @@ class TestCommandDispatcher:
         meeting.meeting_topic = None
         meeting.is_chair.return_value = True
         dispatcher.do_topic(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.CURRENT_TOPIC, message, topic="b")
+        meeting.track_event.assert_called_once_with(EventType.TOPIC, message, topic="b")
         context.set_topic.assert_called_once_with("b")
         assert meeting.current_topic == "b"
 
