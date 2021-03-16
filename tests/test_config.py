@@ -40,7 +40,7 @@ class TestParsing:
         assert config.conf_file == os.path.join(VALID_DIR, "HcoopMeetbot.conf")
         assert config.log_dir == "/tmp/meetings"
         assert config.url_prefix == "https://whatever.com/meetings"
-        assert config.pattern == "%(channel)s-%%Y%%m%%d%%H%%M"
+        assert config.pattern == "{name}-%Y%m%d"
         assert config.timezone == "America/Chicago"
 
     def test_empty_configuration(self):
@@ -49,8 +49,8 @@ class TestParsing:
         config = load_config(logger, conf_dir)  # any key that can't be loaded gets defaults
         assert config.conf_file == os.path.join(EMPTY_DIR, "HcoopMeetbot.conf")
         assert config.log_dir == os.path.join(Path.home(), "hcoop-meetbot")
-        assert config.url_prefix == ""
-        assert config.pattern == "%%Y/%(channel)s.%%Y%%m%%d.%%H%%M"
+        assert config.url_prefix == "/"
+        assert config.pattern == "%Y/{name}.%Y%m%d.%H%M"
         assert config.timezone == "UTC"
 
     def test_invalid_configuration(self):
@@ -59,8 +59,8 @@ class TestParsing:
         config = load_config(logger, conf_dir)  # since the file is invalid, it's like the keys don't exist
         assert config.conf_file == os.path.join(INVALID_DIR, "HcoopMeetbot.conf")
         assert config.log_dir == os.path.join(Path.home(), "hcoop-meetbot")
-        assert config.url_prefix == ""
-        assert config.pattern == "%%Y/%(channel)s.%%Y%%m%%d.%%H%%M"
+        assert config.url_prefix == "/"
+        assert config.pattern == "%Y/{name}.%Y%m%d.%H%M"
         assert config.timezone == "UTC"
 
     def test_missing_configuration(self):
@@ -69,6 +69,6 @@ class TestParsing:
         config = load_config(logger, conf_dir)  # if the file can't be found, we use defaults
         assert config.conf_file is None
         assert config.log_dir == os.path.join(Path.home(), "hcoop-meetbot")
-        assert config.url_prefix == ""
-        assert config.pattern == "%%Y/%(channel)s.%%Y%%m%%d.%%H%%M"
+        assert config.url_prefix == "/"
+        assert config.pattern == "%Y/{name}.%Y%m%d.%H%M"
         assert config.timezone == "UTC"

@@ -49,11 +49,11 @@ def irc_message(context: Context, message: Message) -> None:  # pylint: disable=
     meeting = get_meeting(message.channel, message.network)
     if meeting:
         tracked = meeting.track_message(message)
-        dispatch(meeting, tracked)
+        dispatch(meeting, context, tracked)
     elif is_startmeeting(message):
         meeting = add_meeting(nick=message.nick, channel=message.channel, network=message.network)
         tracked = meeting.track_message(message)
-        dispatch(meeting, tracked)
+        dispatch(meeting, context, tracked)
 
 
 def outbound_message(context: Context, message: Message) -> None:  # pylint: disable=unused-argument:

@@ -22,8 +22,8 @@ PATTERN_KEY = "pattern"
 TIMEZONE_KEY = "timezone"
 
 LOG_DIR_DEFAULT = os.path.join(Path.home(), "hcoop-meetbot")
-URL_PREFIX_DEFAULT = ""
-PATTERN_DEFAULT = "%%Y/%(channel)s.%%Y%%m%%d.%%H%%M"
+URL_PREFIX_DEFAULT = "/"
+PATTERN_DEFAULT = "%Y/{name}.%Y%m%d.%H%M"
 TIMEZONE_DEFAULT = "UTC"
 
 

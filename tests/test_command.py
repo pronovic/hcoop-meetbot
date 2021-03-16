@@ -9,10 +9,11 @@ from hcoopmeetbotlogic.command import dispatch, is_startmeeting, list_commands
 
 def run_dispatch(payload, operation, operand, method):
     meeting = MagicMock()
+    context = MagicMock()
     message = MagicMock(payload=payload)
     method.reset_mock()  # so we can test same method with different scenarios
-    dispatch(meeting, message)
-    method.assert_called_once_with(meeting, operation, operand, message)
+    dispatch(meeting, context, message)
+    method.assert_called_once_with(meeting, context, operation, operand, message)
 
 
 class TestFunctions:
@@ -31,15 +32,18 @@ class TestFunctions:
             "#idea",
             "#info",
             "#link",
+            "#lurk",
             "#meetingname",
             "#meetingtopic",
             "#nick",
             "#reject",
             "#rejected",
+            "#save",
             "#startmeeting",
             "#topic",
             "#unchair",
             "#undo",
+            "#unlurk",
         ]
 
     @pytest.mark.parametrize(
@@ -87,8 +91,9 @@ class TestFunctions:
     def test_dispatch_invalid_link(self, dispatcher, protocol):
         url = "%s://whatever" % protocol
         meeting = MagicMock()
+        context = MagicMock()
         message = MagicMock(payload=url)
-        dispatch(meeting, message)
+        dispatch(meeting, context, message)
         dispatcher.do_link.assert_not_called()
 
     @patch("hcoopmeetbotlogic.command._DISPATCHER")
@@ -120,9 +125,10 @@ class TestFunctions:
     @patch("hcoopmeetbotlogic.command.getattr")
     def test_dispatch_invalid_command(self, getattr, hasattr):  # pylint: disable=redefined-builtin:
         meeting = MagicMock()
+        context = MagicMock()
         message = MagicMock(payload="#bogus")
         hasattr.return_value = False
-        dispatch(meeting, message)
+        dispatch(meeting, context, message)
         getattr.assert_not_called()
 
     # noinspection PyTypeChecker
