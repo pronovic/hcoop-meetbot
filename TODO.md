@@ -1,10 +1,3 @@
-For this PR:
-
-[ ] Implement all of the commands in command.py
-[ ] Implement whatever state tracking is needed on `Meeting`
-[ ] Unit tests for command.py
-[ ] Unit tests for `Meeting` updates
-
 Tasks for future PRs:
 
 [ ] Implement and test writer.py
