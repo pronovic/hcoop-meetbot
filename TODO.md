@@ -1,6 +1,7 @@
 Tasks for future PRs:
 
 [ ] Implement and test writer.py
+[ ] Figure out whether I'm doing the right thing with actions - I don't understand this
 
 Tasks prior to release:
 
