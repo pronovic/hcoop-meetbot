@@ -1,4 +1,4 @@
-HCOOP Meetbot Plugin 
+HCoop Meetbot Plugin 
 ====================
 
 Release v\ |version|
@@ -24,7 +24,7 @@ Release v\ |version|
 .. image:: https://coveralls.io/repos/github/pronovic/hcoop-meetbot/badge.svg?branch=master
     :target: https://coveralls.io/github/pronovic/hcoop-meetbot?branch=master
 
-This is a plugin for Limnoria_, a bot framework for IRC.  It is designed to help run meetings on IRC.  At HCOOP_, we use it to run our quarterly board meetings.
+This is a plugin for Limnoria_, a bot framework for IRC.  It is designed to help run meetings on IRC.  At HCoop_, we use it to run our quarterly board meetings.
 
 The code is based in part on the MeetBot_ plugin for Supybot written by Richard Darst. Supybot is the predecessor to Limnoria.  Richard's MeetBot was "inspired by the original MeetBot, by Holger Levsen, which was itself a derivative of Mootbot by the Ubuntu Scribes team".  So, this code has a relatively long history.  For this version, much of the plugin was rewritten using Python 3, but it generally follows the pattern set by Richard's original code.
 
@@ -121,7 +121,7 @@ Then you can join any channel that the Limnoria bot is configured to join, and s
 Later, if you update the plugin (``pip install --upgrade``), you can either stop and start the bot process, or use ``@reload HcoopMeetbot`` from within IRC.  You may need to identify yourself to Limnoria before doing this.
 
 .. _Limnoria: https://github.com/ProgVal/Limnoria
-.. _HCOOP: https://hcoop.net/
+.. _HCoop: https://hcoop.net/
 .. _MeetBot: https://github.com/rkdarst/MeetBot/
 .. _instructions: https://limnoria-doc.readthedocs.io/en/latest/use/install.html
 .. _getting-started: https://docs.limnoria.net/use/getting_started.html

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: skip-file
 #
-# HCOOP Meetbot documentation build configuration file, based on existing
+# HCoop Meetbot documentation build configuration file, based on existing
 # documentation for Requests (https://github.com/psf/requests).
 #
 # This file is execfile()d with the current directory set to its
@@ -81,7 +81,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "HCOOP Meetbot"
+project = "HCoop Meetbot"
 # noinspection PyShadowingBuiltins
 copyright = "2021 Kenneth J. Pronovici"
 author = "Kenneth J. Pronovici"
@@ -260,7 +260,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [(master_doc, "HcoopMeetbot.tex", "HCOOP Meetbot Documentation", "Kenneth J. Pronovici", "manual")]
+latex_documents = [(master_doc, "HcoopMeetbot.tex", "HCoop Meetbot Documentation", "Kenneth J. Pronovici", "manual")]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -287,7 +287,7 @@ latex_documents = [(master_doc, "HcoopMeetbot.tex", "HCOOP Meetbot Documentation
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "hcoopmeetbotlogic", "HCOOP Meetbot Documentation", [author], 1)]
+man_pages = [(master_doc, "hcoopmeetbotlogic", "HCoop Meetbot Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -301,10 +301,10 @@ man_pages = [(master_doc, "hcoopmeetbotlogic", "HCOOP Meetbot Documentation", [a
 texinfo_documents = [
     (
         master_doc,
-        "HCOOP Meetbot",
-        "HCOOP Meetbot Documentation",
+        "HCoop Meetbot",
+        "HCoop Meetbot Documentation",
         author,
-        "HCOOP Meetbot",
+        "HCoop Meetbot",
         "Plugin for Limnoria to help run IRC meetings",
         "Miscellaneous",
     )
