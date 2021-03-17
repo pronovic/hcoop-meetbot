@@ -2,7 +2,7 @@
 
 ## Supported Platforms
 
-This plugin was written and tested on Debian GNU/Linux, but should also work on MacOS.  The code itself is portable, but Limnoria (Supybot) doesn't always work as expected on Windows, so it's best not to try.
+This plugin was written and tested on Debian GNU/Linux, but should also work on MacOS.  The code itself is portable, but Limnoria (Supybot) doesn't always work as expected on Windows, so I've decided not to try.
 
 ## Architecture and Test Design
 

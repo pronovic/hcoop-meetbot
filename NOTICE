@@ -22,8 +22,8 @@ Richard Darst:
 
 Basically all of the original code was rewritten using Python 3, and the
 structure and interface are not compatible.  However, the new implementation
-generally follows the pattern set by Richard's original code, and it's
-functionally equivalent in most cases.
+generally follows the pattern set by Richard's original code, and it tries
+to stay compatible where possible.
 
 The original MeetBot source code was released under the following license:
 

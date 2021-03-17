@@ -57,7 +57,7 @@ class CommandDispatcher:
             self._set_channel_topic(meeting, context)
             context.send_reply("Meeting started at %s" % self._formatdate(meeting.start_time))
             context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
-            context.send_reply("Useful commands: #action #agreed #help #info #idea #link #topic")
+            context.send_reply("Useful commands: #action #info #idea #link #topic #motion #vote #closed")
 
     def do_endmeeting(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """End an active meeting and save to disk."""
@@ -162,7 +162,7 @@ class CommandDispatcher:
             action = VotingAction.IN_FAVOR if operand.startswith("+") else VotingAction.OPPOSED
             meeting.track_event(EventType.VOTE, message, operand=action)
         else:
-            context.send_reply("%s: No vote is in progress" % message.sender)
+            context.send_reply("No vote is in progress")
 
     def do_closed(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         if meeting.is_chair(message.sender) and meeting.vote_in_progress:
@@ -274,6 +274,8 @@ def dispatch(meeting: Meeting, context: Context, message: TrackedMessage) -> Non
         operand = operation_match.group(_OPERAND_GROUP).strip()
         if hasattr(_DISPATCHER, "%s%s" % (_METHOD_PREFIX, operation)):
             getattr(_DISPATCHER, "%s%s" % (_METHOD_PREFIX, operation))(meeting, context, operation, operand, message)
+        else:
+            context.send_reply("Unknown command: #%s" % operation)
     elif url_match:
         # as a special case, turns messages that start with a URL into a link operation
         operation = "link"

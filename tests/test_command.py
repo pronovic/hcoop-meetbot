@@ -127,6 +127,7 @@ class TestFunctions:
         hasattr.return_value = False
         dispatch(meeting, context, message)
         getattr.assert_not_called()
+        context.send_reply.assert_called_once_with("Unknown command: #bogus")
 
     # noinspection PyTypeChecker
     @patch("hcoopmeetbotlogic.command._DISPATCHER")
@@ -174,7 +175,7 @@ class TestCommandDispatcher:
             [
                 call("Meeting started at 11111"),
                 call("Current chairs: x, y"),
-                call("Useful commands: #action #agreed #help #info #idea #link #topic"),
+                call("Useful commands: #action #info #idea #link #topic #motion #vote #closed"),
             ]
         )
         assert meeting.original_topic == "original"
@@ -537,7 +538,7 @@ class TestCommandDispatcher:
         dispatcher.do_vote(meeting, context, "a", "+1", message)
         meeting.is_chair.assert_not_called()
         meeting.track_event.assert_not_called()
-        context.send_reply.assert_called_once_with("nick: No vote is in progress")
+        context.send_reply.assert_called_once_with("No vote is in progress")
 
     def test_closed_as_not_chair(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = False
