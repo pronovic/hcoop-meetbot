@@ -59,8 +59,8 @@ Next, add configuration.  Create a file ``HcoopMeetbot.conf`` in the ``conf`` di
 
 If you skip this step and don't create a config file, the plugin will try to use sensible defaults as shown below.
 
-+---------------+----------------------------------------+---------------------------------------------------------------------+
-| Parameter     | Default Value                          | Description                                                         |
++---------------+----------------------------------------+----------------------------------------------------------------------+
+| Parameter     | Default Value                          | Description                                                          |
 +===============+========================================+======================================================================+
 | ``logDir``    | ``$HOME/hcoop-meetbot``                | Absolute path where meeting logs will be written on disk.            |
 +---------------+----------------------------------------+----------------------------------------------------------------------+
