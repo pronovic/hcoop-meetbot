@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, call, patch
 import pytest
 
 from hcoopmeetbotlogic.command import CommandDispatcher, dispatch, is_startmeeting, list_commands
-from hcoopmeetbotlogic.meeting import EventType
+from hcoopmeetbotlogic.meeting import EventType, VotingAction
 
 
 def run_dispatch(payload, operation, operand, method):
@@ -21,31 +21,29 @@ def run_dispatch(payload, operation, operand, method):
 class TestFunctions:
     def test_list_commands(self):
         assert list_commands() == [
-            "#accept",
             "#accepted",
             "#action",
-            "#agree",
-            "#agreed",
             "#chair",
+            "#closed",
             "#endmeeting",
-            "#fail",
             "#failed",
             "#help",
             "#idea",
+            "#inconclusive",
             "#info",
             "#link",
             "#lurk",
             "#meetingname",
             "#meetingtopic",
+            "#motion",
             "#nick",
-            "#reject",
-            "#rejected",
             "#save",
             "#startmeeting",
             "#topic",
             "#unchair",
             "#undo",
             "#unlurk",
+            "#vote",
         ]
 
     @pytest.mark.parametrize(
@@ -104,14 +102,11 @@ class TestFunctions:
         run_dispatch("#endmeeting", "endmeeting", "", dispatcher.do_endmeeting)
         run_dispatch("#topic some stuff", "topic", "some stuff", dispatcher.do_topic)
         run_dispatch("#meetingtopic some stuff", "meetingtopic", "some stuff", dispatcher.do_meetingtopic)
+        run_dispatch("#motion some stuff", "motion", "some stuff", dispatcher.do_motion)
+        run_dispatch("#vote +1", "vote", "+1", dispatcher.do_vote)
         run_dispatch("#accepted", "accepted", "", dispatcher.do_accepted)
-        run_dispatch("#accept", "accept", "", dispatcher.do_accept)
-        run_dispatch("#agree", "agree", "", dispatcher.do_agree)
-        run_dispatch("#agreed", "agreed", "", dispatcher.do_agreed)
         run_dispatch("#failed", "failed", "", dispatcher.do_failed)
-        run_dispatch("#fail", "fail", "", dispatcher.do_fail)
-        run_dispatch("#reject", "reject", "", dispatcher.do_reject)
-        run_dispatch("#rejected", "rejected", "", dispatcher.do_rejected)
+        run_dispatch("#inconclusive", "inconclusive", "", dispatcher.do_inconclusive)
         run_dispatch("#chair name", "chair", "name", dispatcher.do_chair)
         run_dispatch("#unchair name", "unchair", "name", dispatcher.do_unchair)
         run_dispatch("#undo", "undo", "", dispatcher.do_undo)
@@ -504,9 +499,166 @@ class TestCommandDispatcher:
         context.send_reply.assert_not_called()
         assert meeting.name is None
 
+    def test_motion_as_chair(self, dispatcher, meeting, context, message):
+        meeting.vote_in_progress = None
+        meeting.motion_index = None
+        meeting.is_chair.return_value = True
+        dispatcher.do_motion(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is True
+        assert meeting.motion_index == -1  # length of events-1; so -1 is correct for this scenario, but looks odd
+        meeting.is_chair.assert_called_once_with("nick")  # message.sender
+        meeting.track_event.assert_called_once_with(EventType.MOTION, message, operand="b")
+        context.send_reply.assert_called_once_with("Voting is open")
+
+    def test_motion_as_not_chair(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = False
+        dispatcher.do_motion(meeting, context, "a", "b", message)
+        meeting.is_chair.assert_called_once_with("nick")  # message.sender
+        meeting.track_event.assert_not_called()
+        context.send_reply.assert_not_called()
+
+    def test_vote_in_favor(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = False
+        meeting.voting_in_progress = True
+        dispatcher.do_vote(meeting, context, "a", "+1", message)
+        meeting.track_event.assert_called_once_with(EventType.VOTE, message, operand=VotingAction.IN_FAVOR)
+        context.send_reply.assert_not_called()
+
+    def test_vote_against(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = False
+        meeting.voting_in_progress = True
+        dispatcher.do_vote(meeting, context, "a", "-1", message)
+        meeting.track_event.assert_called_once_with(EventType.VOTE, message, operand=VotingAction.OPPOSED)
+        context.send_reply.assert_not_called()
+
+    def test_vote_not_in_progress(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = False
+        meeting.vote_in_progress = False
+        dispatcher.do_vote(meeting, context, "a", "+1", message)
+        meeting.is_chair.assert_not_called()
+        meeting.track_event.assert_not_called()
+        context.send_reply.assert_called_once_with("nick: No vote is in progress")
+
+    def test_closed_as_not_chair(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = False
+        meeting.vote_in_progress = True
+        meeting.motion_index = 0
+        dispatcher.do_closed(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is True
+        assert meeting.motion_index == 0
+        meeting.is_chair.assert_called_once_with("nick")  # message.sender
+        meeting.track_event.assert_not_called()
+        context.send_reply.assert_not_called()
+
+    def test_closed_not_in_progress(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = True
+        meeting.vote_in_progress = False
+        meeting.motion_index = 0
+        dispatcher.do_closed(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is False
+        assert meeting.motion_index == 0
+        meeting.is_chair.assert_called_once_with("nick")  # message.sender
+        meeting.track_event.assert_not_called()
+        context.send_reply.assert_not_called()
+
+    def test_closed_no_votes(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = True
+        meeting.vote_in_progress = True
+        meeting.motion_index = 0
+        dispatcher.do_closed(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is True
+        assert meeting.motion_index == 0
+        meeting.is_chair.assert_called_once_with("nick")  # message.sender
+        context.send_reply.assert_called_once_with("Motion cannot be closed: no votes found (maybe use #inclusive?)")
+
+    def test_closed_accepted(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = True
+        meeting.vote_in_progress = True
+        meeting.motion_index = 0
+        meeting.events = []
+        meeting.events.append(MagicMock(event_type=EventType.MOTION))
+        meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="one")))
+        meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="two")))
+        meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.OPPOSED, message=MagicMock(sender="three")))
+        dispatcher.do_closed(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is False
+        assert meeting.motion_index is None
+        meeting.is_chair.assert_called_once_with("nick")  # message.sender
+        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="Motion accepted: 2 in favor to 1 opposed")
+        context.send_reply.assert_has_calls(
+            [call("Motion accepted: 2 in favor to 1 opposed"), call("In favor: one, two"), call("Opposed: three")]
+        )
+
+    def test_closed_accepted_unanimous(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = True
+        meeting.vote_in_progress = True
+        meeting.motion_index = 0
+        meeting.events = []
+        meeting.events.append(MagicMock(event_type=EventType.MOTION))
+        meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="one")))
+        meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="two")))
+        meeting.events.append(
+            MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="three"))
+        )
+        dispatcher.do_closed(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is False
+        assert meeting.motion_index is None
+        meeting.is_chair.assert_called_once_with("nick")  # message.sender
+        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="Motion accepted: 3 in favor to 0 opposed")
+        context.send_reply.assert_has_calls(
+            [call("Motion accepted: 3 in favor to 0 opposed"), call("In favor: one, two, three"), call("Opposed: ")]
+        )
+
+    def test_closed_failed(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = True
+        meeting.vote_in_progress = True
+        meeting.motion_index = 0
+        meeting.events = []
+        meeting.events.append(MagicMock(event_type=EventType.MOTION))
+        meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.OPPOSED, message=MagicMock(sender="one")))
+        meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.OPPOSED, message=MagicMock(sender="two")))
+        meeting.events.append(
+            MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="three"))
+        )
+        dispatcher.do_closed(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is False
+        assert meeting.motion_index is None
+        meeting.is_chair.assert_called_once_with("nick")  # message.sender
+        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="Motion failed: 1 in favor to 2 opposed")
+        context.send_reply.assert_has_calls(
+            [call("Motion failed: 1 in favor to 2 opposed"), call("In favor: three"), call("Opposed: one, two")]
+        )
+
+    def test_closed_inconclusive(self, dispatcher, meeting, context, message):
+        meeting.is_chair.return_value = True
+        meeting.vote_in_progress = True
+        meeting.motion_index = 0
+        meeting.events = []
+        meeting.events.append(MagicMock(event_type=EventType.MOTION))
+        meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.OPPOSED, message=MagicMock(sender="one")))
+        meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.OPPOSED, message=MagicMock(sender="two")))
+        meeting.events.append(
+            MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="three"))
+        )
+        meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="four")))
+        dispatcher.do_closed(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is False
+        assert meeting.motion_index is None
+        meeting.is_chair.assert_called_once_with("nick")  # message.sender
+        meeting.track_event.assert_called_once_with(
+            EventType.INCONCLUSIVE, message, operand="Motion inconclusive: 2 in favor to 2 opposed"
+        )
+        context.send_reply.assert_has_calls(
+            [call("Motion inconclusive: 2 in favor to 2 opposed"), call("In favor: three, four"), call("Opposed: one, two")]
+        )
+
     def test_accepted_as_chair(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
+        meeting.vote_in_progress = True
+        meeting.motion_index = 0
         dispatcher.do_accepted(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is False
+        assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="b")
         context.send_reply.assert_not_called()
@@ -518,51 +670,13 @@ class TestCommandDispatcher:
         meeting.track_event.assert_not_called()
         context.send_reply.assert_not_called()
 
-    def test_accept_as_chair(self, dispatcher, meeting, context, message):
-        meeting.is_chair.return_value = True
-        dispatcher.do_accept(meeting, context, "a", "b", message)
-        meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="b")
-        context.send_reply.assert_not_called()
-
-    def test_accept_as_not_chair(self, dispatcher, meeting, context, message):
-        meeting.is_chair.return_value = False
-        dispatcher.do_accept(meeting, context, "a", "b", message)
-        meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_not_called()
-        context.send_reply.assert_not_called()
-
-    def test_agree_as_chair(self, dispatcher, meeting, context, message):
-        meeting.is_chair.return_value = True
-        dispatcher.do_agree(meeting, context, "a", "b", message)
-        meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="b")
-        context.send_reply.assert_not_called()
-
-    def test_agree_as_not_chair(self, dispatcher, meeting, context, message):
-        meeting.is_chair.return_value = False
-        dispatcher.do_agree(meeting, context, "a", "b", message)
-        meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_not_called()
-        context.send_reply.assert_not_called()
-
-    def test_agreed_as_chair(self, dispatcher, meeting, context, message):
-        meeting.is_chair.return_value = True
-        dispatcher.do_agreed(meeting, context, "a", "b", message)
-        meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="b")
-        context.send_reply.assert_not_called()
-
-    def test_agreed_as_not_chair(self, dispatcher, meeting, context, message):
-        meeting.is_chair.return_value = False
-        dispatcher.do_agreed(meeting, context, "a", "b", message)
-        meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_not_called()
-        context.send_reply.assert_not_called()
-
     def test_failed_as_chair(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
+        meeting.vote_in_progress = True
+        meeting.motion_index = 0
         dispatcher.do_failed(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is False
+        assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="b")
         context.send_reply.assert_not_called()
@@ -574,44 +688,20 @@ class TestCommandDispatcher:
         meeting.track_event.assert_not_called()
         context.send_reply.assert_not_called()
 
-    def test_fail_as_chair(self, dispatcher, meeting, context, message):
+    def test_inconclusive_as_chair(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
-        dispatcher.do_fail(meeting, context, "a", "b", message)
+        meeting.vote_in_progress = True
+        meeting.motion_index = 0
+        dispatcher.do_inconclusive(meeting, context, "a", "b", message)
+        assert meeting.vote_in_progress is False
+        assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="b")
+        meeting.track_event.assert_called_once_with(EventType.INCONCLUSIVE, message, operand="b")
         context.send_reply.assert_not_called()
 
-    def test_fail_as_not_chair(self, dispatcher, meeting, context, message):
+    def test_inconclusive_as_not_chair(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = False
-        dispatcher.do_fail(meeting, context, "a", "b", message)
-        meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_not_called()
-        context.send_reply.assert_not_called()
-
-    def test_reject_as_chair(self, dispatcher, meeting, context, message):
-        meeting.is_chair.return_value = True
-        dispatcher.do_reject(meeting, context, "a", "b", message)
-        meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="b")
-        context.send_reply.assert_not_called()
-
-    def test_reject_as_not_chair(self, dispatcher, meeting, context, message):
-        meeting.is_chair.return_value = False
-        dispatcher.do_reject(meeting, context, "a", "b", message)
-        meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_not_called()
-        context.send_reply.assert_not_called()
-
-    def test_rejected_as_chair(self, dispatcher, meeting, context, message):
-        meeting.is_chair.return_value = True
-        dispatcher.do_rejected(meeting, context, "a", "b", message)
-        meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="b")
-        context.send_reply.assert_not_called()
-
-    def test_rejected_as_not_chair(self, dispatcher, meeting, context, message):
-        meeting.is_chair.return_value = False
-        dispatcher.do_rejected(meeting, context, "a", "b", message)
+        dispatcher.do_inconclusive(meeting, context, "a", "b", message)
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         meeting.track_event.assert_not_called()
         context.send_reply.assert_not_called()
