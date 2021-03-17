@@ -13,7 +13,7 @@ import attr
 
 from .dateutil import formatdate, now
 from .interface import Context, Message
-from .meeting import EventType, Meeting, TrackedMessage
+from .meeting import EventType, Meeting, TrackedMessage, VotingAction
 from .state import config
 from .writer import write_meeting
 
@@ -32,7 +32,7 @@ _URL_GROUP = 2
 # Prefix of a method on CommandDispatcher that implements a command
 _METHOD_PREFIX = "do_"
 
-# pylint: disable=unused-argument:
+# pylint: disable=unused-argument, too-many-public-methods:
 @attr.s
 class CommandDispatcher:
     """
@@ -150,15 +150,65 @@ class CommandDispatcher:
             meeting.name = operand
             context.send_reply("Meeting name set to: %s" % operand)
 
+    def do_motion(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
+        if meeting.is_chair(message.sender):
+            meeting.track_event(EventType.MOTION, message, operand=operand)
+            meeting.vote_in_progress = True
+            meeting.motion_index = len(meeting.events) - 1
+            context.send_reply("Voting is open")
+
+    def do_vote(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
+        if meeting.vote_in_progress:
+            action = VotingAction.IN_FAVOR if operand.startswith("+") else VotingAction.OPPOSED
+            meeting.track_event(EventType.VOTE, message, operand=action)
+        else:
+            context.send_reply("%s: No vote is in progress" % message.sender)
+
+    def do_closed(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
+        if meeting.is_chair(message.sender) and meeting.vote_in_progress:
+            votes = meeting.events[meeting.motion_index + 1 :]  # type: ignore
+            in_favor = [event.message.sender for event in votes if event.operand == VotingAction.IN_FAVOR]
+            opposed = [event.message.sender for event in votes if event.operand == VotingAction.OPPOSED]
+            if not in_favor and not opposed:
+                context.send_reply("Motion cannot be closed: no votes found (maybe use #inclusive?)")
+            else:
+                meeting.vote_in_progress = False
+                meeting.motion_index = None
+                if len(in_favor) > len(opposed):
+                    result = "Motion accepted: %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    meeting.track_event(EventType.ACCEPTED, message, operand=result)
+                    context.send_reply(result)
+                elif len(in_favor) < len(opposed):
+                    result = "Motion failed: %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    meeting.track_event(EventType.FAILED, message, operand=result)
+                    context.send_reply(result)
+                elif len(in_favor) == len(opposed):
+                    result = "Motion inconclusive: %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    meeting.track_event(EventType.INCONCLUSIVE, message, operand=result)
+                    context.send_reply(result)
+                context.send_reply("In favor: %s" % ", ".join(in_favor))
+                context.send_reply("Opposed: %s" % ", ".join(opposed))
+
     def do_accepted(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Indicate that a motion has been accepted."""
         if meeting.is_chair(message.sender):
+            meeting.vote_in_progress = False
+            meeting.motion_index = None
             meeting.track_event(EventType.ACCEPTED, message, operand=operand)
 
     def do_failed(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Indicate that a motion has failed."""
         if meeting.is_chair(message.sender):
+            meeting.vote_in_progress = False
+            meeting.motion_index = None
             meeting.track_event(EventType.FAILED, message, operand=operand)
+
+    def do_inconclusive(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
+        """Indicate that a motion has failed."""
+        if meeting.is_chair(message.sender):
+            meeting.vote_in_progress = False
+            meeting.motion_index = None
+            meeting.track_event(EventType.INCONCLUSIVE, message, operand=operand)
 
     def do_action(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Add an action item to the minutes."""
@@ -179,14 +229,6 @@ class CommandDispatcher:
     def do_link(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Add a link to the minutes."""
         meeting.track_event(EventType.LINK, message, operand=operand)
-
-    # These are aliases for the commands above
-    do_accept = do_accepted
-    do_agree = do_accepted
-    do_agreed = do_accepted
-    do_fail = do_failed
-    do_reject = do_failed
-    do_rejected = do_failed
 
     def _formatdate(self, timestamp: Optional[datetime]) -> str:
         """Format a date in the user's configured time zone."""

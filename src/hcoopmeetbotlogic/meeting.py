@@ -31,13 +31,23 @@ class EventType(Enum):
     TRACK_NICK = "TRACK_NICK"
     UNDO = "UNDO"
     SAVE_MEETING = "SAVE_MEETING"
+    MOTION = "MOTION"
+    VOTE = "VOTE"
     ACCEPTED = "ACCEPTED"
+    INCONCLUSIVE = "INCONCLUSIVE"
     FAILED = "FAILED"
     ACTION = "ACTION"
     INFO = "INFO"
     IDEA = "IDEA"
     HELP = "HELP"
     LINK = "LINK"
+
+
+class VotingAction(Enum):
+    """Voting actions"""
+
+    IN_FAVOR = "IN_FAVOR"
+    OPPOSED = "OPPOSED"
 
 
 @attr.s(frozen=True)
@@ -122,6 +132,8 @@ class Meeting:
         current_topic(Optional[str]): The current topic, assigned by a chair
         messages(List[TrackedMessage]): List of all messages tracked as part of the meeting
         events(List[TrackedEvent]): List of all events tracked as part of the meeting
+        vote_in_progress(bool): Whether voting is in progress
+        motion_index(int): Index into events for the current motion, when voting is in progress
     """
 
     founder = attr.ib(type=str)
@@ -141,6 +153,8 @@ class Meeting:
     current_topic = attr.ib(type=Optional[str], default=None)
     messages = attr.ib(type=List[TrackedMessage])
     events = attr.ib(type=List[TrackedEvent])
+    vote_in_progress = attr.ib(type=bool, default=False)
+    motion_index = attr.ib(type=Optional[int], default=None)
 
     @id.default
     def _default_id(self) -> str:
