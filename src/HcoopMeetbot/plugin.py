@@ -11,12 +11,14 @@ Implement the HcoopMeetbot plugin in terms of Limnoria functionality.
 # of supybot-test, fully type-checked with MyPy, etc.
 
 import importlib
+from uuid import uuid4
 
 import supybot.ircmsgs as ircmsgs
 from supybot import callbacks, conf, world
 from supybot.commands import optional, wrap
 
 from hcoopmeetbotlogic import handler, interface
+from hcoopmeetbotlogic.dateutil import now
 
 # this messes up unit test stubbing and patching
 if not world.testing:
@@ -54,6 +56,8 @@ class HcoopMeetbot(callbacks.Plugin):
         """Capture all messages from supybot."""
         context = _context(self, irc, msg)
         message = interface.Message(
+            id=uuid4().hex,
+            timestamp=now(),
             nick=msg.nick,
             channel=msg.args[0],
             network=irc.msg.tags["receivedOn"],
@@ -68,7 +72,14 @@ class HcoopMeetbot(callbacks.Plugin):
         try:
             if msg.command in ("PRIVMSG",):
                 context = _context(self, irc, msg)
-                message = interface.Message(nick=irc.nick, channel=msg.args[0], network=irc.network, payload=msg.args[1])
+                message = interface.Message(
+                    id=uuid4().hex,
+                    timestamp=now(),
+                    nick=irc.nick,
+                    channel=msg.args[0],
+                    network=irc.network,
+                    payload=msg.args[1],
+                )
                 handler.outbound_message(context=context, message=message)
         except Exception:
             # Per original MeetBot, catch errors to prevent all output from being clobbered

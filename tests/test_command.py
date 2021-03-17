@@ -161,13 +161,15 @@ class TestCommandDispatcher:
         return MagicMock(sender="nick")
 
     @patch("hcoopmeetbotlogic.command.formatdate")
-    def test_startmeeting_as_chair(self, formatdate, dispatcher, meeting, context, message):
+    @patch("hcoopmeetbotlogic.command.config")
+    def test_startmeeting_as_chair(self, config, formatdate, dispatcher, meeting, context, message):
         meeting.active = False
         meeting.original_topic = None
         meeting.meeting_topic = None
         meeting.is_chair.return_value = True
         meeting.chairs = ["x", "y"]
         meeting.start_time = datetime(2021, 3, 7, 13, 14, 0)
+        config.return_value = MagicMock(timezone="America/Chicago")
         formatdate.return_value = "11111"
         context.get_topic = MagicMock(return_value="original")
         dispatcher.do_startmeeting(meeting, context, "a", "b", message)
@@ -182,7 +184,7 @@ class TestCommandDispatcher:
         )
         assert meeting.original_topic == "original"
         assert meeting.meeting_topic == "b"
-        formatdate.assert_called_once_with(meeting.start_time)
+        formatdate.assert_called_once_with(timestamp=meeting.start_time, zone="America/Chicago")
 
     def test_startmeeting_as_chair_duplicated(self, dispatcher, meeting, context, message):
         meeting.active = True
@@ -218,7 +220,7 @@ class TestCommandDispatcher:
         meeting.end_time = None
         meeting.active = None
         meeting.original_topic = "original"
-        config.return_value = MagicMock()
+        config.return_value = MagicMock(timezone="America/Chicago")
         formatdate.return_value = "11111"
         now.return_value = datetime(2021, 3, 7, 13, 14, 0)
         meeting.is_chair.return_value = True
@@ -230,7 +232,7 @@ class TestCommandDispatcher:
         write_meeting.assert_called_once_with(config=config.return_value, meeting=meeting)
         context.send_reply.assert_has_calls([call("Meeting ended at 11111"), call("Raw log: logurl"), call("Minutes: minutesurl")])
         context.set_topic.assert_called_once_with("original")
-        formatdate.assert_called_once_with(now.return_value)
+        formatdate.assert_called_once_with(timestamp=now.return_value, zone="America/Chicago")
         assert meeting.end_time is now.return_value
         assert meeting.active is False
 
@@ -302,7 +304,7 @@ class TestCommandDispatcher:
         meeting.display_name = MagicMock(return_value="name")
         meeting.is_chair.return_value = True
         dispatcher.do_meetingtopic(meeting, context, "a", "", message)
-        meeting.track_event.assert_called_once_with(EventType.MEETING_TOPIC, message, meetingtopic="")
+        meeting.track_event.assert_called_once_with(EventType.MEETING_TOPIC, message, operand="")
         context.set_topic.assert_called_once_with("name")
         assert meeting.meeting_topic == ""
 
@@ -311,7 +313,7 @@ class TestCommandDispatcher:
         meeting.meeting_topic = None
         meeting.is_chair.return_value = True
         dispatcher.do_meetingtopic(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.MEETING_TOPIC, message, meetingtopic="b")
+        meeting.track_event.assert_called_once_with(EventType.MEETING_TOPIC, message, operand="b")
         context.set_topic.assert_called_once_with("b")
         assert meeting.meeting_topic == "b"
 
@@ -320,7 +322,7 @@ class TestCommandDispatcher:
         meeting.meeting_topic = None
         meeting.is_chair.return_value = True
         dispatcher.do_meetingtopic(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.MEETING_TOPIC, message, meetingtopic="b")
+        meeting.track_event.assert_called_once_with(EventType.MEETING_TOPIC, message, operand="b")
         context.set_topic.assert_called_once_with("x (Meeting topic: b)")
         assert meeting.meeting_topic == "b"
 
@@ -339,7 +341,7 @@ class TestCommandDispatcher:
         meeting.display_name = MagicMock(return_value="name")
         meeting.is_chair.return_value = True
         dispatcher.do_topic(meeting, context, "a", "", message)
-        meeting.track_event.assert_called_once_with(EventType.CURRENT_TOPIC, message, topic="")
+        meeting.track_event.assert_called_once_with(EventType.TOPIC, message, operand="")
         context.set_topic.assert_called_once_with("name")
         assert meeting.current_topic == ""
 
@@ -348,7 +350,7 @@ class TestCommandDispatcher:
         meeting.meeting_topic = None
         meeting.is_chair.return_value = True
         dispatcher.do_topic(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.CURRENT_TOPIC, message, topic="b")
+        meeting.track_event.assert_called_once_with(EventType.TOPIC, message, operand="b")
         context.set_topic.assert_called_once_with("b")
         assert meeting.current_topic == "b"
 
@@ -371,7 +373,7 @@ class TestCommandDispatcher:
         meeting.chairs = ["x", "y"]
         meeting.is_chair.return_value = True
         dispatcher.do_chair(meeting, context, "a", "one", message)
-        meeting.track_event.assert_called_once_with(EventType.ADD_CHAIR, message, chairs=["one"])
+        meeting.track_event.assert_called_once_with(EventType.ADD_CHAIR, message, operand=["one"])
         meeting.add_chair.assert_called_once_with("one", primary=False)
         context.send_reply.assert_called_once_with("Current chairs: x, y")
 
@@ -380,7 +382,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         dispatcher.do_chair(meeting, context, "a", "one, two three   four five, six", message)
         meeting.track_event.assert_called_once_with(
-            EventType.ADD_CHAIR, message, chairs=["one", "two", "three", "four", "five", "six"]
+            EventType.ADD_CHAIR, message, operand=["one", "two", "three", "four", "five", "six"]
         )
         meeting.add_chair.assert_has_calls(
             [
@@ -412,7 +414,7 @@ class TestCommandDispatcher:
         meeting.chairs = ["x", "y"]
         meeting.is_chair.return_value = True
         dispatcher.do_unchair(meeting, context, "a", "one", message)
-        meeting.track_event.assert_called_once_with(EventType.REMOVE_CHAIR, message, chairs=["one"])
+        meeting.track_event.assert_called_once_with(EventType.REMOVE_CHAIR, message, operand=["one"])
         meeting.remove_chair.assert_called_once_with("one")
         context.send_reply.assert_called_once_with("Current chairs: x, y")
 
@@ -421,7 +423,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         dispatcher.do_unchair(meeting, context, "a", "one, two three   four five, six", message)
         meeting.track_event.assert_called_once_with(
-            EventType.REMOVE_CHAIR, message, chairs=["one", "two", "three", "four", "five", "six"]
+            EventType.REMOVE_CHAIR, message, operand=["one", "two", "three", "four", "five", "six"]
         )
         meeting.remove_chair.assert_has_calls([call("one"), call("two"), call("three"), call("four"), call("five"), call("six")])
         context.send_reply.assert_called_once_with("Current chairs: x, y")
@@ -442,7 +444,7 @@ class TestCommandDispatcher:
     def test_nick_single(self, dispatcher, meeting, context, message):
         meeting.nicks = {"x": 99, "y": 22}
         dispatcher.do_nick(meeting, context, "a", "one", message)
-        meeting.track_event.assert_called_once_with(EventType.TRACK_NICK, message, nicks=["one"])
+        meeting.track_event.assert_called_once_with(EventType.TRACK_NICK, message, operand=["one"])
         meeting.track_nick.assert_called_once_with("one", messages=0)
         context.send_reply.assert_called_once_with("Current nicks: x, y")
 
@@ -450,7 +452,7 @@ class TestCommandDispatcher:
         meeting.nicks = {"x": 99, "y": 22}
         dispatcher.do_nick(meeting, context, "a", "one, two three   four five, six", message)
         meeting.track_event.assert_called_once_with(
-            EventType.TRACK_NICK, message, nicks=["one", "two", "three", "four", "five", "six"]
+            EventType.TRACK_NICK, message, operand=["one", "two", "three", "four", "five", "six"]
         )
         meeting.track_nick.assert_has_calls(
             [
@@ -476,7 +478,7 @@ class TestCommandDispatcher:
         meeting.pop_event.return_value = MagicMock(id="theid")
         meeting.pop_event.return_value.display_name = MagicMock(return_value="theevent")
         dispatcher.do_undo(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.UNDO, message, id="theid")
+        meeting.track_event.assert_called_once_with(EventType.UNDO, message, operand="theid")
         context.send_reply.assert_called_once_with("Removed event: theevent")
 
     def test_undo_as_not_chair(self, dispatcher, meeting, context, message):
@@ -490,7 +492,7 @@ class TestCommandDispatcher:
         meeting.name = None
         meeting.is_chair.return_value = True
         dispatcher.do_meetingname(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.MEETING_NAME, message, meetingname="b")
+        meeting.track_event.assert_called_once_with(EventType.MEETING_NAME, message, operand="b")
         context.send_reply.assert_called_once_with("Meeting name set to: b")
         assert meeting.name == "b"
 
@@ -506,7 +508,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         dispatcher.do_accepted(meeting, context, "a", "b", message)
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_accepted_as_not_chair(self, dispatcher, meeting, context, message):
@@ -520,7 +522,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         dispatcher.do_accept(meeting, context, "a", "b", message)
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_accept_as_not_chair(self, dispatcher, meeting, context, message):
@@ -534,7 +536,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         dispatcher.do_agree(meeting, context, "a", "b", message)
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_agree_as_not_chair(self, dispatcher, meeting, context, message):
@@ -548,7 +550,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         dispatcher.do_agreed(meeting, context, "a", "b", message)
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_agreed_as_not_chair(self, dispatcher, meeting, context, message):
@@ -562,7 +564,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         dispatcher.do_failed(meeting, context, "a", "b", message)
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.FAILED, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_failed_as_not_chair(self, dispatcher, meeting, context, message):
@@ -576,7 +578,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         dispatcher.do_fail(meeting, context, "a", "b", message)
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.FAILED, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_fail_as_not_chair(self, dispatcher, meeting, context, message):
@@ -590,7 +592,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         dispatcher.do_reject(meeting, context, "a", "b", message)
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.FAILED, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_reject_as_not_chair(self, dispatcher, meeting, context, message):
@@ -604,7 +606,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         dispatcher.do_rejected(meeting, context, "a", "b", message)
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.FAILED, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_rejected_as_not_chair(self, dispatcher, meeting, context, message):
@@ -616,25 +618,25 @@ class TestCommandDispatcher:
 
     def test_action(self, dispatcher, meeting, context, message):
         dispatcher.do_action(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.ACTION, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.ACTION, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_info(self, dispatcher, meeting, context, message):
         dispatcher.do_info(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.INFO, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.INFO, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_idea(self, dispatcher, meeting, context, message):
         dispatcher.do_idea(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.IDEA, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.IDEA, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_help(self, dispatcher, meeting, context, message):
         dispatcher.do_help(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.HELP, message, text="b")
+        meeting.track_event.assert_called_once_with(EventType.HELP, message, operand="b")
         context.send_reply.assert_not_called()
 
     def test_link(self, dispatcher, meeting, context, message):
         dispatcher.do_link(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.LINK, message, url="b")
+        meeting.track_event.assert_called_once_with(EventType.LINK, message, operand="b")
         context.send_reply.assert_not_called()

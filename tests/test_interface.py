@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
 # pylint: disable=no-self-use,protected-access
-
 from unittest.mock import MagicMock
 
 from hcoopmeetbotlogic.interface import Context, Message
@@ -21,10 +20,13 @@ class TestContext:
 
 class TestMessage:
     def test_constructor(self):
-        context = Message("nick", "channel", "network", "payload", "topic", ["one", "two"])
-        assert context.nick == "nick"
-        assert context.channel == "channel"
-        assert context.network == "network"
-        assert context.payload == "payload"
-        assert context.topic == "topic"
-        assert context.channel_nicks == ["one", "two"]
+        timestamp = MagicMock()
+        message = Message("id", timestamp, "nick", "channel", "network", "payload", "topic", ["one", "two"])
+        assert message.id == "id"
+        assert message.timestamp is timestamp
+        assert message.nick == "nick"
+        assert message.channel == "channel"
+        assert message.network == "network"
+        assert message.payload == "payload"
+        assert message.topic == "topic"
+        assert message.channel_nicks == ["one", "two"]

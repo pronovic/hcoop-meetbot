@@ -29,6 +29,7 @@ python = ">=3.7,<4"
 limnoria = "^2021.01.15"
 attrs = "^20.1.0"
 pytz = "^2021.1"
+genshi = "^0.7.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
@@ -67,6 +68,11 @@ exclude = '''
 profile = "black"
 line_length = 132
 skip_glob = [ "docs", "notes" ]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+   'ignore:.*Flags not at the start of the expression.'  # Genshi does some deprecated things that don't matter to us
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

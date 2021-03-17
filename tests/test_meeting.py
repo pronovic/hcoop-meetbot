@@ -12,19 +12,19 @@ from hcoopmeetbotlogic.meeting import EventType, Meeting, TrackedEvent, TrackedM
 
 class TestTrackedMessage:
     def test_constructor(self):
-        before = datetime.now(utc)
-        message = TrackedMessage("sender", "payload", False)
-        assert message.id is not None
+        timestamp = MagicMock()
+        message = TrackedMessage("whatever", "sender", "payload", False, timestamp)
+        assert message.id == "whatever"
         assert message.sender == "sender"
         assert message.payload == "payload"
         assert message.action is False
-        assert message.timestamp >= before
+        assert message.timestamp is timestamp
 
     @patch("hcoopmeetbotlogic.meeting.formatdate")
     def test_display_name(self, formatdate):
         formatdate.return_value = "11111"
         timestamp = MagicMock()
-        message = TrackedMessage("sender", "payload", False, id="whatever", timestamp=timestamp)
+        message = TrackedMessage("whatever", "sender", "payload", False, timestamp)
         assert message.display_name() == "whatever@11111"
         formatdate.assert_called_once_with(timestamp)
 
@@ -33,12 +33,11 @@ class TestTrackedEvent:
     def test_constructor(self):
         timestamp = MagicMock()
         message = MagicMock(timestamp=timestamp)
-        attributes = {"a": "A"}
-        event = TrackedEvent(EventType.LURK, message, attributes)
+        event = TrackedEvent(EventType.LURK, message, "A")
         assert event.id is not None
         assert event.event_type == EventType.LURK
         assert event.message is message
-        assert event.attributes is attributes
+        assert event.operand == "A"
         assert event.timestamp is timestamp
 
     @patch("hcoopmeetbotlogic.meeting.formatdate")
@@ -179,7 +178,7 @@ class TestMeeting:
         assert meeting.nicks["nick"] == 5
 
     def test_track_message_non_action(self):
-        message = Message("nick", "channel", "network", "Hello, world")
+        message = Message("id", MagicMock(), "nick", "channel", "network", "Hello, world")
         meeting = Meeting("n", "c", "n")
         tracked = meeting.track_message(message)
         assert meeting.nicks["nick"] == 1
@@ -191,7 +190,7 @@ class TestMeeting:
     def test_track_message_action(self):
         # Trying to replicate "^AACTION waves goodbye^A" as in the Wikipedia article
         # See "DCC CHAT" under: https://en.wikipedia.org/wiki/Client-to-client_protocol
-        message = Message("nick", "channel", "network", "\x01ACTION waves goodbye\x01")
+        message = Message("id", MagicMock(), "nick", "channel", "network", "\x01ACTION waves goodbye\x01")
         meeting = Meeting("n", "c", "n")
         tracked = meeting.track_message(message)
         assert meeting.nicks["nick"] == 1
@@ -211,19 +210,19 @@ class TestMeeting:
         assert tracked.event_type == EventType.LURK
         assert tracked.message is message
         assert tracked.timestamp is timestamp
-        assert tracked.attributes == {}
+        assert tracked.operand is None
 
     def test_track_event_with_attributes(self):
         meeting = Meeting("n", "c", "n")
         timestamp = MagicMock()
         message = MagicMock(timestamp=timestamp)
-        tracked = meeting.track_event(event_type=EventType.LURK, message=message, one="ONE", two="222")
+        tracked = meeting.track_event(event_type=EventType.LURK, message=message, operand="ONE")
         assert tracked in meeting.events
         assert tracked.id is not None
         assert tracked.event_type == EventType.LURK
         assert tracked.message is message
         assert tracked.timestamp is timestamp
-        assert tracked.attributes == {"one": "ONE", "two": "222"}
+        assert tracked.operand == "ONE"
 
     def test_pop_event(self):
         meeting = Meeting("n", "c", "n")

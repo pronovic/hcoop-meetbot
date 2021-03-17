@@ -4,7 +4,7 @@
 """
 Object interface used by plugin to access code in the local package.
 """
-
+from datetime import datetime
 from typing import Callable, Iterable, Optional
 
 import attr
@@ -36,6 +36,8 @@ class Message:
     A message to be processed.
 
     Attributes:
+        id(str): Identifier for the message
+        timestamp(str): Time the message was received
         nick(str): Nickname of the IRC user that sent the message
         channel(str): Channel the message was sent to
         network(str): Network the message was sent on
@@ -44,6 +46,8 @@ class Message:
         channel_nicks(Optional[Iterable[str]]): List of nicknames currently in the channel
     """
 
+    id = attr.ib(type=str)
+    timestamp = attr.ib(type=datetime)
     nick = attr.ib(type=str)
     channel = attr.ib(type=str)
     network = attr.ib(type=str)
