@@ -297,11 +297,10 @@ class TestCommandDispatcher:
     def test_meetingtopic_as_chair_empty(self, dispatcher, meeting, context, message):
         meeting.current_topic = None
         meeting.meeting_topic = None
-        meeting.display_name = MagicMock(return_value="name")
         meeting.is_chair.return_value = True
         dispatcher.do_meetingtopic(meeting, context, "a", "", message)
         meeting.track_event.assert_called_once_with(EventType.MEETING_TOPIC, message, operand="")
-        context.set_topic.assert_called_once_with("name")
+        context.set_topic.assert_called_once_with("Meeting Active")
         assert meeting.meeting_topic == ""
 
     def test_meetingtopic_as_chair_not_empty(self, dispatcher, meeting, context, message):
@@ -334,11 +333,10 @@ class TestCommandDispatcher:
     def test_topic_as_chair_empty(self, dispatcher, meeting, context, message):
         meeting.current_topic = None
         meeting.meeting_topic = None
-        meeting.display_name = MagicMock(return_value="name")
         meeting.is_chair.return_value = True
         dispatcher.do_topic(meeting, context, "a", "", message)
         meeting.track_event.assert_called_once_with(EventType.TOPIC, message, operand="")
-        context.set_topic.assert_called_once_with("name")
+        context.set_topic.assert_called_once_with("Meeting Active")
         assert meeting.current_topic == ""
 
     def test_topic_as_chair_not_empty(self, dispatcher, meeting, context, message):

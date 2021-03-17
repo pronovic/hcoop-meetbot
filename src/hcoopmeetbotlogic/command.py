@@ -251,7 +251,7 @@ class CommandDispatcher:
             elif meeting.current_topic:
                 context.set_topic("%s" % meeting.current_topic)
             else:
-                context.set_topic("%s" % meeting.display_name())
+                context.set_topic("Meeting Active")
         else:
             context.set_topic(meeting.original_topic if meeting.original_topic else "")
 
