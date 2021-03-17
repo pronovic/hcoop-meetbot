@@ -54,7 +54,7 @@ Next, add configuration.  Create a file ``HcoopMeetbot.conf`` in the ``conf`` di
    [HcoopMeetbot]
    logDir = /home/myuser/meetings
    urlPrefix = https://example.com/meetings
-   pattern = %%Y/%(channel)s.%%Y%%m%%d.%%H%%M
+   pattern = %Y/{name}.%Y%m%d.%H%M
    timezone = UTC
 
 If you skip this step and don't create a config file, the plugin will try to use sensible defaults as shown below.
