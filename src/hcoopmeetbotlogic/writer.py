@@ -177,7 +177,7 @@ class _MeetingMinutes:
             actions = []
             pattern = re.compile(r"\b%s\b" % nick)
             for event in meeting.events:
-                if event.event_type == EventType.ACTION and event.operand and pattern.match(event.operand):
+                if event.event_type == EventType.ACTION and event.operand and pattern.search(event.operand):
                     actions.append(event.operand)
             attendee = _MeetingAttendee(nick=nick, count=count, actions=actions)
             attendees.append(attendee)
@@ -202,16 +202,6 @@ class _MeetingMinutes:
                     nick=event.message.sender,
                 )
                 topics.append(current)
-            elif event.event_type == EventType.LINK:
-                # links are rendered differently than other events
-                item = _MeetingEvent(
-                    id=event.id,
-                    event_type=event.event_type.value,
-                    timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
-                    nick=event.message.sender,
-                    payload="%s" % event.operand,
-                )
-                current.events.append(item)
             elif event.event_type not in (EventType.START_MEETING, EventType.END_MEETING):
                 # meeting start/end are not considered to be part of any topic
                 item = _MeetingEvent(
