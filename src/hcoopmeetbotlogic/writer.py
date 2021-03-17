@@ -89,10 +89,12 @@ class _LogMessage:
                 operand = operation_match.group(_OPERAND_GROUP).strip()
                 if operation == "#topic":
                     return tag.span(
-                        tag.span(operation, class_="topic"), tag.span(_LogMessage._payload(operand), class_="topicline")
+                        tag.span("%s " % operation, class_="topic"), tag.span(_LogMessage._payload(operand), class_="topicline")
                     )
                 else:
-                    return tag.span(tag.span(operation, class_="cmd"), tag.span(_LogMessage._payload(operand), class_="cmdline"))
+                    return tag.span(
+                        tag.span("%s " % operation, class_="cmd"), tag.span(_LogMessage._payload(operand), class_="cmdline")
+                    )
             else:
                 return _LogMessage._payload(message.payload)
 
@@ -165,7 +167,7 @@ class _MeetingMinutes:
 
     @staticmethod
     def _actions(meeting: Meeting) -> List[str]:
-        return [event.attributes["text"] for event in meeting.events if event.event_type == EventType.ACTION]
+        return [event.operand for event in meeting.events if event.event_type == EventType.ACTION and event.operand]
 
     @staticmethod
     def _attendees(meeting: Meeting) -> List[_MeetingAttendee]:
@@ -175,8 +177,8 @@ class _MeetingMinutes:
             actions = []
             pattern = re.compile(r"\b%s\b" % nick)
             for event in meeting.events:
-                if event.event_type == EventType.ACTION and pattern.match(event.attributes["text"]):
-                    actions.append(event.attributes["text"])
+                if event.event_type == EventType.ACTION and event.operand and pattern.match(event.operand):
+                    actions.append(event.operand)
             attendee = _MeetingAttendee(nick=nick, count=count, actions=actions)
             attendees.append(attendee)
         return attendees
@@ -195,27 +197,29 @@ class _MeetingMinutes:
             if event.event_type == EventType.TOPIC:
                 current = _MeetingTopic(
                     id=event.id,
-                    name=event.attributes["topic"],
+                    name="%s" % event.operand,
                     timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
                     nick=event.message.sender,
                 )
                 topics.append(current)
             elif event.event_type == EventType.LINK:
+                # links are rendered differently than other events
                 item = _MeetingEvent(
                     id=event.id,
                     event_type=event.event_type.value,
                     timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
                     nick=event.message.sender,
-                    payload=event.attributes["url"],
+                    payload="%s" % event.operand,
                 )
                 current.events.append(item)
-            else:
+            elif event.event_type not in (EventType.START_MEETING, EventType.END_MEETING):
+                # meeting start/end are not considered to be part of any topic
                 item = _MeetingEvent(
                     id=event.id,
                     event_type=event.event_type.value,
                     timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
                     nick=event.message.sender,
-                    payload=event.message.payload,
+                    payload="%s" % event.operand,
                 )
                 current.events.append(item)
         if not topics[0].events:
@@ -236,7 +240,7 @@ def _write_log(config: Config, locations: Locations, meeting: Meeting) -> None:
         "messages": [_LogMessage.for_message(config, message) for message in meeting.messages],
     }
     with open(locations.log.path, "x") as out:
-        _render_html(template="log.genshi", context=context, out=out)
+        _render_html(template="log.html", context=context, out=out)
 
 
 def _write_minutes(config: Config, locations: Locations, meeting: Meeting) -> None:
@@ -248,7 +252,7 @@ def _write_minutes(config: Config, locations: Locations, meeting: Meeting) -> No
         "minutes": _MeetingMinutes.for_meeting(config, meeting),
     }
     with open(locations.minutes.path, "x") as out:
-        _render_html(template="minutes.genshi", context=context, out=out)
+        _render_html(template="minutes.html", context=context, out=out)
 
 
 def write_meeting(config: Config, meeting: Meeting) -> Locations:

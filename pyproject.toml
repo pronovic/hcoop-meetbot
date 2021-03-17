@@ -71,7 +71,7 @@ skip_glob = [ "docs", "notes" ]
 
 [tool.pytest.ini_options]
 filterwarnings = [
-   'ignore:.*Flags not at the start of the expression.'  # Genshi does some deprecated things
+   'ignore:.*Flags not at the start of the expression.'  # Genshi does some deprecated things that don't matter to us
 ]
 
 [build-system]

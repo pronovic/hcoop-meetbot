@@ -5,7 +5,7 @@
 #
 # Unfortunately, tests must live alongside the source code for supybot-test to execute them.
 # So, this lives here rather than in the tests modules with all of the other unit tests.
-
+from datetime import datetime
 from unittest.mock import ANY, MagicMock, call, patch
 
 from supybot.test import ChannelPluginTestCase
@@ -14,10 +14,12 @@ from HcoopMeetbot.plugin import _context
 from hcoopmeetbotlogic.interface import Message
 
 # These are values used by the plugin test case
+ID = "id"
 NICK = "test"
 CHANNEL = "#test"
 NETWORK = "test"
 PREFIX = "@"
+TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0)
 
 
 def _stub(context, **kwargs):  # pylint: disable=unused-argument:
@@ -27,12 +29,21 @@ def _stub(context, **kwargs):  # pylint: disable=unused-argument:
 
 def _inbound(payload: str):
     """Generate an expected inbound message generated via doPrivmsg()."""
-    return Message(nick=NICK, channel=CHANNEL, network=NETWORK, payload="%s%s" % (PREFIX, payload), topic="", channel_nicks=[NICK])
+    return Message(
+        id=ID,
+        timestamp=TIMESTAMP,
+        nick=NICK,
+        channel=CHANNEL,
+        network=NETWORK,
+        payload="%s%s" % (PREFIX, payload),
+        topic="",
+        channel_nicks=[NICK],
+    )
 
 
 def _outbound():
     """Generate an expected outbound message returned to the caller based on the _stub() call"""
-    return Message(nick=NICK, channel=CHANNEL, network=NETWORK, payload="%s: Hello" % NICK)
+    return Message(id=ID, timestamp=TIMESTAMP, nick=NICK, channel=CHANNEL, network=NETWORK, payload="%s: Hello" % NICK)
 
 
 class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
@@ -72,8 +83,12 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
     @patch("HcoopMeetbot.plugin.handler.meetversion")
     @patch("HcoopMeetbot.plugin.handler.outbound_message")
     @patch("HcoopMeetbot.plugin.handler.irc_message")
-    def test_meetversion(self, irc_message, outbound_message, meetversion) -> None:
+    @patch("HcoopMeetbot.plugin.now")
+    @patch("HcoopMeetbot.plugin.uuid4")
+    def test_meetversion(self, uuid4, now, irc_message, outbound_message, meetversion) -> None:
         """Test the meetversion command"""
+        uuid4.return_value = MagicMock(hex=ID)
+        now.return_value = TIMESTAMP
         meetversion.side_effect = _stub
         self.assertNotError("meetversion")
         irc_message.assert_called_once_with(context=ANY, message=_inbound("meetversion"))
@@ -83,8 +98,12 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
     @patch("HcoopMeetbot.plugin.handler.listmeetings")
     @patch("HcoopMeetbot.plugin.handler.outbound_message")
     @patch("HcoopMeetbot.plugin.handler.irc_message")
-    def test_listmeetings(self, irc_message, outbound_message, listmeetings) -> None:
+    @patch("HcoopMeetbot.plugin.now")
+    @patch("HcoopMeetbot.plugin.uuid4")
+    def test_listmeetings(self, uuid4, now, irc_message, outbound_message, listmeetings) -> None:
         """Test the listmeetings command"""
+        uuid4.return_value = MagicMock(hex=ID)
+        now.return_value = TIMESTAMP
         listmeetings.side_effect = _stub
         self.assertNotError("listmeetings")
         irc_message.assert_called_once_with(context=ANY, message=_inbound("listmeetings"))
@@ -94,8 +113,12 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
     @patch("HcoopMeetbot.plugin.handler.savemeetings")
     @patch("HcoopMeetbot.plugin.handler.outbound_message")
     @patch("HcoopMeetbot.plugin.handler.irc_message")
-    def test_savemeetings(self, irc_message, outbound_message, savemeetings) -> None:
+    @patch("HcoopMeetbot.plugin.now")
+    @patch("HcoopMeetbot.plugin.uuid4")
+    def test_savemeetings(self, uuid4, now, irc_message, outbound_message, savemeetings) -> None:
         """Test the savemeetings command"""
+        uuid4.return_value = MagicMock(hex=ID)
+        now.return_value = TIMESTAMP
         savemeetings.side_effect = _stub
         self.assertNotError("savemeetings")
         irc_message.assert_called_once_with(context=ANY, message=_inbound("savemeetings"))
@@ -105,8 +128,12 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
     @patch("HcoopMeetbot.plugin.handler.addchair")
     @patch("HcoopMeetbot.plugin.handler.outbound_message")
     @patch("HcoopMeetbot.plugin.handler.irc_message")
-    def test_addchair(self, irc_message, outbound_message, addchair) -> None:
+    @patch("HcoopMeetbot.plugin.now")
+    @patch("HcoopMeetbot.plugin.uuid4")
+    def test_addchair(self, uuid4, now, irc_message, outbound_message, addchair) -> None:
         """Test the addchair command"""
+        uuid4.return_value = MagicMock(hex=ID)
+        now.return_value = TIMESTAMP
         addchair.side_effect = _stub
         self.assertNotError("addchair nick")
         irc_message.assert_called_once_with(context=ANY, message=_inbound("addchair nick"))
@@ -116,8 +143,12 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
     @patch("HcoopMeetbot.plugin.handler.deletemeeting")
     @patch("HcoopMeetbot.plugin.handler.outbound_message")
     @patch("HcoopMeetbot.plugin.handler.irc_message")
-    def test_deletemeeting_save(self, irc_message, outbound_message, deletemeeting) -> None:
+    @patch("HcoopMeetbot.plugin.now")
+    @patch("HcoopMeetbot.plugin.uuid4")
+    def test_deletemeeting_save(self, uuid4, now, irc_message, outbound_message, deletemeeting) -> None:
         """Test the deletemeeting command,.save=True"""
+        uuid4.return_value = MagicMock(hex=ID)
+        now.return_value = TIMESTAMP
         deletemeeting.side_effect = _stub
         self.assertNotError("deletemeeting true")
         irc_message.assert_called_once_with(context=ANY, message=_inbound("deletemeeting true"))
@@ -127,8 +158,12 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
     @patch("HcoopMeetbot.plugin.handler.deletemeeting")
     @patch("HcoopMeetbot.plugin.handler.outbound_message")
     @patch("HcoopMeetbot.plugin.handler.irc_message")
-    def test_deletemeeting_nosave(self, irc_message, outbound_message, deletemeeting) -> None:
+    @patch("HcoopMeetbot.plugin.now")
+    @patch("HcoopMeetbot.plugin.uuid4")
+    def test_deletemeeting_nosave(self, uuid4, now, irc_message, outbound_message, deletemeeting) -> None:
         """Test the deletemeeting command,.save=False"""
+        uuid4.return_value = MagicMock(hex=ID)
+        now.return_value = TIMESTAMP
         deletemeeting.side_effect = _stub
         self.assertNotError("deletemeeting false")
         irc_message.assert_called_once_with(context=ANY, message=_inbound("deletemeeting false"))
@@ -138,8 +173,12 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
     @patch("HcoopMeetbot.plugin.handler.recent")
     @patch("HcoopMeetbot.plugin.handler.outbound_message")
     @patch("HcoopMeetbot.plugin.handler.irc_message")
-    def test_recent(self, irc_message, outbound_message, recent) -> None:
+    @patch("HcoopMeetbot.plugin.now")
+    @patch("HcoopMeetbot.plugin.uuid4")
+    def test_recent(self, uuid4, now, irc_message, outbound_message, recent) -> None:
         """Test the recent command"""
+        uuid4.return_value = MagicMock(hex=ID)
+        now.return_value = TIMESTAMP
         recent.side_effect = _stub
         self.assertNotError("recent")
         irc_message.assert_called_once_with(context=ANY, message=_inbound("recent"))
@@ -149,8 +188,12 @@ class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
     @patch("HcoopMeetbot.plugin.handler.commands")
     @patch("HcoopMeetbot.plugin.handler.outbound_message")
     @patch("HcoopMeetbot.plugin.handler.irc_message")
-    def test_commands(self, irc_message, outbound_message, commands) -> None:
+    @patch("HcoopMeetbot.plugin.now")
+    @patch("HcoopMeetbot.plugin.uuid4")
+    def test_commands(self, uuid4, now, irc_message, outbound_message, commands) -> None:
         """Test the commands command"""
+        uuid4.return_value = MagicMock(hex=ID)
+        now.return_value = TIMESTAMP
         commands.side_effect = _stub
         self.assertNotError("commands")
         irc_message.assert_called_once_with(context=ANY, message=_inbound("commands"))

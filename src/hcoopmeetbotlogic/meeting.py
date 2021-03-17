@@ -47,25 +47,18 @@ class TrackedMessage:
     A message tracked as part of a meeting.
 
     Attributes:
+        id(str): Message identifier
         sender(str): IRC nick of the sender
         payload(str): Payload of the message
         action(bool): Whether this is an ACTION message
         timestamp(datetime): Message timestamp in UTC
     """
 
+    id = attr.ib(type=str)
     sender = attr.ib(type=str)
     payload = attr.ib(type=str)
     action = attr.ib(type=bool)
-    id = attr.ib(type=str)
     timestamp = attr.ib(type=datetime)
-
-    @id.default
-    def _default_id(self) -> str:
-        return uuid.uuid4().hex
-
-    @timestamp.default
-    def _default_timestamp(self) -> datetime:
-        return now()
 
     def display_name(self) -> str:
         """Get the message display name."""
@@ -83,11 +76,12 @@ class TrackedEvent:
         event_type(EventType): Type of the event
         timestamp(datetime): Event timestamp in UTC
         message(TrackedMessage): The message associated with the event
+        operand(Optional[str]): The operand (remainder of the payload after the command)
     """
 
     event_type = attr.ib(type=EventType)
     message = attr.ib(type=TrackedMessage)
-    attributes = attr.ib(type=Dict[str, Any])
+    operand = attr.ib(type=Optional[Any])
     id = attr.ib(type=str)
     timestamp = attr.ib(type=datetime)
 
@@ -230,14 +224,14 @@ class Meeting:
         payload = message.payload.strip(" \x01")
         action = payload[:6] == "ACTION"
         payload = payload[7:].strip() if action else payload.strip()
-        tracked = TrackedMessage(action=action, sender=message.nick, payload=payload)
+        tracked = TrackedMessage(id=message.id, timestamp=message.timestamp, action=action, sender=message.nick, payload=payload)
         self.messages.append(tracked)
         self.track_nick(message.nick)
         return tracked
 
-    def track_event(self, event_type: EventType, message: TrackedMessage, **kwargs: Any) -> TrackedEvent:
+    def track_event(self, event_type: EventType, message: TrackedMessage, operand: Optional[Any] = None) -> TrackedEvent:
         """Track an event associated with a meeting."""
-        event = TrackedEvent(event_type=event_type, message=message, attributes=kwargs.copy())
+        event = TrackedEvent(event_type=event_type, message=message, operand=operand)
         self.events.append(event)
         return event
 

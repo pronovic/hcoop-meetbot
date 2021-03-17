@@ -95,14 +95,14 @@ class CommandDispatcher:
     def do_meetingtopic(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Set a meeting topic, to be included in all sub-topics."""
         if meeting.is_chair(message.sender):
-            meeting.track_event(EventType.MEETING_TOPIC, message, meetingtopic=operand)
+            meeting.track_event(EventType.MEETING_TOPIC, message, operand=operand)
             meeting.meeting_topic = operand
             self._set_channel_topic(meeting, context)
 
     def do_topic(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Set a new topic in the channel."""
         if meeting.is_chair(message.sender):
-            meeting.track_event(EventType.TOPIC, message, topic=operand)
+            meeting.track_event(EventType.TOPIC, message, operand=operand)
             meeting.current_topic = operand
             self._set_channel_topic(meeting, context)
 
@@ -111,7 +111,7 @@ class CommandDispatcher:
         if meeting.is_chair(message.sender):
             chairs = self._tokenize(operand)
             if chairs:
-                meeting.track_event(EventType.ADD_CHAIR, message, chairs=chairs)
+                meeting.track_event(EventType.ADD_CHAIR, message, operand=chairs)
                 for nick in chairs:
                     meeting.add_chair(nick, primary=False)
                 context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
@@ -121,7 +121,7 @@ class CommandDispatcher:
         if meeting.is_chair(message.sender):
             chairs = self._tokenize(operand)
             if chairs:
-                meeting.track_event(EventType.REMOVE_CHAIR, message, chairs=chairs)
+                meeting.track_event(EventType.REMOVE_CHAIR, message, operand=chairs)
                 for nick in chairs:
                     meeting.remove_chair(nick)
                 context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
@@ -130,7 +130,7 @@ class CommandDispatcher:
         """Make the bot aware of a nick which hasn't said anything, for use with actions."""
         nicks = self._tokenize(operand)
         if nicks:
-            meeting.track_event(EventType.TRACK_NICK, message, nicks=nicks)
+            meeting.track_event(EventType.TRACK_NICK, message, operand=nicks)
             for nick in nicks:
                 meeting.track_nick(nick, messages=0)
             context.send_reply("Current nicks: %s" % ", ".join(meeting.nicks.keys()))
@@ -140,45 +140,45 @@ class CommandDispatcher:
         if meeting.is_chair(message.sender):
             removed = meeting.pop_event()
             if removed:
-                meeting.track_event(EventType.UNDO, message, id=removed.id)
+                meeting.track_event(EventType.UNDO, message, operand=removed.id)
                 context.send_reply("Removed event: %s" % removed.display_name())
 
     def do_meetingname(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Set the meeting name, which defaults to the channel name."""
         if meeting.is_chair(message.sender):
-            meeting.track_event(EventType.MEETING_NAME, message, meetingname=operand)
+            meeting.track_event(EventType.MEETING_NAME, message, operand=operand)
             meeting.name = operand
             context.send_reply("Meeting name set to: %s" % operand)
 
     def do_accepted(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Indicate that a motion has been accepted."""
         if meeting.is_chair(message.sender):
-            meeting.track_event(EventType.ACCEPTED, message, text=operand)
+            meeting.track_event(EventType.ACCEPTED, message, operand=operand)
 
     def do_failed(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Indicate that a motion has failed."""
         if meeting.is_chair(message.sender):
-            meeting.track_event(EventType.FAILED, message, text=operand)
+            meeting.track_event(EventType.FAILED, message, operand=operand)
 
     def do_action(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Add an action item to the minutes."""
-        meeting.track_event(EventType.ACTION, message, text=operand)
+        meeting.track_event(EventType.ACTION, message, operand=operand)
 
     def do_info(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Add an informational item to the minutes."""
-        meeting.track_event(EventType.INFO, message, text=operand)
+        meeting.track_event(EventType.INFO, message, operand=operand)
 
     def do_idea(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Add an idea item to the minutes."""
-        meeting.track_event(EventType.IDEA, message, text=operand)
+        meeting.track_event(EventType.IDEA, message, operand=operand)
 
     def do_help(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Add a help item to the minutes."""
-        meeting.track_event(EventType.HELP, message, text=operand)
+        meeting.track_event(EventType.HELP, message, operand=operand)
 
     def do_link(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Add a link to the minutes."""
-        meeting.track_event(EventType.LINK, message, url=operand)
+        meeting.track_event(EventType.LINK, message, operand=operand)
 
     # These are aliases for the commands above
     do_accept = do_accepted
