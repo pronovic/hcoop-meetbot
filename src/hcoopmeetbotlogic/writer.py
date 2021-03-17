@@ -229,7 +229,7 @@ def _write_log(config: Config, locations: Locations, meeting: Meeting) -> None:
         "title": "%s Log" % meeting.name,
         "messages": [_LogMessage.for_message(config, message) for message in meeting.messages],
     }
-    with open(locations.log.path, "x") as out:
+    with open(locations.log.path, "w") as out:
         _render_html(template="log.html", context=context, out=out)
 
 
@@ -241,7 +241,7 @@ def _write_minutes(config: Config, locations: Locations, meeting: Meeting) -> No
         "logpath": os.path.basename(locations.log.path),
         "minutes": _MeetingMinutes.for_meeting(config, meeting),
     }
-    with open(locations.minutes.path, "x") as out:
+    with open(locations.minutes.path, "w") as out:
         _render_html(template="minutes.html", context=context, out=out)
 
 

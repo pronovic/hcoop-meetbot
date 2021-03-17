@@ -125,7 +125,7 @@ class TestCommands:
     @patch("hcoopmeetbotlogic.handler.VERSION", "1.2.3")
     def test_meetversion(self, send_reply, logger, context):
         meetversion(context)
-        send_reply.assert_called_once_with(context, "HcoopMeetbot v1.2.3, released 2001-02-03")
+        send_reply.assert_called_once_with(context, "HCoop Meetbot v1.2.3 (2001-02-03)")
 
     @patch("hcoopmeetbotlogic.handler._send_reply")
     @patch("hcoopmeetbotlogic.handler.get_meetings")

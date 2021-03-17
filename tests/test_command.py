@@ -24,7 +24,7 @@ class TestFunctions:
             "#accepted",
             "#action",
             "#chair",
-            "#closed",
+            "#close",
             "#endmeeting",
             "#failed",
             "#help",
@@ -34,7 +34,6 @@ class TestFunctions:
             "#link",
             "#lurk",
             "#meetingname",
-            "#meetingtopic",
             "#motion",
             "#nick",
             "#save",
@@ -101,9 +100,9 @@ class TestFunctions:
         run_dispatch("#startmeeting", "startmeeting", "", dispatcher.do_startmeeting)
         run_dispatch("#endmeeting", "endmeeting", "", dispatcher.do_endmeeting)
         run_dispatch("#topic some stuff", "topic", "some stuff", dispatcher.do_topic)
-        run_dispatch("#meetingtopic some stuff", "meetingtopic", "some stuff", dispatcher.do_meetingtopic)
         run_dispatch("#motion some stuff", "motion", "some stuff", dispatcher.do_motion)
         run_dispatch("#vote +1", "vote", "+1", dispatcher.do_vote)
+        run_dispatch("#close", "close", "", dispatcher.do_close)
         run_dispatch("#accepted", "accepted", "", dispatcher.do_accepted)
         run_dispatch("#failed", "failed", "", dispatcher.do_failed)
         run_dispatch("#inconclusive", "inconclusive", "", dispatcher.do_inconclusive)
@@ -161,7 +160,6 @@ class TestCommandDispatcher:
     def test_startmeeting_as_chair(self, config, formatdate, dispatcher, meeting, context, message):
         meeting.active = False
         meeting.original_topic = None
-        meeting.meeting_topic = None
         meeting.is_chair.return_value = True
         meeting.chairs = ["x", "y"]
         meeting.start_time = datetime(2021, 3, 7, 13, 14, 0)
@@ -175,17 +173,15 @@ class TestCommandDispatcher:
             [
                 call("Meeting started at 11111"),
                 call("Current chairs: x, y"),
-                call("Useful commands: #action #info #idea #link #topic #motion #vote #closed"),
+                call("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting"),
             ]
         )
         assert meeting.original_topic == "original"
-        assert meeting.meeting_topic == "b"
         formatdate.assert_called_once_with(timestamp=meeting.start_time, zone="America/Chicago")
 
     def test_startmeeting_as_chair_duplicated(self, dispatcher, meeting, context, message):
         meeting.active = True
         meeting.original_topic = None
-        meeting.meeting_topic = None
         meeting.is_chair.return_value = True
         dispatcher.do_startmeeting(meeting, context, "a", "b", message)
         meeting.track_event.assert_not_called()
@@ -193,12 +189,10 @@ class TestCommandDispatcher:
         context.sent_reply.assert_not_called()
         assert meeting.active is True
         assert meeting.original_topic is None
-        assert meeting.meeting_topic is None
 
     def test_startmeeting_as_not_chair(self, dispatcher, meeting, context, message):
         meeting.active = False
         meeting.original_topic = None
-        meeting.meeting_topic = None
         meeting.is_chair.return_value = False
         dispatcher.do_startmeeting(meeting, context, "a", "b", message)
         meeting.track_event.assert_not_called()
@@ -206,7 +200,6 @@ class TestCommandDispatcher:
         context.sent_reply.assert_not_called()
         assert meeting.active is False
         assert meeting.original_topic is None
-        assert meeting.meeting_topic is None
 
     @patch("hcoopmeetbotlogic.command.formatdate")
     @patch("hcoopmeetbotlogic.command.now")
@@ -294,45 +287,8 @@ class TestCommandDispatcher:
         meeting.track_event.assert_not_called()
         assert meeting.lurk is None
 
-    def test_meetingtopic_as_chair_empty(self, dispatcher, meeting, context, message):
-        meeting.current_topic = None
-        meeting.meeting_topic = None
-        meeting.is_chair.return_value = True
-        dispatcher.do_meetingtopic(meeting, context, "a", "", message)
-        meeting.track_event.assert_called_once_with(EventType.MEETING_TOPIC, message, operand="")
-        context.set_topic.assert_called_once_with("Meeting Active")
-        assert meeting.meeting_topic == ""
-
-    def test_meetingtopic_as_chair_not_empty(self, dispatcher, meeting, context, message):
-        meeting.current_topic = None
-        meeting.meeting_topic = None
-        meeting.is_chair.return_value = True
-        dispatcher.do_meetingtopic(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.MEETING_TOPIC, message, operand="b")
-        context.set_topic.assert_called_once_with("b")
-        assert meeting.meeting_topic == "b"
-
-    def test_meetingtopic_as_chair_with_topic(self, dispatcher, meeting, context, message):
-        meeting.current_topic = "x"
-        meeting.meeting_topic = None
-        meeting.is_chair.return_value = True
-        dispatcher.do_meetingtopic(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.MEETING_TOPIC, message, operand="b")
-        context.set_topic.assert_called_once_with("x (Meeting topic: b)")
-        assert meeting.meeting_topic == "b"
-
-    def test_meetingtopic_as_not_chair(self, dispatcher, meeting, context, message):
-        meeting.current_topic = None
-        meeting.meeting_topic = None
-        meeting.is_chair.return_value = False
-        dispatcher.do_meetingtopic(meeting, context, "a", "b", message)
-        meeting.track_event.assert_not_called()
-        context.set_topic.assert_not_called()
-        assert meeting.meeting_topic is None
-
     def test_topic_as_chair_empty(self, dispatcher, meeting, context, message):
         meeting.current_topic = None
-        meeting.meeting_topic = None
         meeting.is_chair.return_value = True
         dispatcher.do_topic(meeting, context, "a", "", message)
         meeting.track_event.assert_called_once_with(EventType.TOPIC, message, operand="")
@@ -341,7 +297,6 @@ class TestCommandDispatcher:
 
     def test_topic_as_chair_not_empty(self, dispatcher, meeting, context, message):
         meeting.current_topic = None
-        meeting.meeting_topic = None
         meeting.is_chair.return_value = True
         dispatcher.do_topic(meeting, context, "a", "b", message)
         meeting.track_event.assert_called_once_with(EventType.TOPIC, message, operand="b")
@@ -538,39 +493,39 @@ class TestCommandDispatcher:
         meeting.track_event.assert_not_called()
         context.send_reply.assert_called_once_with("No vote is in progress")
 
-    def test_closed_as_not_chair(self, dispatcher, meeting, context, message):
+    def test_close_as_not_chair(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = False
         meeting.vote_in_progress = True
         meeting.motion_index = 0
-        dispatcher.do_closed(meeting, context, "a", "b", message)
+        dispatcher.do_close(meeting, context, "a", "b", message)
         assert meeting.vote_in_progress is True
         assert meeting.motion_index == 0
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         meeting.track_event.assert_not_called()
         context.send_reply.assert_not_called()
 
-    def test_closed_not_in_progress(self, dispatcher, meeting, context, message):
+    def test_close_not_in_progress(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
         meeting.vote_in_progress = False
         meeting.motion_index = 0
-        dispatcher.do_closed(meeting, context, "a", "b", message)
+        dispatcher.do_close(meeting, context, "a", "b", message)
         assert meeting.vote_in_progress is False
         assert meeting.motion_index == 0
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         meeting.track_event.assert_not_called()
         context.send_reply.assert_not_called()
 
-    def test_closed_no_votes(self, dispatcher, meeting, context, message):
+    def test_close_no_votes(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
         meeting.vote_in_progress = True
         meeting.motion_index = 0
-        dispatcher.do_closed(meeting, context, "a", "b", message)
+        dispatcher.do_close(meeting, context, "a", "b", message)
         assert meeting.vote_in_progress is True
         assert meeting.motion_index == 0
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         context.send_reply.assert_called_once_with("Motion cannot be closed: no votes found (maybe use #inclusive?)")
 
-    def test_closed_accepted(self, dispatcher, meeting, context, message):
+    def test_close_accepted(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
         meeting.vote_in_progress = True
         meeting.motion_index = 0
@@ -579,7 +534,7 @@ class TestCommandDispatcher:
         meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="one")))
         meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="two")))
         meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.OPPOSED, message=MagicMock(sender="three")))
-        dispatcher.do_closed(meeting, context, "a", "b", message)
+        dispatcher.do_close(meeting, context, "a", "b", message)
         assert meeting.vote_in_progress is False
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
@@ -588,7 +543,7 @@ class TestCommandDispatcher:
             [call("Motion accepted: 2 in favor to 1 opposed"), call("In favor: one, two"), call("Opposed: three")]
         )
 
-    def test_closed_accepted_unanimous(self, dispatcher, meeting, context, message):
+    def test_close_accepted_unanimous(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
         meeting.vote_in_progress = True
         meeting.motion_index = 0
@@ -599,7 +554,7 @@ class TestCommandDispatcher:
         meeting.events.append(
             MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="three"))
         )
-        dispatcher.do_closed(meeting, context, "a", "b", message)
+        dispatcher.do_close(meeting, context, "a", "b", message)
         assert meeting.vote_in_progress is False
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
@@ -608,7 +563,7 @@ class TestCommandDispatcher:
             [call("Motion accepted: 3 in favor to 0 opposed"), call("In favor: one, two, three"), call("Opposed: ")]
         )
 
-    def test_closed_failed(self, dispatcher, meeting, context, message):
+    def test_close_failed(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
         meeting.vote_in_progress = True
         meeting.motion_index = 0
@@ -619,7 +574,7 @@ class TestCommandDispatcher:
         meeting.events.append(
             MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="three"))
         )
-        dispatcher.do_closed(meeting, context, "a", "b", message)
+        dispatcher.do_close(meeting, context, "a", "b", message)
         assert meeting.vote_in_progress is False
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
@@ -628,7 +583,7 @@ class TestCommandDispatcher:
             [call("Motion failed: 1 in favor to 2 opposed"), call("In favor: three"), call("Opposed: one, two")]
         )
 
-    def test_closed_inconclusive(self, dispatcher, meeting, context, message):
+    def test_close_inconclusive(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
         meeting.vote_in_progress = True
         meeting.motion_index = 0
@@ -640,7 +595,7 @@ class TestCommandDispatcher:
             MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="three"))
         )
         meeting.events.append(MagicMock(event_type=EventType.VOTE, operand=VotingAction.IN_FAVOR, message=MagicMock(sender="four")))
-        dispatcher.do_closed(meeting, context, "a", "b", message)
+        dispatcher.do_close(meeting, context, "a", "b", message)
         assert meeting.vote_in_progress is False
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender

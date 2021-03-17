@@ -35,6 +35,113 @@ Developer Documentation
    :maxdepth: 2
    :glob:
 
+Running a Meeting
+-----------------
+
+If the plugin is already installed in your IRC channel, running a meeting is easy.  Meeting commands all start with ``#``, and
+are mostly compatible with the original MeetBot.  
+
+*Note:* Not all commands give feedback, and you won't be warned about invalid commands unless a meeting is active.
+
+Basic Meeting
+~~~~~~~~~~~~~
+
+You can run a basic meeting with just these few commands.
+
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| Command           | Who?   | Description                                                                                        |
++===================+========+====================================================================================================+
+| ``#startmeeting`` | Anyone | Start a new meeting.  The user who starts the meeting becomes its chair.                           |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#endmeeting``   | Chair  | End the active meeting. Writes log and minutes to the configured log directory.                    |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#topic``        | Chair  | Set a new discussion topic like ``#topic First Topic``.  Events are grouped together under topics  |
+|                   |        | in the minutes.                                                                                    |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#accepted``     | Chair  | Document an agreement in the minutes, like ``#accepted We agree to disagree``.                     |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+
+Agreement and Disagrement
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can document agreement and disagreement using these commands.
+
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| Command           | Who?   | Description                                                                                        |
++===================+========+====================================================================================================+
+| ``#accepted``     | Chair  | Document an agreement in the minutes, like ``#accepted We agree to disagree``.                     |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#failed``       | Chair  | Document disagreement in the minutes, like ``#failed Budget was not approved``.                    |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#inconclusive`` | Chair  | Document a decision that could not be made, like ``#inconclusive There was no agreement on a fix``.|
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+
+Formal Voting
+~~~~~~~~~~~~~
+
+If you are running a formal meeting, you can document a motion and take votes using these commands.
+
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| Command           | Who?   | Description                                                                                        |
++===================+========+====================================================================================================+
+| ``#motion``       | Chair  | Indicate that a motion has been made, like ``#motion Approve the 2021 budget``.                    |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#vote``         | Anyone | Vote in favor of or against the motion, like ``#vote +1`` or ``#vote -1``.                         |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#close``        | Chair  | Close voting on the open motion, and report voting results.                                        | 
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+
+Important Information
+~~~~~~~~~~~~~~~~~~~~~
+
+Anyone can use these commands to log important information in the minutes.
+
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| Command           | Who?   | Description                                                                                        |
++===================+========+====================================================================================================+
+| ``#info``         | Anyone | Log important information in the minutes, like ``#info Happy hour starts at 6pm``.                 |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#action``       | Anyone | Document an action, like ``#action ken will pick up dinner``.  If you include a known IRC          |
+|                   |        | nickname, the action will be assigned to that user.                                                |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#idea``         | Anyone | Add an idea to the minutes, like ``#idea we should start using HCoop Meetbot``.                    |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#help``         | Anyone | Add a call for help into the minutes. Use this command when you need to recruit someone to do a    |
+|                   |        | task. (Counter-intuitively, this does not not provide help for how to use the bot.)                |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#link``         | Anyone | Add a link to the meeting minutes.  Additionally, certain common URL patterns are auto-detected.   |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+
+Administrative Commands
+~~~~~~~~~~~~~~~~~~~~~~~
+
+A meeting chair may run a variety of administrative commands.
+
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| Command           | Who?   | Description                                                                                        |
++===================+========+====================================================================================================+
+| ``#meetingname``  | Chair  | By default, the meeting name is set to the channel name.  Use ``#meetingname`` to set an           |
+|                   |        | alternate name, which will be indicated in the minutes and may be used in the generated file       |
+|                   |        | names (depending on configuration).                                                                |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#nick``         | Chair  | Identify an IRC nickname for a user who hasn't spoken, so they can be assigned actions.            |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#chair``        | Chair  | Add an IRC nickname to the list of meeting chairs.                                                 |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#unchair``      | Chair  | Remove an IRC nickname from the list of meeting chairs.                                            |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#lurk``         | Chair  | Prevent the bot from writing any replies to the channel.  The bot will still track meeting         |
+|                   |        | activity and handle commands, but users won't get any feedback about what is happening.            |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#unlurk``       | Chair  | Disable lurk mode, returning to normal operation.                                                  |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#undo``         | Chair  | Remove the most recent event (such as ``#accepted``, ``#topic``, ``#info``, etc.) from the         |
+|                   |        | minutes.  The activity will still appear in the raw log, but won't be called out in the summary.   |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#save``         | Chair  | Save the meeting to disk in its current state, without calling ``#endmeeting``.  Some results      |
+|                   |        | might look a little funky, like ``None`` for the meeting end date.                                 |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+
 Using the Plugin
 ----------------
 
@@ -119,6 +226,31 @@ Install the plugin using ``load HcoopMeetbot``.  You should see a response ``The
 Then you can join any channel that the Limnoria bot is configured to join, and start using the plugin immediately.
 
 Later, if you update the plugin (``pip install --upgrade``), you can either stop and start the bot process, or use ``@reload HcoopMeetbot`` from within IRC.  You may need to identify yourself to Limnoria before doing this.
+
+Administrator Features
+----------------------
+
+The administrator who owns the Limnoria bot has access to some additional features and can manage meetings across multiple channels.  These commands are invoked in the traditional way, either by addressing the bot by its name or using the command prefix you configured when setting up the bot (often ``@``).  These commands work in any channel the bot has joined, and do not require a meeting to be active.
+
++-------------------+-------------------------------------------------------------------------------------------------------------+
+| Command           | Description                                                                                                 |
++===================+=============================================================================================================+
+| ``commands``      | List all of the legal meeting commands (``#startmeeting``, ``#endmeeting``, etc.).                          |
++-------------------+-------------------------------------------------------------------------------------------------------------+
+| ``meetversion``   | Reply with the version of the bot that is running.                                                          |
++-------------------+-------------------------------------------------------------------------------------------------------------+
+| ``listmeetings``  | List all of the active meetings in all channels.                                                            |
++-------------------+-------------------------------------------------------------------------------------------------------------+
+| ``recent``        | List all of the recently-completed meetings in all channels.                                                |
++-------------------+-------------------------------------------------------------------------------------------------------------+
+| ``savemeetings``  | Save all currently active meetings, like a chair calling ``#save`` individually for each meeting.  All of   |
+|                   | the same caveats that apply to ``#save`` also apply here.                                                   |
++-------------------+-------------------------------------------------------------------------------------------------------------+
+| ``addchair``      | Add an IRC nickname to the list of chairs for a meeting in a channel, like ``@addchair #channel nick``.     |
++-------------------+-------------------------------------------------------------------------------------------------------------+
+| ``deletemeeting`` | Delete a meeting, moving it out of active state without actually ending it, like                            |
+|                   | ``@deletemeeting #channel``.                                                                                |
++-------------------+-------------------------------------------------------------------------------------------------------------+
 
 .. _Limnoria: https://github.com/ProgVal/Limnoria
 .. _HCoop: https://hcoop.net/

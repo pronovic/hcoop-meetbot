@@ -67,7 +67,6 @@ class TestMeeting:
         assert meeting.start_time >= before
         assert meeting.end_time is None
         assert meeting.original_topic is None
-        assert meeting.meeting_topic is None
         assert meeting.current_topic is None
         assert meeting.messages == []
         assert meeting.events == []

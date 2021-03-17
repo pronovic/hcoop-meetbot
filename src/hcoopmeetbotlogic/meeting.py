@@ -22,7 +22,6 @@ class EventType(Enum):
     START_MEETING = "START_MEETING"
     END_MEETING = "END_MEETING"
     MEETING_NAME = "MEETING_NAME"
-    MEETING_TOPIC = "MEETING_TOPIC"
     TOPIC = "TOPIC"
     LURK = "LURK"
     UNLURK = "UNLURK"
@@ -128,7 +127,6 @@ class Meeting:
         start_time(datetime): Start time of the meeting in UTC
         end_time(Optional[datetime]): End time of the meeting in UTC, possibly None
         original_topic(Optional[str]): The original topic assigned to the channel prior to starting the meeting
-        meeting_topic(Optional[str]): The overall meeting topic, assigned by a chair
         current_topic(Optional[str]): The current topic, assigned by a chair
         messages(List[TrackedMessage]): List of all messages tracked as part of the meeting
         events(List[TrackedEvent]): List of all events tracked as part of the meeting
@@ -149,7 +147,6 @@ class Meeting:
     end_time = attr.ib(type=Optional[datetime])
     active = attr.ib(type=bool, default=False)
     original_topic = attr.ib(type=Optional[str], default=None)
-    meeting_topic = attr.ib(type=Optional[str], default=None)
     current_topic = attr.ib(type=Optional[str], default=None)
     messages = attr.ib(type=List[TrackedMessage])
     events = attr.ib(type=List[TrackedEvent])

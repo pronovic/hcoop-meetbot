@@ -73,7 +73,7 @@ def outbound_message(context: Context, message: Message) -> None:  # pylint: dis
 def meetversion(context: Context) -> None:  # pylint: disable=unused-argument:
     """Reply with a string describing the version of the plugin."""
     logger().debug("Handled 'meetversion'")
-    _send_reply(context, "HcoopMeetbot v%s, released %s" % (VERSION, DATE))
+    _send_reply(context, "HCoop Meetbot v%s (%s)" % (VERSION, DATE))
 
 
 def listmeetings(context: Context) -> None:

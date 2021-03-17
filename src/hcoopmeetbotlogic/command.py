@@ -53,11 +53,10 @@ class CommandDispatcher:
             meeting.active = True  # set this here so we can tell this is not a duplicated start meeting event
             meeting.track_event(EventType.START_MEETING, message)
             meeting.original_topic = context.get_topic()
-            meeting.meeting_topic = operand
             self._set_channel_topic(meeting, context)
             context.send_reply("Meeting started at %s" % self._formatdate(meeting.start_time))
             context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
-            context.send_reply("Useful commands: #action #info #idea #link #topic #motion #vote #closed")
+            context.send_reply("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting")
 
     def do_endmeeting(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """End an active meeting and save to disk."""
@@ -91,13 +90,6 @@ class CommandDispatcher:
         if meeting.is_chair(message.sender):
             meeting.track_event(EventType.UNLURK, message)
             meeting.lurk = False
-
-    def do_meetingtopic(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
-        """Set a meeting topic, to be included in all sub-topics."""
-        if meeting.is_chair(message.sender):
-            meeting.track_event(EventType.MEETING_TOPIC, message, operand=operand)
-            meeting.meeting_topic = operand
-            self._set_channel_topic(meeting, context)
 
     def do_topic(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Set a new topic in the channel."""
@@ -164,7 +156,7 @@ class CommandDispatcher:
         else:
             context.send_reply("No vote is in progress")
 
-    def do_closed(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
+    def do_close(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         if meeting.is_chair(message.sender) and meeting.vote_in_progress:
             votes = meeting.events[meeting.motion_index + 1 :]  # type: ignore
             in_favor = [event.message.sender for event in votes if event.operand == VotingAction.IN_FAVOR]
@@ -244,11 +236,7 @@ class CommandDispatcher:
     def _set_channel_topic(self, meeting: Meeting, context: Context) -> None:
         """Set the channel topic based on the current state of the meeting."""
         if meeting.active:
-            if meeting.meeting_topic and meeting.current_topic:
-                context.set_topic("%s (Meeting topic: %s)" % (meeting.current_topic, meeting.meeting_topic))
-            elif meeting.meeting_topic:
-                context.set_topic("%s" % meeting.meeting_topic)
-            elif meeting.current_topic:
+            if meeting.current_topic:
                 context.set_topic("%s" % meeting.current_topic)
             else:
                 context.set_topic("Meeting Active")
