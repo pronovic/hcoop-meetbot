@@ -102,7 +102,7 @@ class TestFunctions:
             timezone="UTC",
             pattern="%Y/{name}.%Y%m%d.%H%M",
         )
-        meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        meeting = Meeting(id="i", name="#n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
         assert locations.log.path == "/data/meetings/hcoop/2021/n.20210307.1314.log.html"
         assert locations.log.url == "https://whatever/2021/n.20210307.1314.log.html"

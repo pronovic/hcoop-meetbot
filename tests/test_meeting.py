@@ -33,9 +33,9 @@ class TestTrackedEvent:
     def test_constructor(self):
         timestamp = MagicMock()
         message = MagicMock(timestamp=timestamp)
-        event = TrackedEvent(EventType.LURK, message, "A")
+        event = TrackedEvent(EventType.VOTE, message, "A")
         assert event.id is not None
-        assert event.event_type == EventType.LURK
+        assert event.event_type == EventType.VOTE
         assert event.message is message
         assert event.operand == "A"
         assert event.timestamp is timestamp
@@ -46,7 +46,7 @@ class TestTrackedEvent:
         timestamp = MagicMock()
         message = MagicMock(timestamp=timestamp)
         attributes = {"a": "A"}
-        event = TrackedEvent(EventType.LURK, message, attributes, id="whatever")
+        event = TrackedEvent(EventType.VOTE, message, attributes, id="whatever")
         assert event.display_name() == "whatever@11111"
         formatdate.assert_called_once_with(timestamp)
 
@@ -60,7 +60,6 @@ class TestMeeting:
         assert meeting.founder == "nick"
         assert meeting.channel == "channel"
         assert meeting.network == "network"
-        assert meeting.lurk is False
         assert meeting.chair == "nick"
         assert meeting.chairs == ["nick"]
         assert meeting.nicks == {"nick": 0}
@@ -203,10 +202,10 @@ class TestMeeting:
         meeting = Meeting("n", "c", "n")
         timestamp = MagicMock()
         message = MagicMock(timestamp=timestamp)
-        tracked = meeting.track_event(event_type=EventType.LURK, message=message)
+        tracked = meeting.track_event(event_type=EventType.VOTE, message=message)
         assert tracked in meeting.events
         assert tracked.id is not None
-        assert tracked.event_type == EventType.LURK
+        assert tracked.event_type == EventType.VOTE
         assert tracked.message is message
         assert tracked.timestamp is timestamp
         assert tracked.operand is None
@@ -215,10 +214,10 @@ class TestMeeting:
         meeting = Meeting("n", "c", "n")
         timestamp = MagicMock()
         message = MagicMock(timestamp=timestamp)
-        tracked = meeting.track_event(event_type=EventType.LURK, message=message, operand="ONE")
+        tracked = meeting.track_event(event_type=EventType.VOTE, message=message, operand="ONE")
         assert tracked in meeting.events
         assert tracked.id is not None
-        assert tracked.event_type == EventType.LURK
+        assert tracked.event_type == EventType.VOTE
         assert tracked.message is message
         assert tracked.timestamp is timestamp
         assert tracked.operand == "ONE"
@@ -227,8 +226,10 @@ class TestMeeting:
         meeting = Meeting("n", "c", "n")
         timestamp = MagicMock()
         message = MagicMock(timestamp=timestamp)
-        tracked = meeting.track_event(event_type=EventType.LURK, message=message)
-        assert tracked in meeting.events
-        assert meeting.pop_event() is tracked
-        assert meeting.events == []
+        start = meeting.track_event(event_type=EventType.START_MEETING, message=message)
+        assert start in meeting.events
+        vote = meeting.track_event(event_type=EventType.VOTE, message=message)
+        assert vote in meeting.events
+        assert meeting.pop_event() is vote
+        assert start in meeting.events
         assert meeting.pop_event() is None

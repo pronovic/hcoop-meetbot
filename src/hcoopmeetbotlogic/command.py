@@ -14,7 +14,8 @@ import attr
 from .dateutil import formatdate, now
 from .interface import Context, Message
 from .meeting import EventType, Meeting, TrackedMessage, VotingAction
-from .state import config
+from .release import DOCS
+from .state import config, deactivate_meeting
 from .writer import write_meeting
 
 # Regular expression to identify the startmeeting command
@@ -57,6 +58,7 @@ class CommandDispatcher:
             context.send_reply("Meeting started at %s" % self._formatdate(meeting.start_time))
             context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
             context.send_reply("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting")
+            context.send_reply("See also: %s" % DOCS)
 
     def do_endmeeting(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """End an active meeting and save to disk."""
@@ -69,6 +71,7 @@ class CommandDispatcher:
             context.send_reply("Meeting ended at %s" % self._formatdate(meeting.end_time))
             context.send_reply("Raw log: %s" % locations.log.url)
             context.send_reply("Minutes: %s" % locations.minutes.url)
+            deactivate_meeting(meeting, retain=True)
 
     def do_save(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Save the meeting to disk in its current state."""
@@ -78,18 +81,6 @@ class CommandDispatcher:
             context.send_reply("Meeting saved")
             context.send_reply("Raw log: %s" % locations.log.url)
             context.send_reply("Minutes: %s" % locations.minutes.url)
-
-    def do_lurk(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
-        """Enable lurk mode, which means to listen without sending any replies."""
-        if meeting.is_chair(message.sender):
-            meeting.track_event(EventType.LURK, message)
-            meeting.lurk = True
-
-    def do_unlurk(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
-        """Disable lurk mode, which means to listen without sending any replies."""
-        if meeting.is_chair(message.sender):
-            meeting.track_event(EventType.UNLURK, message)
-            meeting.lurk = False
 
     def do_topic(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Set a new topic in the channel."""
@@ -167,15 +158,15 @@ class CommandDispatcher:
                 meeting.vote_in_progress = False
                 meeting.motion_index = None
                 if len(in_favor) > len(opposed):
-                    result = "Motion accepted: %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = "Motion accepted -> %d in favor to %d opposed" % (len(in_favor), len(opposed))
                     meeting.track_event(EventType.ACCEPTED, message, operand=result)
                     context.send_reply(result)
                 elif len(in_favor) < len(opposed):
-                    result = "Motion failed: %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = "Motion failed -> %d in favor to %d opposed" % (len(in_favor), len(opposed))
                     meeting.track_event(EventType.FAILED, message, operand=result)
                     context.send_reply(result)
                 elif len(in_favor) == len(opposed):
-                    result = "Motion inconclusive: %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = "Motion inconclusive -> %d in favor to %d opposed" % (len(in_favor), len(opposed))
                     meeting.track_event(EventType.INCONCLUSIVE, message, operand=result)
                     context.send_reply(result)
                 context.send_reply("In favor: %s" % ", ".join(in_favor))

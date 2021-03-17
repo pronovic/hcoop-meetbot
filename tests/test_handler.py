@@ -270,4 +270,9 @@ class TestCommands:
     def test_commands(self, list_commands, send_reply, logger, context):
         list_commands.return_value = ["a", "b", "c"]
         commands(context)
-        send_reply.assert_called_once_with(context, "Available commands: a, b, c")
+        send_reply.assert_has_calls(
+            [
+                call(context, "Available commands: a, b, c"),
+                call(context, "See also: https://hcoop-meetbot.readthedocs.io/en/stable/"),
+            ]
+        )

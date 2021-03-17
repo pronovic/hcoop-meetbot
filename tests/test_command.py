@@ -32,7 +32,6 @@ class TestFunctions:
             "#inconclusive",
             "#info",
             "#link",
-            "#lurk",
             "#meetingname",
             "#motion",
             "#nick",
@@ -41,7 +40,6 @@ class TestFunctions:
             "#topic",
             "#unchair",
             "#undo",
-            "#unlurk",
             "#vote",
         ]
 
@@ -174,6 +172,7 @@ class TestCommandDispatcher:
                 call("Meeting started at 11111"),
                 call("Current chairs: x, y"),
                 call("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting"),
+                call("See also: https://hcoop-meetbot.readthedocs.io/en/stable/"),
             ]
         )
         assert meeting.original_topic == "original"
@@ -201,11 +200,14 @@ class TestCommandDispatcher:
         assert meeting.active is False
         assert meeting.original_topic is None
 
+    @patch("hcoopmeetbotlogic.command.deactivate_meeting")
     @patch("hcoopmeetbotlogic.command.formatdate")
     @patch("hcoopmeetbotlogic.command.now")
     @patch("hcoopmeetbotlogic.command.config")
     @patch("hcoopmeetbotlogic.command.write_meeting")
-    def test_endmeeting_as_chair(self, write_meeting, config, now, formatdate, dispatcher, meeting, context, message):
+    def test_endmeeting_as_chair(
+        self, write_meeting, config, now, formatdate, deactivate_meeting, dispatcher, meeting, context, message
+    ):
         meeting.end_time = None
         meeting.active = None
         meeting.original_topic = "original"
@@ -222,6 +224,7 @@ class TestCommandDispatcher:
         context.send_reply.assert_has_calls([call("Meeting ended at 11111"), call("Raw log: logurl"), call("Minutes: minutesurl")])
         context.set_topic.assert_called_once_with("original")
         formatdate.assert_called_once_with(timestamp=now.return_value, zone="America/Chicago")
+        deactivate_meeting.assert_called_once_with(meeting, retain=True)
         assert meeting.end_time is now.return_value
         assert meeting.active is False
 
@@ -258,34 +261,6 @@ class TestCommandDispatcher:
         write_meeting.assert_not_called()
         meeting.track_event.assert_not_called()
         context.send_reply.assert_not_called()
-
-    def test_lurk_as_chair(self, dispatcher, meeting, context, message):
-        meeting.lurk = None
-        meeting.is_chair.return_value = True
-        dispatcher.do_lurk(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.LURK, message)
-        assert meeting.lurk is True
-
-    def test_lurk_as_not_chair(self, dispatcher, meeting, context, message):
-        meeting.lurk = None
-        meeting.is_chair.return_value = False
-        dispatcher.do_lurk(meeting, context, "a", "b", message)
-        meeting.track_event.assert_not_called()
-        assert meeting.lurk is None
-
-    def test_unlurk_as_chair(self, dispatcher, meeting, context, message):
-        meeting.lurk = None
-        meeting.is_chair.return_value = True
-        dispatcher.do_unlurk(meeting, context, "a", "b", message)
-        meeting.track_event.assert_called_once_with(EventType.UNLURK, message)
-        assert meeting.lurk is False
-
-    def test_unlurk_as_not_chair(self, dispatcher, meeting, context, message):
-        meeting.lurk = None
-        meeting.is_chair.return_value = False
-        dispatcher.do_unlurk(meeting, context, "a", "b", message)
-        meeting.track_event.assert_not_called()
-        assert meeting.lurk is None
 
     def test_topic_as_chair_empty(self, dispatcher, meeting, context, message):
         meeting.current_topic = None
@@ -538,9 +513,11 @@ class TestCommandDispatcher:
         assert meeting.vote_in_progress is False
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="Motion accepted: 2 in favor to 1 opposed")
+        meeting.track_event.assert_called_once_with(
+            EventType.ACCEPTED, message, operand="Motion accepted -> 2 in favor to 1 opposed"
+        )
         context.send_reply.assert_has_calls(
-            [call("Motion accepted: 2 in favor to 1 opposed"), call("In favor: one, two"), call("Opposed: three")]
+            [call("Motion accepted -> 2 in favor to 1 opposed"), call("In favor: one, two"), call("Opposed: three")]
         )
 
     def test_close_accepted_unanimous(self, dispatcher, meeting, context, message):
@@ -558,9 +535,11 @@ class TestCommandDispatcher:
         assert meeting.vote_in_progress is False
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="Motion accepted: 3 in favor to 0 opposed")
+        meeting.track_event.assert_called_once_with(
+            EventType.ACCEPTED, message, operand="Motion accepted -> 3 in favor to 0 opposed"
+        )
         context.send_reply.assert_has_calls(
-            [call("Motion accepted: 3 in favor to 0 opposed"), call("In favor: one, two, three"), call("Opposed: ")]
+            [call("Motion accepted -> 3 in favor to 0 opposed"), call("In favor: one, two, three"), call("Opposed: ")]
         )
 
     def test_close_failed(self, dispatcher, meeting, context, message):
@@ -578,9 +557,9 @@ class TestCommandDispatcher:
         assert meeting.vote_in_progress is False
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="Motion failed: 1 in favor to 2 opposed")
+        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="Motion failed -> 1 in favor to 2 opposed")
         context.send_reply.assert_has_calls(
-            [call("Motion failed: 1 in favor to 2 opposed"), call("In favor: three"), call("Opposed: one, two")]
+            [call("Motion failed -> 1 in favor to 2 opposed"), call("In favor: three"), call("Opposed: one, two")]
         )
 
     def test_close_inconclusive(self, dispatcher, meeting, context, message):
@@ -600,10 +579,10 @@ class TestCommandDispatcher:
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         meeting.track_event.assert_called_once_with(
-            EventType.INCONCLUSIVE, message, operand="Motion inconclusive: 2 in favor to 2 opposed"
+            EventType.INCONCLUSIVE, message, operand="Motion inconclusive -> 2 in favor to 2 opposed"
         )
         context.send_reply.assert_has_calls(
-            [call("Motion inconclusive: 2 in favor to 2 opposed"), call("In favor: three, four"), call("Opposed: one, two")]
+            [call("Motion inconclusive -> 2 in favor to 2 opposed"), call("In favor: three, four"), call("Opposed: one, two")]
         )
 
     def test_accepted_as_chair(self, dispatcher, meeting, context, message):

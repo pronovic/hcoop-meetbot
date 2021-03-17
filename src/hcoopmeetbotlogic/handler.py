@@ -10,7 +10,7 @@ from logging import Logger
 from .command import dispatch, is_startmeeting, list_commands
 from .config import load_config
 from .interface import Context, Message
-from .release import DATE, VERSION
+from .release import DATE, DOCS, VERSION
 from .state import add_meeting, config, deactivate_meeting, get_meeting, get_meetings, logger, set_config, set_logger
 from .writer import write_meeting
 
@@ -173,3 +173,4 @@ def commands(context: Context) -> None:
     """
     logger().debug("Handled 'commands'")
     _send_reply(context, "Available commands: %s" % ", ".join(list_commands()))
+    _send_reply(context, "See also: %s" % DOCS)

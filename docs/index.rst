@@ -130,11 +130,6 @@ A meeting chair may run a variety of administrative commands.
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
 | ``#unchair``      | Chair  | Remove an IRC nickname from the list of meeting chairs.                                            |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
-| ``#lurk``         | Chair  | Prevent the bot from writing any replies to the channel.  The bot will still track meeting         |
-|                   |        | activity and handle commands, but users won't get any feedback about what is happening.            |
-+-------------------+--------+----------------------------------------------------------------------------------------------------+
-| ``#unlurk``       | Chair  | Disable lurk mode, returning to normal operation.                                                  |
-+-------------------+--------+----------------------------------------------------------------------------------------------------+
 | ``#undo``         | Chair  | Remove the most recent event (such as ``#accepted``, ``#topic``, ``#info``, etc.) from the         |
 |                   |        | minutes.  The activity will still appear in the raw log, but won't be called out in the summary.   |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
@@ -249,7 +244,8 @@ The administrator who owns the Limnoria bot has access to some additional featur
 | ``addchair``      | Add an IRC nickname to the list of chairs for a meeting in a channel, like ``@addchair #channel nick``.     |
 +-------------------+-------------------------------------------------------------------------------------------------------------+
 | ``deletemeeting`` | Delete a meeting, moving it out of active state without actually ending it, like                            |
-|                   | ``@deletemeeting #channel``.                                                                                |
+|                   | ``@deletemeeting #channel``.  By default, it will be saved before being deleted.  If you don't want that,   |
+|                   | then use ``@deletemeeting #channel false``.                                                                 |
 +-------------------+-------------------------------------------------------------------------------------------------------------+
 
 .. _Limnoria: https://github.com/ProgVal/Limnoria

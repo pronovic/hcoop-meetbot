@@ -10,7 +10,7 @@ import pytest
 
 from hcoopmeetbotlogic.interface import Message
 from hcoopmeetbotlogic.location import Location, Locations
-from hcoopmeetbotlogic.meeting import EventType, Meeting
+from hcoopmeetbotlogic.meeting import EventType, Meeting, VotingAction
 from hcoopmeetbotlogic.writer import _LogMessage, write_meeting
 
 EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log.html")
@@ -89,9 +89,13 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(12, "pronovic", "#topic Cross-site Scripting", 453))
     tracked = meeting.track_message(message=_message(15, "pronovic", "#action <script>alert('malicious')</script>", 497))
     meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="<script>alert('malicious')</script>")
+    tracked = meeting.track_message(message=_message(12, "pronovic", "#motion the motion", 502))
+    meeting.track_event(event_type=EventType.MOTION, message=tracked, operand="the motion")
+    tracked = meeting.track_message(message=_message(12, "pronovic", "#vote +1", 553))
+    meeting.track_event(event_type=EventType.VOTE, message=tracked, operand=VotingAction.IN_FAVOR)
 
     # End the meeting
-    tracked = meeting.track_message(message=_message(16, "pronovic", "#endmeeting", 502))
+    tracked = meeting.track_message(message=_message(16, "pronovic", "#endmeeting", 567))
     meeting.track_event(event_type=EventType.END_MEETING, message=tracked)
     meeting.active = False
     meeting.end_time = END_TIME
@@ -176,18 +180,25 @@ class TestLogMessage:
             + "</span></span></span></span>"
         )
 
-    # pylint: disable=line-too-long:
     def test_highlights(self, config, message):
         message.action = False
-        message.payload = "this is some stuff for highlight1: and more for highlight2: here and an https://url"
+        message.payload = "nick: this is some stuff: yeah that stuff"
         result = _LogMessage.for_message(config, message)
         assert "%s" % result.id == '<a name="id"/>'
         assert "%s" % result.timestamp == '<span class="tm">13:14:00</span>'
         assert "%s" % result.nick == '<span class="nk">&lt;nick&gt;</span>'
         assert (
-            "%s" % result.content
-            == '<span><span>this is some stuff for </span><span class="hi">highlight1:</span><span> and more for </span><span class="hi">highlight2:</span><span> here and an https://url</span></span>'
+            "%s" % result.content == '<span><span class="hi">nick:</span><span> this is some stuff: yeah that stuff</span></span>'
         )
+
+    def test_url(self, config, message):
+        message.action = False
+        message.payload = "http://whatever this should not be highlighted"
+        result = _LogMessage.for_message(config, message)
+        assert "%s" % result.id == '<a name="id"/>'
+        assert "%s" % result.timestamp == '<span class="tm">13:14:00</span>'
+        assert "%s" % result.nick == '<span class="nk">&lt;nick&gt;</span>'
+        assert "%s" % result.content == "<span><span>http://whatever this should not be highlighted</span></span>"
 
     # we can generally expect Genshi to handle this stuff, so this is a spot-check
     # examples from: https://owasp.org/www-community/attacks/xss/

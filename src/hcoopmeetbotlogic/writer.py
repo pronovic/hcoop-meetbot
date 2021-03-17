@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import os
 import re
+from enum import Enum
 from typing import Any, Dict, List, TextIO
 
 import attr
@@ -34,8 +35,19 @@ _OPERATION_REGEX = re.compile(r"(^\s*)(#\w+)(\s*)(.*$)", re.IGNORECASE)
 _OPERATION_GROUP = 2
 _OPERAND_GROUP = 4
 
-# Identifies a highlight within a message payload (finds cases of "nick:" to be highlighted)
-_HIGHLIGHT_REGEX = re.compile(r"([^\s]+:(?!//))")  # note: lookback (?!//) prevents us from matching URLs
+# Identifies a nick at the front of the payload, to be highlighted
+_NICK_REGEX = re.compile(r"(^[^\s]+:(?!//))")  # note: lookback (?!//) prevents us from matching URLs
+
+# List of event types that are excluded from the summary in the meeting minutes
+_EXCLUDED = [
+    EventType.START_MEETING,
+    EventType.END_MEETING,
+    EventType.UNDO,
+    EventType.SAVE_MEETING,
+    EventType.TRACK_NICK,
+    EventType.ADD_CHAIR,
+    EventType.REMOVE_CHAIR,
+]
 
 
 @attr.s(frozen=True)
@@ -102,8 +114,9 @@ class _LogMessage:
     def _payload(payload: str) -> Element:
         return tag.span(
             [
-                tag.span(element, class_="hi") if _HIGHLIGHT_REGEX.fullmatch(element) else tag.span(element)
-                for element in _HIGHLIGHT_REGEX.split(payload)
+                tag.span(element, class_="hi") if _NICK_REGEX.fullmatch(element) else tag.span(element)
+                for element in _NICK_REGEX.split(payload, 1)
+                if element
             ]
         )
 
@@ -202,14 +215,13 @@ class _MeetingMinutes:
                     nick=event.message.sender,
                 )
                 topics.append(current)
-            elif event.event_type not in (EventType.START_MEETING, EventType.END_MEETING):
-                # meeting start/end are not considered to be part of any topic
+            elif event.event_type not in _EXCLUDED:  # some things are adminstrative and aren't relevant
                 item = _MeetingEvent(
                     id=event.id,
                     event_type=event.event_type.value,
                     timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
                     nick=event.message.sender,
-                    payload="%s" % event.operand,
+                    payload=event.operand.value if isinstance(event.operand, Enum) else "%s" % event.operand,
                 )
                 current.events.append(item)
         if not topics[0].events:
@@ -229,6 +241,7 @@ def _write_log(config: Config, locations: Locations, meeting: Meeting) -> None:
         "title": "%s Log" % meeting.name,
         "messages": [_LogMessage.for_message(config, message) for message in meeting.messages],
     }
+    os.makedirs(os.path.dirname(locations.log.path), exist_ok=True)
     with open(locations.log.path, "w") as out:
         _render_html(template="log.html", context=context, out=out)
 
@@ -241,6 +254,7 @@ def _write_minutes(config: Config, locations: Locations, meeting: Meeting) -> No
         "logpath": os.path.basename(locations.log.path),
         "minutes": _MeetingMinutes.for_meeting(config, meeting),
     }
+    os.makedirs(os.path.dirname(locations.minutes.path), exist_ok=True)
     with open(locations.minutes.path, "w") as out:
         _render_html(template="minutes.html", context=context, out=out)
 

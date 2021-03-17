@@ -23,8 +23,6 @@ class EventType(Enum):
     END_MEETING = "END_MEETING"
     MEETING_NAME = "MEETING_NAME"
     TOPIC = "TOPIC"
-    LURK = "LURK"
-    UNLURK = "UNLURK"
     ADD_CHAIR = "ADD_CHAIR"
     REMOVE_CHAIR = "REMOVE_CHAIR"
     TRACK_NICK = "TRACK_NICK"
@@ -45,8 +43,8 @@ class EventType(Enum):
 class VotingAction(Enum):
     """Voting actions"""
 
-    IN_FAVOR = "IN_FAVOR"
-    OPPOSED = "OPPOSED"
+    IN_FAVOR = "+1"
+    OPPOSED = "-1"
 
 
 @attr.s(frozen=True)
@@ -120,7 +118,6 @@ class Meeting:
         founder(str): IRC nick of the meeting founder always a member of chairs
         channel(str): Channel the meeting is running on
         network(str): Network associated with the channel
-        lurk(bool): Whether to lurk in the channel, which means to listen without sending any replies
         chair(str): IRC nick of primary meeting chair, always a member of chairs
         chairs(List[str]): IRC nick of all meeting chairs, including the primary
         nicks(List[str]): IRC nick of anyone who contributed to the meeting or was explicitly called out
@@ -139,7 +136,6 @@ class Meeting:
     network = attr.ib(type=str)
     id = attr.ib(type=str)
     name = attr.ib(type=str)
-    lurk = attr.ib(type=bool, default=False)
     chair = attr.ib(type=str)
     chairs = attr.ib(type=List[str])
     nicks = attr.ib(type=Dict[str, int])
@@ -248,4 +244,6 @@ class Meeting:
 
     def pop_event(self) -> Optional[TrackedEvent]:
         """Pop the last tracked event off the list of events, if possible, returning the event."""
-        return self.events.pop() if self.events else None
+        # We do not allow the caller to pop the very first event (#startmeeting), because that would leave
+        # things in a strange, indeterminate state.  If they don't want the meeting, they should end it.
+        return self.events.pop() if len(self.events) > 1 else None

@@ -35,7 +35,9 @@ def _file_prefix(config: Config, meeting: Meeting) -> str:
     """Build the file prefix used for generating meeting-related files."""
     fmt = re.sub(r"^/", "", config.pattern).format(**vars(meeting))  # Substitute in meeting fields
     prefix = formatdate(meeting.start_time, zone=config.timezone, fmt=fmt)  # Substitute in date fields
-    return re.sub(r"[^./a-zA-Z0-9_-]+", "_", prefix)  # Normalize to a sane path without confusing characters
+    normalized = re.sub(r"[#]+", "", prefix)  # We track channel name as "#channel" but we don't want it in path
+    normalized = re.sub(r"[^./a-zA-Z0-9_-]+", "_", normalized)  # Normalize to a sane path without confusing characters
+    return normalized
 
 
 def _abs_path(config: Config, file_prefix: str, suffix: str) -> str:
