@@ -28,6 +28,13 @@ This is a plugin for Limnoria_, a bot framework for IRC.  It is designed to help
 
 The code is based in part on the MeetBot_ plugin for Supybot written by Richard Darst. Supybot is the predecessor to Limnoria.  Richard's MeetBot was "inspired by the original MeetBot, by Holger Levsen, which was itself a derivative of Mootbot by the Ubuntu Scribes team".  So, this code has a relatively long history.  For this version, much of the plugin was rewritten using Python 3, but it generally follows the pattern set by Richard's original code.
 
+Developer Documentation
+-----------------------
+
+.. toctree::
+   :maxdepth: 2
+   :glob:
+
 Using the Plugin
 ----------------
 
@@ -112,14 +119,6 @@ Install the plugin using ``load HcoopMeetbot``.  You should see a response ``The
 Then you can join any channel that the Limnoria bot is configured to join, and start using the plugin immediately.
 
 Later, if you update the plugin (``pip install --upgrade``), you can either stop and start the bot process, or use ``@reload HcoopMeetbot`` from within IRC.  You may need to identify yourself to Limnoria before doing this.
-
-
-Developer Documentation
------------------------
-
-.. toctree::
-   :maxdepth: 2
-   :glob:
 
 .. _Limnoria: https://github.com/ProgVal/Limnoria
 .. _HCOOP: https://hcoop.net/
