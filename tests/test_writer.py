@@ -230,6 +230,8 @@ class TestLogMessage:
 
 
 class TestRendering:
+    @patch("hcoopmeetbotlogic.writer.DATE", "2001-02-03")
+    @patch("hcoopmeetbotlogic.writer.VERSION", "1.2.3")
     @patch("hcoopmeetbotlogic.writer.derive_locations")
     def test_write_meeting_wiring(self, derive_locations):
         # The goal here is to prove that rendering is wired up properly, the templates are

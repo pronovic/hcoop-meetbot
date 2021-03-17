@@ -211,7 +211,7 @@ Install the plugin using ``load HcoopMeetbot``.  You should see a response ``The
    02:22 <ken> load HcoopMeetbot
    02:22 -meetbot(limnoria@127.0.0.1)- The operation succeeded.
    02:22 <ken> meetversion
-   02:22 -meetbot(limnoria@127.0.0.1)- HcoopMeetbot v0.1.0, released 16 Feb 2021
+   02:22 -meetbot(limnoria@127.0.0.1)- HcoopMeetbot v0.1.0 (17 Mar 2021)
    02:22 <ken> list HcoopMeetbot
    02:22 -meetbot(limnoria@127.0.0.1)- addchair, deletemeeting, listmeetings, meetversion, recent, and savemeetings
 
