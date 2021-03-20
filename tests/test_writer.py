@@ -60,7 +60,7 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(3, "pronovic", "#link https://whatver/agenda.html", 123))
     meeting.track_event(event_type=EventType.LINK, message=tracked, operand="https://whatver/agenda.html")
 
-    # these messages and eventus are associated with the attendance topic
+    # these messages and events are associated with the attendance topic
     # note that we track attendees manually since that's what would be done by the command interpreter
     tracked = meeting.track_message(message=_message(4, "pronovic", "#topic Attendance", 125))
     meeting.track_event(event_type=EventType.TOPIC, message=tracked, operand="Attendance")
