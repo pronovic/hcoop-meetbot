@@ -498,7 +498,7 @@ class TestCommandDispatcher:
         assert meeting.vote_in_progress is True
         assert meeting.motion_index == 0
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        context.send_reply.assert_called_once_with("Motion cannot be closed: no votes found (maybe use #inclusive?)")
+        context.send_reply.assert_called_once_with("Motion cannot be closed: no votes found (maybe use #inconclusive?)")
 
     def test_close_accepted(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True

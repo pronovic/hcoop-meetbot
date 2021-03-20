@@ -153,7 +153,7 @@ class CommandDispatcher:
             in_favor = [event.message.sender for event in votes if event.operand == VotingAction.IN_FAVOR]
             opposed = [event.message.sender for event in votes if event.operand == VotingAction.OPPOSED]
             if not in_favor and not opposed:
-                context.send_reply("Motion cannot be closed: no votes found (maybe use #inclusive?)")
+                context.send_reply("Motion cannot be closed: no votes found (maybe use #inconclusive?)")
             else:
                 meeting.vote_in_progress = False
                 meeting.motion_index = None
