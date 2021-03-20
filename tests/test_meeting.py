@@ -69,6 +69,7 @@ class TestMeeting:
         assert meeting.current_topic is None
         assert meeting.messages == []
         assert meeting.events == []
+        assert meeting.attendees == {}
         assert meeting.key() == "channel/network"
         assert meeting.active is False
 
@@ -233,3 +234,12 @@ class TestMeeting:
         assert meeting.pop_event() is vote
         assert start in meeting.events
         assert meeting.pop_event() is None
+
+    def test_track_attendee(self):
+        meeting = Meeting("n", "c", "n")
+        meeting.track_attendee("one", None)
+        assert meeting.attendees["one"] is None
+        meeting.track_attendee("two", "three")
+        assert meeting.attendees["two"] == "three"
+        meeting.track_attendee("one", "four")
+        assert meeting.attendees["one"] == "four"

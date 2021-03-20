@@ -61,6 +61,21 @@ You can run a basic meeting with just these few commands.
 | ``#accepted``     | Chair  | Document an agreement in the minutes, like ``#accepted We agree to disagree``.                     |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
 
+Attendance
+~~~~~~~~~~
+
+You can optionally document attendance using these commands.
+
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| Command           | Who?   | Description                                                                                        |
++===================+========+====================================================================================================+
+| ``#here``         | Anyone | Document attendance and optionally associate an IRC nickname to an alias.  If IRC nick ``ken``     |
+|                   |        | uses ``#here``, that nick is marked as a meeting attendee in the minutes.  If IRC nick ``ken``     |
+|                   |        | includes an alias, like ``#here pronovic`` or even ``#here Ken Pronovici``, then the remainder     |
+|                   |        | of the line becomes an alias for ``ken`` and can be used when assigning actions, etc.              |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+
+
 Agreement and Disagrement
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

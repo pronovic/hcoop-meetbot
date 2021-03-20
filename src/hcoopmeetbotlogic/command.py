@@ -109,6 +109,12 @@ class CommandDispatcher:
                     meeting.remove_chair(nick)
                 context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
 
+    def do_here(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
+        """Document attendance and optionally associate a nick with an alias."""
+        alias = operand if operand else None
+        meeting.track_event(EventType.ATTENDEE, message, operand=alias)
+        meeting.track_attendee(nick=message.sender, alias=alias)
+
     def do_nick(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Make the bot aware of a nick which hasn't said anything, for use with actions."""
         nicks = self._tokenize(operand)

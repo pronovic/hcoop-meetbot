@@ -28,6 +28,7 @@ class TestFunctions:
             "#endmeeting",
             "#failed",
             "#help",
+            "#here",
             "#idea",
             "#inconclusive",
             "#info",
@@ -109,6 +110,7 @@ class TestFunctions:
         run_dispatch("#undo", "undo", "", dispatcher.do_undo)
         run_dispatch("#meetingname name", "meetingname", "name", dispatcher.do_meetingname)
         run_dispatch("#action some stuff", "action", "some stuff", dispatcher.do_action)
+        run_dispatch("#here alias", "here", "alias", dispatcher.do_here)
         run_dispatch("#nick name", "nick", "name", dispatcher.do_nick)
         run_dispatch("#info some stuff", "info", "some stuff", dispatcher.do_info)
         run_dispatch("#idea some stuff", "idea", "some stuff", dispatcher.do_idea)
@@ -357,6 +359,20 @@ class TestCommandDispatcher:
         dispatcher.do_unchair(meeting, context, "a", "b", message)
         meeting.track_event.assert_not_called()
         meeting.remove_chair.assert_not_called()
+        context.send_reply.assert_not_called()
+
+    def test_here_no_alias(self, dispatcher, meeting, context, message):
+        meeting.sender = "nick"
+        dispatcher.do_here(meeting, context, "a", "", message)
+        meeting.track_event.assert_called_once_with(EventType.ATTENDEE, message, operand=None)
+        meeting.track_attendee.assert_called_once_with(nick="nick", alias=None)
+        context.send_reply.assert_not_called()
+
+    def test_here_with_alias(self, dispatcher, meeting, context, message):
+        meeting.sender = "nick"
+        dispatcher.do_here(meeting, context, "a", "alias", message)
+        meeting.track_event.assert_called_once_with(EventType.ATTENDEE, message, operand="alias")
+        meeting.track_attendee.assert_called_once_with(nick="nick", alias="alias")
         context.send_reply.assert_not_called()
 
     def test_nick_empty(self, dispatcher, meeting, context, message):
