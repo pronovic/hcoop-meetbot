@@ -64,9 +64,7 @@ def _meeting() -> Meeting:
     # note that we track attendees manually since that's what would be done by the command interpreter
     tracked = meeting.track_message(message=_message(4, "pronovic", "#topic Attendance", 125))
     meeting.track_event(event_type=EventType.TOPIC, message=tracked, operand="Attendance")
-    tracked = meeting.track_message(
-        message=_message(5, "pronovic", 'if you are an hcoop member and present please write "#here $hcoop_username"', 126)
-    )
+    tracked = meeting.track_message(message=_message(5, "pronovic", 'If you are present please write "#here $hcoop_username"', 126))
     tracked = meeting.track_message(message=_message(6, "pronovic", "#here Pronovic", 127))  # note: alias != nick
     meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="Pronovic")
     meeting.track_attendee(nick="pronovic", alias="Pronovic")
@@ -273,7 +271,7 @@ class TestRendering:
             meeting = _meeting()
             assert write_meeting(config, meeting) is locations
             # print("\n" + _contents(log.path))
-            print("\n" + _contents(minutes.path))
+            # print("\n" + _contents(minutes.path))
             derive_locations.assert_called_once_with(config, meeting)
             assert _contents(log.path) == _contents(EXPECTED_LOG)
             assert _contents(minutes.path) == _contents(EXPECTED_MINUTES)
