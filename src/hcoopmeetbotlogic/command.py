@@ -109,6 +109,12 @@ class CommandDispatcher:
                     meeting.remove_chair(nick)
                 context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
 
+    def do_here(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
+        """Document attendance and optionally associate a nick with an alias, for use with actions."""
+        alias = operand if operand else message.sender
+        meeting.track_event(EventType.ATTENDEE, message, operand=alias)
+        meeting.track_attendee(nick=message.sender, alias=alias)
+
     def do_nick(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Make the bot aware of a nick which hasn't said anything, for use with actions."""
         nicks = self._tokenize(operand)
@@ -153,20 +159,20 @@ class CommandDispatcher:
             in_favor = [event.message.sender for event in votes if event.operand == VotingAction.IN_FAVOR]
             opposed = [event.message.sender for event in votes if event.operand == VotingAction.OPPOSED]
             if not in_favor and not opposed:
-                context.send_reply("Motion cannot be closed: no votes found (maybe use #inclusive?)")
+                context.send_reply("Motion cannot be closed: no votes found (maybe use #inconclusive?)")
             else:
                 meeting.vote_in_progress = False
                 meeting.motion_index = None
                 if len(in_favor) > len(opposed):
-                    result = "Motion accepted -> %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = "Motion accepted: %d in favor to %d opposed" % (len(in_favor), len(opposed))
                     meeting.track_event(EventType.ACCEPTED, message, operand=result)
                     context.send_reply(result)
                 elif len(in_favor) < len(opposed):
-                    result = "Motion failed -> %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = "Motion failed: %d in favor to %d opposed" % (len(in_favor), len(opposed))
                     meeting.track_event(EventType.FAILED, message, operand=result)
                     context.send_reply(result)
                 elif len(in_favor) == len(opposed):
-                    result = "Motion inconclusive -> %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = "Motion inconclusive: %d in favor to %d opposed" % (len(in_favor), len(opposed))
                     meeting.track_event(EventType.INCONCLUSIVE, message, operand=result)
                     context.send_reply(result)
                 context.send_reply("In favor: %s" % ", ".join(in_favor))

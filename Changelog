@@ -1,7 +1,11 @@
+Version 0.2.0     unreleased
+
+	* Add new #here command for use with attendance.
+
 Version 0.1.1     17 Mar 2021
 
 	* Fix test cases where actual version leaked into expected results.
 
 Version 0.1.0     17 Mar 2021
 
-	* Initial public release
+	* Initial public release.
