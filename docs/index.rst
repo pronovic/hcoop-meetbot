@@ -71,8 +71,11 @@ You can optionally document attendance using these commands.
 +===================+========+====================================================================================================+
 | ``#here``         | Anyone | Document attendance and optionally associate an IRC nickname to an alias.  If IRC nick ``ken``     |
 |                   |        | uses ``#here``, that nick is marked as a meeting attendee in the minutes.  If IRC nick ``ken``     |
-|                   |        | includes an alias, like ``#here pronovic`` or even ``#here Ken Pronovici``, then the remainder     |
+|                   |        | includes an alias, like ``#here pronovic`` or ``#here Ken Pronovici``, then the remainder          |
 |                   |        | of the line becomes an alias for ``ken`` and can be used when assigning actions, etc.              |
++-------------------+--------+----------------------------------------------------------------------------------------------------+
+| ``#nick``         | Chair  | Identify an IRC nickname for a user who hasn't spoken, so they can be assigned actions, like       |
+|                   |        | ``#nick whoever``.                                                                                 |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
 
 
@@ -138,8 +141,6 @@ A meeting chair may run a variety of administrative commands.
 | ``#meetingname``  | Chair  | By default, the meeting name is set to the channel name.  Use ``#meetingname`` to set an           |
 |                   |        | alternate name, which will be indicated in the minutes and may be used in the generated file       |
 |                   |        | names (depending on configuration).                                                                |
-+-------------------+--------+----------------------------------------------------------------------------------------------------+
-| ``#nick``         | Chair  | Identify an IRC nickname for a user who hasn't spoken, so they can be assigned actions.            |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
 | ``#chair``        | Chair  | Add an IRC nickname to the list of meeting chairs.                                                 |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
