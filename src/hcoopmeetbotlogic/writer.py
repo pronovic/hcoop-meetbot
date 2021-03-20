@@ -10,7 +10,7 @@ from __future__ import annotations
 import os
 import re
 from enum import Enum
-from typing import Any, Dict, List, TextIO
+from typing import Any, Dict, List, Optional, TextIO
 
 import attr
 from genshi.builder import Element, tag
@@ -126,6 +126,7 @@ class _MeetingAttendee:
     """A meeting attendee, including count of chat lines and all associated actions."""
 
     nick = attr.ib(type=str)
+    alias = attr.ib(type=Optional[str])
     count = attr.ib(type=int)
     actions = attr.ib(type=List[str])
 
@@ -187,14 +188,22 @@ class _MeetingMinutes:
         attendees = []
         for nick in sorted(meeting.nicks.keys()):
             count = meeting.nicks[nick]
-            actions = []
-            pattern = re.compile(r"\b%s\b" % nick)
-            for event in meeting.events:
-                if event.event_type == EventType.ACTION and event.operand and pattern.search(event.operand):
-                    actions.append(event.operand)
-            attendee = _MeetingAttendee(nick=nick, count=count, actions=actions)
+            alias = meeting.aliases[nick] if nick in meeting.aliases else None
+            actions = _MeetingMinutes._attendee_actions(meeting, nick, alias)
+            attendee = _MeetingAttendee(nick=nick, alias=alias, count=count, actions=actions)
             attendees.append(attendee)
         return attendees
+
+    @staticmethod
+    def _attendee_actions(meeting: Meeting, nick: str, alias: Optional[str]) -> List[str]:
+        actions = []
+        nick_pattern = re.compile(r"\b%s\b" % nick, re.IGNORECASE)
+        alias_pattern = re.compile(r"\b%s\b" % alias, re.IGNORECASE) if alias else None
+        for event in meeting.events:
+            if event.event_type == EventType.ACTION and event.operand:
+                if nick_pattern.search(event.operand) or (alias_pattern and alias_pattern.search(event.operand)):
+                    actions.append(event.operand)
+        return actions
 
     @staticmethod
     def _topics(config: Config, meeting: Meeting) -> List[_MeetingTopic]:

@@ -18,7 +18,6 @@ EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer
 
 TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0)
 START_TIME = datetime(2021, 4, 13, 2, 6, 12)
-END_TIME = datetime(2021, 5, 19, 23, 2)
 
 
 def _contents(path: str) -> str:
@@ -37,6 +36,7 @@ def _message(identifier: int, nick: str, payload: str, seconds: int) -> Message:
     return MagicMock(id="id-%d" % identifier, nick=nick, payload=payload, timestamp=_time(seconds))
 
 
+# pylint: disable=too-many-statements:
 def _meeting() -> Meeting:
     """Generate a semi-realistic meeting that can be used for unit tests"""
 
@@ -50,7 +50,7 @@ def _meeting() -> Meeting:
 
     # Start the meeting
     meeting.active = True
-    meeting.start_time = START_TIME
+    meeting.start_time = _time(0)
     tracked = meeting.track_message(message=_message(0, "pronovic", "#startmeeting", 0))
     meeting.track_event(event_type=EventType.START_MEETING, message=tracked)
 
@@ -60,45 +60,72 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(3, "pronovic", "#link https://whatver/agenda.html", 123))
     meeting.track_event(event_type=EventType.LINK, message=tracked, operand="https://whatver/agenda.html")
 
+    # these messages and eventus are associated with the attendance topic
+    # note that we track attendees manually since that's what would be done by the command interpreter
+    tracked = meeting.track_message(message=_message(4, "pronovic", "#topic Attendance", 125))
+    meeting.track_event(event_type=EventType.TOPIC, message=tracked, operand="Attendance")
+    tracked = meeting.track_message(
+        message=_message(5, "pronovic", 'if you are an hcoop member and present please write "#here $hcoop_username"', 126)
+    )
+    tracked = meeting.track_message(message=_message(6, "pronovic", "#here Pronovic", 127))  # note: alias != nick
+    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="Pronovic")
+    meeting.track_attendee(nick="pronovic", alias="Pronovic")
+    tracked = meeting.track_message(message=_message(7, "unknown_lamer", "#here Clinton Alias", 128))  # note: alias != nick
+    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="Clinton Alias")
+    meeting.track_attendee(nick="unknown_lamer", alias="Clinton Alias")
+    tracked = meeting.track_message(message=_message(8, "keverets", "#here keverets", 129))  # note: alias == nick
+    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="keverets")
+    meeting.track_attendee(nick="keverets", alias="keverets")
+    tracked = meeting.track_message(message=_message(9, "layline", "#here", 130))  # note: no alias, so it's set to nick
+    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="layline")
+    meeting.track_attendee(nick="layline", alias="layline")
+    tracked = meeting.track_message(message=_message(10, "pronovic", "Thanks, everyone", 130))
+
     # these messages and events are associated with the first topic
-    tracked = meeting.track_message(message=_message(4, "pronovic", "#topic The first topic", 199))
+    tracked = meeting.track_message(message=_message(11, "pronovic", "#topic The first topic", 199))
     meeting.track_event(event_type=EventType.TOPIC, message=tracked, operand="The first topic")
-    tracked = meeting.track_message(message=_message(5, "pronovic", "Does anyone have any discussion?", 231))
-    tracked = meeting.track_message(message=_message(6, "layline", "Is this important?", 232))
-    tracked = meeting.track_message(message=_message(7, "unknown_lamer", "Yes it is", 299))
-    tracked = meeting.track_message(message=_message(8, "pronovic", "#info moving on then", 305))
+    tracked = meeting.track_message(message=_message(12, "pronovic", "Does anyone have any discussion?", 231))
+    tracked = meeting.track_message(message=_message(13, "layline", "Is this important?", 232))
+    tracked = meeting.track_message(message=_message(14, "unknown_lamer", "Yes it is", 299))
+    tracked = meeting.track_message(message=_message(15, "pronovic", "#info moving on then", 305))
     meeting.track_event(event_type=EventType.INFO, message=tracked, operand="moving on then")
 
     # these messages and events are associated with the second topic
-    tracked = meeting.track_message(message=_message(9, "pronovic", "#topic The second topic", 332))
+    tracked = meeting.track_message(message=_message(16, "pronovic", "#topic The second topic", 332))
     meeting.track_event(event_type=EventType.TOPIC, message=tracked, operand="The second topic")
-    tracked = meeting.track_message(message=_message(10, "layline", "\x01unknown_lamer: I need you for this action\x01", 334))
-    tracked = meeting.track_message(message=_message(11, "pronovic", "#action unknown_lamer will work with layline on this", 401))
-    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="unknown_lamer will work with layline on this")
+    tracked = meeting.track_message(message=_message(17, "layline", "\x01unknown_lamer: I need you for this action\x01", 334))
+    tracked = meeting.track_message(message=_message(18, "pronovic", "#action clinton alias will work with layline on this", 401))
+    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="clinton alias will work with layline on this")
 
     # these messages and events are associated with the third topic
-    tracked = meeting.track_message(message=_message(12, "pronovic", "#topic The third topic", 407))
+    tracked = meeting.track_message(message=_message(19, "pronovic", "#topic The third topic", 407))
     meeting.track_event(event_type=EventType.TOPIC, message=tracked, operand="The third topic")
-    tracked = meeting.track_message(message=_message(13, "pronovic", "#idea we should improve MeetBot", 414))
+    tracked = meeting.track_message(message=_message(20, "pronovic", "#idea we should improve MeetBot", 414))
     meeting.track_event(event_type=EventType.IDEA, message=tracked, operand="we should improve MeetBot")
-    tracked = meeting.track_message(message=_message(14, "pronovic", "I'll just take this one myself", 435))
-    tracked = meeting.track_message(message=_message(15, "pronovic", "#action pronovic will deal with it", 449))
-    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="pronovic will deal with it")
+    tracked = meeting.track_message(message=_message(21, "pronovic", "I'll just take this one myself", 435))
+    tracked = meeting.track_message(message=_message(22, "pronovic", "#action Pronovic will deal with it", 449))
+    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="Pronovic will deal with it")
 
     # these messages and events are associated with the final topic
-    tracked = meeting.track_message(message=_message(12, "pronovic", "#topic Cross-site Scripting", 453))
-    tracked = meeting.track_message(message=_message(15, "pronovic", "#action <script>alert('malicious')</script>", 497))
+    tracked = meeting.track_message(message=_message(23, "pronovic", "#topic Cross-site Scripting", 453))
+    tracked = meeting.track_message(message=_message(24, "pronovic", "#action <script>alert('malicious')</script>", 497))
     meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="<script>alert('malicious')</script>")
-    tracked = meeting.track_message(message=_message(12, "pronovic", "#motion the motion", 502))
+    tracked = meeting.track_message(message=_message(25, "pronovic", "#motion the motion", 502))
     meeting.track_event(event_type=EventType.MOTION, message=tracked, operand="the motion")
-    tracked = meeting.track_message(message=_message(12, "pronovic", "#vote +1", 553))
+    tracked = meeting.track_message(message=_message(26, "pronovic", "#vote +1", 553))
     meeting.track_event(event_type=EventType.VOTE, message=tracked, operand=VotingAction.IN_FAVOR)
+    tracked = meeting.track_message(message=_message(27, "unknown_lamer", "#vote +1", 555))
+    meeting.track_event(event_type=EventType.VOTE, message=tracked, operand=VotingAction.IN_FAVOR)
+    tracked = meeting.track_message(message=_message(28, "layline", "#vote -1", 557))
+    meeting.track_event(event_type=EventType.VOTE, message=tracked, operand=VotingAction.OPPOSED)
+    tracked = meeting.track_message(message=_message(29, "pronovic", "#close", 559))
+    meeting.track_event(event_type=EventType.ACCEPTED, message=tracked, operand="Motion accepted: 2 in favor to 1 opposed")
 
     # End the meeting
-    tracked = meeting.track_message(message=_message(16, "pronovic", "#endmeeting", 567))
+    tracked = meeting.track_message(message=_message(30, "pronovic", "#endmeeting", 567))
     meeting.track_event(event_type=EventType.END_MEETING, message=tracked)
     meeting.active = False
-    meeting.end_time = END_TIME
+    meeting.end_time = _time(567)
 
     return meeting
 
@@ -245,7 +272,8 @@ class TestRendering:
             config = MagicMock(timezone="America/Chicago")
             meeting = _meeting()
             assert write_meeting(config, meeting) is locations
-            print(_contents(minutes.path))
+            # print("\n" + _contents(log.path))
+            print("\n" + _contents(minutes.path))
             derive_locations.assert_called_once_with(config, meeting)
             assert _contents(log.path) == _contents(EXPECTED_LOG)
             assert _contents(minutes.path) == _contents(EXPECTED_MINUTES)

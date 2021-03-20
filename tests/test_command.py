@@ -364,8 +364,8 @@ class TestCommandDispatcher:
     def test_here_no_alias(self, dispatcher, meeting, context, message):
         meeting.sender = "nick"
         dispatcher.do_here(meeting, context, "a", "", message)
-        meeting.track_event.assert_called_once_with(EventType.ATTENDEE, message, operand=None)
-        meeting.track_attendee.assert_called_once_with(nick="nick", alias=None)
+        meeting.track_event.assert_called_once_with(EventType.ATTENDEE, message, operand="nick")
+        meeting.track_attendee.assert_called_once_with(nick="nick", alias="nick")
         context.send_reply.assert_not_called()
 
     def test_here_with_alias(self, dispatcher, meeting, context, message):
@@ -529,11 +529,9 @@ class TestCommandDispatcher:
         assert meeting.vote_in_progress is False
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(
-            EventType.ACCEPTED, message, operand="Motion accepted -> 2 in favor to 1 opposed"
-        )
+        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="Motion accepted: 2 in favor to 1 opposed")
         context.send_reply.assert_has_calls(
-            [call("Motion accepted -> 2 in favor to 1 opposed"), call("In favor: one, two"), call("Opposed: three")]
+            [call("Motion accepted: 2 in favor to 1 opposed"), call("In favor: one, two"), call("Opposed: three")]
         )
 
     def test_close_accepted_unanimous(self, dispatcher, meeting, context, message):
@@ -551,11 +549,9 @@ class TestCommandDispatcher:
         assert meeting.vote_in_progress is False
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(
-            EventType.ACCEPTED, message, operand="Motion accepted -> 3 in favor to 0 opposed"
-        )
+        meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="Motion accepted: 3 in favor to 0 opposed")
         context.send_reply.assert_has_calls(
-            [call("Motion accepted -> 3 in favor to 0 opposed"), call("In favor: one, two, three"), call("Opposed: ")]
+            [call("Motion accepted: 3 in favor to 0 opposed"), call("In favor: one, two, three"), call("Opposed: ")]
         )
 
     def test_close_failed(self, dispatcher, meeting, context, message):
@@ -573,9 +569,9 @@ class TestCommandDispatcher:
         assert meeting.vote_in_progress is False
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
-        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="Motion failed -> 1 in favor to 2 opposed")
+        meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="Motion failed: 1 in favor to 2 opposed")
         context.send_reply.assert_has_calls(
-            [call("Motion failed -> 1 in favor to 2 opposed"), call("In favor: three"), call("Opposed: one, two")]
+            [call("Motion failed: 1 in favor to 2 opposed"), call("In favor: three"), call("Opposed: one, two")]
         )
 
     def test_close_inconclusive(self, dispatcher, meeting, context, message):
@@ -595,10 +591,10 @@ class TestCommandDispatcher:
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         meeting.track_event.assert_called_once_with(
-            EventType.INCONCLUSIVE, message, operand="Motion inconclusive -> 2 in favor to 2 opposed"
+            EventType.INCONCLUSIVE, message, operand="Motion inconclusive: 2 in favor to 2 opposed"
         )
         context.send_reply.assert_has_calls(
-            [call("Motion inconclusive -> 2 in favor to 2 opposed"), call("In favor: three, four"), call("Opposed: one, two")]
+            [call("Motion inconclusive: 2 in favor to 2 opposed"), call("In favor: three, four"), call("Opposed: one, two")]
         )
 
     def test_accepted_as_chair(self, dispatcher, meeting, context, message):

@@ -128,7 +128,7 @@ class Meeting:
         current_topic(Optional[str]): The current topic, assigned by a chair
         messages(List[TrackedMessage]): List of all messages tracked as part of the meeting
         events(List[TrackedEvent]): List of all events tracked as part of the meeting
-        attendees(Dict[str, Optional[str]): Dictionary mapping attendee IRC nick to optional alias
+        aliases(Dict[str, Optional[str]): Dictionary mapping attendee IRC nick to optional alias
         vote_in_progress(bool): Whether voting is in progress
         motion_index(int): Index into events for the current motion, when voting is in progress
     """
@@ -148,7 +148,7 @@ class Meeting:
     current_topic = attr.ib(type=Optional[str], default=None)
     messages = attr.ib(type=List[TrackedMessage])
     events = attr.ib(type=List[TrackedEvent])
-    attendees = attr.ib(type=Dict[str, Optional[str]])
+    aliases = attr.ib(type=Dict[str, Optional[str]])
     vote_in_progress = attr.ib(type=bool, default=False)
     motion_index = attr.ib(type=Optional[int], default=None)
 
@@ -184,8 +184,8 @@ class Meeting:
     def _default_events(self) -> List[TrackedEvent]:
         return []
 
-    @attendees.default
-    def _default_attendees(self) -> Dict[str, Optional[str]]:
+    @aliases.default
+    def _default_aliases(self) -> Dict[str, Optional[str]]:
         return {}
 
     @name.default
@@ -226,7 +226,8 @@ class Meeting:
 
     def track_attendee(self, nick: str, alias: Optional[str] = None) -> None:
         """Track an IRC nick as a meeting attendee, optionally assigning an alias."""
-        self.attendees[nick] = alias
+        self.aliases[nick] = alias if alias and alias != nick else None
+        self.track_nick(nick=nick, messages=0)
 
     def track_nick(self, nick: str, messages: int = 1) -> None:
         """Track an IRC nick, incrementing its count of messages as indicated"""

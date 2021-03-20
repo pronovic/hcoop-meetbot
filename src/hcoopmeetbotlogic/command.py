@@ -110,8 +110,8 @@ class CommandDispatcher:
                 context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
 
     def do_here(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
-        """Document attendance and optionally associate a nick with an alias."""
-        alias = operand if operand else None
+        """Document attendance and optionally associate a nick with an alias, for use with actions."""
+        alias = operand if operand else message.sender
         meeting.track_event(EventType.ATTENDEE, message, operand=alias)
         meeting.track_attendee(nick=message.sender, alias=alias)
 
@@ -164,15 +164,15 @@ class CommandDispatcher:
                 meeting.vote_in_progress = False
                 meeting.motion_index = None
                 if len(in_favor) > len(opposed):
-                    result = "Motion accepted -> %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = "Motion accepted: %d in favor to %d opposed" % (len(in_favor), len(opposed))
                     meeting.track_event(EventType.ACCEPTED, message, operand=result)
                     context.send_reply(result)
                 elif len(in_favor) < len(opposed):
-                    result = "Motion failed -> %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = "Motion failed: %d in favor to %d opposed" % (len(in_favor), len(opposed))
                     meeting.track_event(EventType.FAILED, message, operand=result)
                     context.send_reply(result)
                 elif len(in_favor) == len(opposed):
-                    result = "Motion inconclusive -> %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = "Motion inconclusive: %d in favor to %d opposed" % (len(in_favor), len(opposed))
                     meeting.track_event(EventType.INCONCLUSIVE, message, operand=result)
                     context.send_reply(result)
                 context.send_reply("In favor: %s" % ", ".join(in_favor))
