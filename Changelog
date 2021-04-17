@@ -1,4 +1,4 @@
-Version 0.3.0     unreleased
+Version 0.3.0     17 Apr 2021
 
 	* Enhance #link command so it can contain text other than a URL.
 
