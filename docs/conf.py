@@ -151,7 +151,7 @@ html_theme = "alabaster"
 html_theme_options = {
     "show_powered_by": False,
     "github_user": "pronovic",
-    "github_repo": "hcoopmeetbotlogic",
+    "github_repo": "hcoop-meetbot",
     "github_banner": True,
     "show_related": False,
     "note_bg": "#FFF59C",
@@ -287,7 +287,7 @@ latex_documents = [(master_doc, "HcoopMeetbot.tex", "HCoop Meetbot Documentation
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "hcoopmeetbotlogic", "HCoop Meetbot Documentation", [author], 1)]
+man_pages = [(master_doc, "hcoop-meetbot", "HCoop Meetbot Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
