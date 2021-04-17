@@ -127,7 +127,10 @@ Anyone can use these commands to log important information in the minutes.
 | ``#help``         | Anyone | Add a call for help into the minutes. Use this command when you need to recruit someone to do a    |
 |                   |        | task. (Counter-intuitively, this does not not provide help for how to use the bot.)                |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
-| ``#link``         | Anyone | Add a link to the meeting minutes.  Additionally, certain common URL patterns are auto-detected.   |
+| ``#link``         | Anyone | Add a link to the meeting minutes.  Additionally, certain common URL patterns are auto-detected    |
+|                   |        | even if you do not use ``#link``.  Use like ``#link https://whatever.com/agenda.html`` or          |
+|                   |        | ``#link Agenda at https://whatever/agenda.html like usual``. The URL portion of the                |
+|                   |        | message will be turned into an ``<a href>`` in the generated minutes.                              |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
 
 Administrative Commands

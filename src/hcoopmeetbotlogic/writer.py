@@ -35,6 +35,10 @@ _OPERATION_REGEX = re.compile(r"(^\s*)(#\w+)(\s*)(.*$)", re.IGNORECASE)
 _OPERATION_GROUP = 2
 _OPERAND_GROUP = 4
 
+# Pulls a URL out of a LINK event
+_URL_REGEX = re.compile(r"(^.*)((http|https|irc|ftp|mailto|ssh)(://)([^\s]*))(.*$)")
+_URL_GROUP = 2
+
 # Identifies a nick at the front of the payload, to be highlighted
 _NICK_REGEX = re.compile(r"(^[^\s]+:(?!//))")  # note: lookback (?!//) prevents us from matching URLs
 
@@ -140,6 +144,7 @@ class _MeetingEvent:
     timestamp = attr.ib(type=str)
     nick = attr.ib(type=str)
     payload = attr.ib(type=str)
+    link = attr.ib(type=Optional[str], default=None)
 
 
 @attr.s(frozen=True)
@@ -224,6 +229,17 @@ class _MeetingMinutes:
                     nick=event.message.sender,
                 )
                 topics.append(current)
+            elif event.event_type == EventType.LINK:
+                url_match = _URL_REGEX.match("%s" % event.operand)
+                item = _MeetingEvent(
+                    id=event.id,
+                    event_type=event.event_type.value,
+                    timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
+                    nick=event.message.sender,
+                    payload="%s" % event.operand,
+                    link=url_match.group(_URL_GROUP) if url_match else None,
+                )
+                current.events.append(item)
             elif event.event_type not in _EXCLUDED:  # some things are adminstrative and aren't relevant
                 item = _MeetingEvent(
                     id=event.id,

@@ -57,8 +57,8 @@ def _meeting() -> Meeting:
     # these messages and events will be associated with the prologue, because no topic has been set yet
     tracked = meeting.track_message(message=_message(1, "pronovic", "Hello everyone, is it ok to get started?", 32))
     tracked = meeting.track_message(message=_message(2, "unknown_lamer", "Yeah, let's do it", 97))
-    tracked = meeting.track_message(message=_message(3, "pronovic", "#link https://whatver/agenda.html", 123))
-    meeting.track_event(event_type=EventType.LINK, message=tracked, operand="https://whatver/agenda.html")
+    tracked = meeting.track_message(message=_message(3, "pronovic", "#link Agenda at https://whatever/agenda.html like usual", 123))
+    meeting.track_event(event_type=EventType.LINK, message=tracked, operand="Agenda at https://whatever/agenda.html like usual")
 
     # these messages and events are associated with the attendance topic
     # note that we track attendees manually since that's what would be done by the command interpreter

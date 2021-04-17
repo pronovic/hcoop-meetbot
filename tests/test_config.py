@@ -39,7 +39,7 @@ class TestParsing:
         config = load_config(logger, conf_dir)
         assert config.conf_file == os.path.join(VALID_DIR, "HcoopMeetbot.conf")
         assert config.log_dir == "/tmp/meetings"
-        assert config.url_prefix == "https://whatever.com/meetings"
+        assert config.url_prefix == "https://whatever/meetings"
         assert config.pattern == "{name}-%Y%m%d"
         assert config.timezone == "America/Chicago"
 

@@ -116,6 +116,13 @@ class TestFunctions:
         run_dispatch("#idea some stuff", "idea", "some stuff", dispatcher.do_idea)
         run_dispatch("#help some stuff", "help", "some stuff", dispatcher.do_help)
         run_dispatch("#link http://whatever", "link", "http://whatever", dispatcher.do_link)
+        run_dispatch("http://whatever", "link", "http://whatever", dispatcher.do_link)  # auto-detected as a #link event
+        run_dispatch(
+            "#link Agenda at https://whatever/agenda.html like usual",
+            "link",
+            "Agenda at https://whatever/agenda.html like usual",
+            dispatcher.do_link,
+        )
 
     @patch("hcoopmeetbotlogic.command.hasattr")
     @patch("hcoopmeetbotlogic.command.getattr")

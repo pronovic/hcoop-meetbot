@@ -65,8 +65,8 @@ ol.decimal {
                     <li py:for="event in topic.events">
                         <span class="event">${event.event_type}: </span>
                         <py:choose>
-                            <py:when test="event.event_type == 'LINK'">
-                                <span class="${event.event_type}"><a href="${event.payload}">${event.payload}</a></span>
+                            <py:when test="event.link is not None">
+                                <span class="${event.event_type}"><a href="${event.link}">${event.payload}</a></span>
                             </py:when>
                             <py:otherwise>
                                 <span class="${event.event_type}">${event.payload}</span>
