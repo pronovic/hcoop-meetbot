@@ -1,6 +1,9 @@
 # Compiled Python code
 __pycache__
 
+# Pytest cache
+.pytest_cache
+
 # Local bot directory and generated meeting logs
 /localbot
 /meetings
