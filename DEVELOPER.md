@@ -207,7 +207,7 @@ Go to settings and find the `hcoop-meetbot` project.  Under **Python Interpreter
 Under **Project Structure**, mark both `src` and `tests` as source folders.  In the **Exclude Files** box, enter the following:
 
 ```
-CREDITS;LICENSE;PyPI.md;.coverage;.coveragerc;.github;.gitignore;.gitattributes;.htmlcov;.idea;.isort.cfg;.mypy.ini;.mypy_cache;.pre-commit-config.yaml;.pylintrc;.pytest.ini;.pytest_cache;.readthedocs.yml;.tox;.toxrc;build;dist;docs/_build;out;poetry.lock;run;.tabignore;localbot;test-conf;test-data;tmp;web
+LICENSE;NOTICE;PyPI.md;.coverage;.coveragerc;.github;.gitignore;.gitattributes;.htmlcov;.idea;.isort.cfg;.mypy.ini;.mypy_cache;.pre-commit-config.yaml;.pylintrc;.pytest_cache;.readthedocs.yml;.tox;.toxrc;.tabignore;build;dist;docs/_build;out;poetry.lock;poetry.toml;run;localbot;test-conf;test-data;tmp;web;backup
 ```
 
 Finally, go to the gear icon in the project panel, and uncheck **Show Excluded Files**.  This will hide the files and directories that were excluded above.
