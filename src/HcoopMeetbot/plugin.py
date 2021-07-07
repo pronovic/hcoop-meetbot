@@ -13,8 +13,7 @@ Implement the HcoopMeetbot plugin in terms of Limnoria functionality.
 import importlib
 from uuid import uuid4
 
-import supybot.ircmsgs as ircmsgs
-from supybot import callbacks, conf, world
+from supybot import callbacks, conf, ircmsgs, world
 from supybot.commands import optional, wrap
 
 from hcoopmeetbotlogic import handler, interface
