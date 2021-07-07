@@ -264,6 +264,9 @@ different option (i.e. for "Unittest" instead of "pytest") then you probably
 skipped the preferences setup discussed above.  You may need to remove the
 run configuration before PyCharm will find the right test suite.
 
+> _Note:_ Keep in mind that the specialized Limnoria test suite can only be run
+> from the command line, not from within PyCharm. 
+
 ### External Tools
 
 Optionally, you might want to set up external tools for some of common
