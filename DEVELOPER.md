@@ -2,35 +2,70 @@
 
 ## Supported Platforms
 
-This plugin was written and tested on Debian GNU/Linux, but should also work on MacOS.  The code itself is portable, but Limnoria (Supybot) doesn't always work as expected on Windows, so I've decided not to try.
+This plugin was written and tested on Debian GNU/Linux, but should also work on
+MacOS.  The code itself is portable, but Limnoria (Supybot) doesn't always work
+as expected on Windows, so I've decided not to try.
 
 ## Architecture and Test Design
 
-Limnoria (Supybot) plugins are quite specialized, with a standard code structure and a dedicated test framework.  For this implementation, I have chosen to make the Limnoria plugin in [`HcoopMeetbot`](src/HcoopMeetbot) as a very thin wrapper over functionality implemented in the companion [`hcoopmeetbotlogic`](src/hcoopmeetbotlogic) package.  The interface has been abstracted, and the backend logic is not even aware of Limnoria.  By using this design, we can minimize the testing needed to prove that the plugin is wired up properly.  It's also easier to unit test the business logic, and easier to apply code checks like MyPy.  
+Limnoria (Supybot) plugins are quite specialized, with a standard code
+structure and a dedicated test framework.  For this implementation, I have
+chosen to make the Limnoria plugin in [`HcoopMeetbot`](src/HcoopMeetbot) as a
+very thin wrapper over functionality implemented in the companion [`hcoopmeetbotlogic`](src/hcoopmeetbotlogic) package.  The 
+interface has been abstracted, and the backend logic is not even aware of
+Limnoria.  By using this design, we can minimize the testing needed to prove
+that the plugin is wired up properly.  It's also easier to unit test the
+business logic, and easier to apply code checks like MyPy.  
 
-There are two different test suites.  The first, in [`src/HcoopMeetbot/test.py`](src/HcoopMeetbot/test.py), is the Limnoria test suite.  This must be executed via `supybot-test` &mdash; you can't run it any other way.  The second, in the [`tests`](tests) package, is a standard Pytest suite.  The `run test` task (discussed below) executes both suites and combines the coverage results together into a single report.
+There are two different test suites.  The first, in [`src/HcoopMeetbot/test.py`](src/HcoopMeetbot/test.py), is 
+the Limnoria test suite.  This must be executed via `supybot-test` &mdash; you
+can't run it any other way.  The second, in the [`tests`](tests) package, is a
+standard Pytest suite.  The `run test` task (discussed below) executes both
+suites and combines the coverage results together into a single report.
 
 ## Packaging and Dependencies
 
 This project uses [Poetry](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.  
 
-A coding standard is enforced using [Black](https://github.com/psf/black), [isort](https://pypi.org/project/isort/) and [Pylint](https://www.pylint.org/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  Additional code security standards are enforced [Safety](https://github.com/pyupio/safety).
+A coding standard is enforced using [Black](https://github.com/psf/black), [isort](https://pypi.org/project/isort/) and [Pylint](https://www.pylint.org/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  To reduce boilerplate, classes are defined using [Attrs](https://www.attrs.org/) (see this [rationale](https://glyph.twistedmatrix.com/2016/08/attrs.html)).  Additional code security standards are enforced [Safety](https://github.com/pyupio/safety).
 
 ## Pre-Commit Hooks
 
-We rely on pre-commit hooks to ensure that the code is properly-formatted, clean, and type-safe when it's checked in.  The `run install` step described below installs the project pre-commit hooks into your repository.  These hooks are configured in [`.pre-commit-config.yaml`](.pre-commit-config.yaml).
+We rely on pre-commit hooks to ensure that the code is properly-formatted,
+clean, and type-safe when it's checked in.  The `run install` step described
+below installs the project pre-commit hooks into your repository.  These hooks
+are configured in [`.pre-commit-config.yaml`](.pre-commit-config.yaml).
 
-If necessary, you can temporarily disable a hook using Git's `--no-verify` switch.  However, keep in mind that the CI build on GitHub enforces these checks, so the build will fail.
+If necessary, you can temporarily disable a hook using Git's `--no-verify`
+switch.  However, keep in mind that the CI build on GitHub enforces these
+checks, so the build will fail.
 
 ## Line Endings
 
-The [`.gitattributes`](.gitattributes) file controls line endings for the files in this repository.  It would be simplest to have files in the Git working copy use native line endings.  However, I develop this code on multiple platforms, and the files in the published PyPI package get the line endings from the working copy.  If we use native line endings, the format of the published package will vary depending on where the publish step was run.  This is confusing, and can cause problems for downstream users who expect the PyPI package to have a consistent format.  Instead of relying on automatic behavior, the `.gitattributes` file forces most files to have UNIX line endings.  
+The [`.gitattributes`](.gitattributes) file controls line endings for the files
+in this repository.  It would be simplest to have files in the Git working copy
+use native line endings.  However, I develop this code on multiple platforms,
+and the files in the published PyPI package get the line endings from the
+working copy.  If we use native line endings, the format of the published
+package will vary depending on where the publish step was run.  This is
+confusing, and can cause problems for downstream users who expect the PyPI
+package to have a consistent format.  Instead of relying on automatic behavior,
+the `.gitattributes` file forces most files to have UNIX line endings.
 
-This generally works ok, except for the [`docs/requirements.txt`](docs/requirements.txt) file generated by Poetry.  Unfortunately, all of the files that Poetry generates have native platform line endings, and you can't override that behavior.  Even with sane configuration in `.gitattributes`, you sometimes still get spurious differences, where Git says that a file has changed but then `git diff` shows an empty result.  The `run` script and the pre-commit hooks both normalize the line endings for `requirements.txt` using [`utils/dos2unix.py`](utils/dos2unix.py).  I wish there were a standard way to do this in Poetry or in Python, but there isn't as of this writing.
+This generally works ok, except for the [`docs/requirements.txt`](docs/requirements.txt) file
+generated by Poetry.  Unfortunately, all of the files that Poetry generates
+have native platform line endings, and you can't override that behavior.  Even
+with sane configuration in `.gitattributes`, you sometimes still get spurious
+differences, where Git says that a file has changed but then `git diff` shows
+an empty result.  The `run` script and the pre-commit hooks both normalize the
+line endings for `requirements.txt` using [`utils/dos2unix.py`](utils/dos2unix.py).  I wish
+there were a standard way to do this in Poetry or in Python, but there isn't as
+of this writing.
 
-## Prequisites
+## Prerequisites
 
-Nearly all prerequisites are managed by Poetry.  All you need to do is make sure that you have a working Python 3 enviroment and install Poetry itself.  
+Nearly all prerequisites are managed by Poetry.  All you need to do is make
+sure that you have a working Python 3 enviroment and install Poetry itself.
 
 ### MacOS
 
@@ -41,7 +76,9 @@ $ brew install python3
 $ brew install poetry
 ```
 
-When you're done, you probably want to set up your profile so the `python` on your `$PATH` is Python 3 from Homebrew (in `/usr/local`).  By default, you'll get the standard Python 2 that comes with MacOS.
+Once that's done, make sure the `python` on your `$PATH` is Python 3 from
+Homebrew (in `/usr/local`), rather than the standard Python 2 that comes with
+MacOS.
 
 ### Debian
 
@@ -51,48 +88,16 @@ First, install Python 3 and related tools:
 $ sudo apt-get install python3 python3-venv python3-pip
 ```
 
-Once that's done, make sure Python 3 is the default on your system.  There are a couple of ways to do this, but using `update-alternatives` as discussed on [StackOverflow](https://unix.stackexchange.com/a/410851) is probably the best.
+Once that's done, make sure Python 3 is the default `python` on your
+system.  There are a couple of ways to do this, but using `update-alternatives` as
+discussed on [StackExchange](https://unix.stackexchange.com/a/410851) is probably
+the best.
 
 Then, install Poetry in your home directory:
 
 ```
 $ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 ```
-
-## Configure Poetry's Python Interpreter
-
-At this point, you can either let Poetry use its defaults, or tell it explicity which Python interpreter you want it to use.  On MacOS anyway, Poetry >= v1.1.3 seems to be quite aggressive about using the most recent version of Python available on my system (even if it's not on my `$PATH`), which is not always what I want.
-
-To force Poetry to use a particular version of Python on the `$PATH`, do this:
-
-```
-$ poetry env use 3.8
-```
-
-To force Poetry to use a version that isn't on the `$PATH`, you can't just use the version number as shown above.  You have to provide the whole path:
-
-```
-$ poetry env use /usr/local/Cellar/python@3.9/3.9.0/bin/python3.9
-```
-
-You can check the version that is in use with:
-
-```
-$ poetry env info
-```
-
-If you switch between versions, it is a good idea to sanity check what is actually being used.  I've noticed that if I start on 3.8 and then switch to 3.9 (in the order shown above), then `python env info` still reports Python 3.8.6 when I'm done.  The fix seems to be to remove the virutalenvs and start over:
-
-```
-$ poetry env list
-$ poetry env remove <item>
-```
-
-For more background, see [this discussion](https://github.com/python-poetry/poetry/issues/522) and also [Poetry PR #731](https://github.com/python-poetry/poetry/pull/731).
-
-## Activating the Virtual Environment
-
-Poetry manages the virtual environment used for testing.  Theoretically, the Poetry `shell` command gives you a shell using that virutalenv.  However, it doesn't work that well.  Instead, it's simpler to just activate the virtual environment directly.  The [`run`](run) script has an entry that dumps out the correct `source` command. Otherwise, see [`notes/venv.sh`](notes/venv.sh) for a way to set up a global alias that activates any virtualenv found in the current directory.
 
 ## Developer Tasks
 
@@ -125,9 +130,12 @@ Usage: run <command>
 
 ## Local Testing
 
-Local testing is straightforward.  Instructions below are for Debian, but setup should be similar on other platforms.
+Local testing is straightforward.  Instructions below are for Debian, but setup
+should be similar on other platforms.
 
-First, install an IRC server.  The [InspIRCd](https://www.inspircd.org/) server works well and there are are Debian-specific install [instructions](https://wiki.debian.org/InspIRCd) if you need more help:
+First, install an IRC server.  The [InspIRCd](https://www.inspircd.org/) server
+works well and there are are Debian-specific install [instructions](https://wiki.debian.org/InspIRCd) if 
+you need more help:
 
 ```
 $ sudo apt-get install inspircd
@@ -162,73 +170,119 @@ INFO 2021-02-14T17:06:50 Got end of MOTD from irc.local
 INFO 2021-02-14T17:06:54 Join to #localtest on LocalNet synced in 4.01 seconds.
 ```
 
-Notice that this takes a few seconds to complete, and there's always an initial `ConnectionRefusedError`.  Once it's done, if you look over in your IRC window, you should see a notification that the local bot has joined the `#localtest` channel:
+Notice that this takes a few seconds to complete, and there's always an initial
+`ConnectionRefusedError`.  Once it's done, if you look over in your IRC window,
+you should see a notification that the local bot has joined the `#localtest`
+channel:
 
 ```
 17:06 -!- localbot [limnoria@127.0.0.1] has joined #localtest
 ```
 
-You can now interact with the local bot using `localbot: <command>`, or using `@<command>` as a shortcut.  
+You can now interact with the local bot using `localbot: <command>`, or using
+`@<command>` as a shortcut.  
 
-The `HcoopMeetbot` plugin is automatically available in the bot, running out of the source tree.  If you make changes to the code, you can either reload using `@reload HcoopMeetbot` or just CTRL-C the bot and restart it.  If reload doesn't seem to work as expected, just use CTRL-C.
+The `HcoopMeetbot` plugin is automatically available in the bot, running out of
+the source tree.  If you make changes to the code, you can either reload using
+`@reload HcoopMeetbot` or just CTRL-C the bot and restart it.  If reload
+doesn't seem to work as expected, just use CTRL-C.
 
-> `Note:` The first time you use `run bot`, a `localbot` directory is create with a `localbot.conf` file based on the original template in `util/localbot.conf.template`.  If something gets screwed up and you want to start over, just blow away the `localbot` directory and it will be recreated by `run bot`.  
+> `Note:` The first time you use `run bot`, a `localbot` directory is created
+> with a `localbot.conf` file based on the original template in
+> `util/localbot.conf.template`.  If something gets screwed up and you want to
+> start over, just blow away the `localbot` directory and it will be recreated
+> by `run bot`.  
 
 ## Integration with PyCharm
 
-By integrating Black and Pylint, most everything important that can be done from a shell environment can also be done right in PyCharm.
+Currently, I use [PyCharm Community Edition](https://www.jetbrains.com/pycharm/download) as
+my day-to-day IDE.  By integrating Black and Pylint, most everything important
+that can be done from a shell environment can also be done right in PyCharm.
 
-Unfortunately, it is somewhat difficult to provide a working PyCharm configuration that other developers can simply import. There are still some manual steps required.  I have checked in a minimal `.idea` directory, so at least all developers can share a single inspection profile, etc.
+PyCharm offers a good developer experience.  However, the underlying configuration
+on disk mixes together project policy (i.e. preferences about which test runner to
+use) with system-specific settings (such as the name and version of the active Python
+interpreter). This makes it impossible to commit complete PyCharm configuration
+to the Git repository.  Instead, the repository contains partial configuration, and
+there are instructions below about how to manually configure the remaining items.
 
 ### Prerequisites
 
-Before going any further, make sure sure that you installed all of the system prerequisites discussed above.  Then, make sure your environment is in working order.  In particular, if you do not run the install step, there will be no virtualenv for PyCharm to use:
+Before going any further, make sure sure that you have installed all of the system
+prerequisites discussed above.  Then, make sure your environment is in working
+order.  In particular, if you do not run the install step, there will be no
+virtualenv for PyCharm to use:
 
 ```
-$ run install
-$ run test
-$ run checks
+$ run install && run checks && run test
 ```
 
-Once you have a working shell development environment, **Open** (do not **Import**) the `hcoop-meetbot` directory in PyCharm and follow the remaining instructions below.  (By using **Open**, the existing `.idea` directory will be retained.)  
+### Open the Project
 
-### Project and Module Setup
+Once you have a working shell development environment, **Open** (do not
+**Import**) the `hcoop-meetbot` directory in PyCharm, then follow the remaining
+instructions below.  By using **Open**, the existing `.idea` directory will be
+retained and all of the existing settings will be used.
 
-Run the following to find the location of the Python virtualenv managed by Poetry:
+### Interpreter
+
+As a security precaution, PyCharm does not trust any virtual environment
+installed within the repository, such as the Poetry `.venv` directory. In the
+status bar on the bottom right, PyCharm will report _No interpreter_.  Click
+on this error and select **Add Interpreter**.  In the resulting dialog, click
+**Ok** to accept the selected environment, which should be the Poetry virtual
+environment.
+
+### Project Structure
+
+Go to the PyCharm settings and find the `hcoop-meetbot` project.  Under 
+**Project Structure**, mark both `src` and `tests` as source folders.  In 
+the **Exclude Files** box, enter the following: 
 
 ```
-$ poetry run which python
+LICENSE;NOTICE;PyPI.md;.coverage;.coveragerc;.github;.gitignore;.gitattributes;.htmlcov;.idea;.isort.cfg;.mypy.ini;.mypy_cache;.pre-commit-config.yaml;.pylintrc;.pytest_cache;.readthedocs.yml;.tox;.toxrc;.tabignore;build;dist;docs/_build;out;poetry.lock;poetry.toml;run;localbot;test-conf;test-data;tmp;web;backup
 ```
 
-#### PyCharm
+When you're done, click **Ok**.  Then, go to the gear icon in the project panel
+and uncheck **Show Excluded Files**.  This will hide the files and directories
+in the list above.
 
-Go to settings and find the `hcoop-meetbot` project.  Under **Python Interpreter**, select the Python virtualenv from above.
+### Tool Preferences
 
-Under **Project Structure**, mark both `src` and `tests` as source folders.  In the **Exclude Files** box, enter the following:
-
-```
-CREDITS;LICENSE;PyPI.md;.coverage;.coveragerc;.github;.gitignore;.gitattributes;.htmlcov;.idea;.isort.cfg;.mypy.ini;.mypy_cache;.pre-commit-config.yaml;.pylintrc;.pytest.ini;.pytest_cache;.readthedocs.yml;.tox;.toxrc;build;dist;docs/_build;out;poetry.lock;run;.tabignore;localbot;test-conf;test-data;tmp;web
-```
-
-Finally, go to the gear icon in the project panel, and uncheck **Show Excluded Files**.  This will hide the files and directories that were excluded above.
-
-### Preferences
-
-Unit tests are written using [Pytest](https://docs.pytest.org/en/latest/), and API documentation is written using [Google Style Python Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html).  However, neither of these is the default in IntelliJ or PyCharm.
-
-In settings, go to **Tools > Python Integrated Tools**.  Under **Testing > Default test runner**, select _pytest_.  Under **Docstrings > Docstring format**, select _Google_.
+Unit tests are written using [Pytest](https://docs.pytest.org/en/latest/),
+and API documentation is written
+using [Google Style Python Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html).  However,
+neither of these is the default in PyCharm.  In the PyCharm settings, go to
+**Tools > Python Integrated Tools**.  Under **Testing > Default test runner**,
+select _pytest_.  Under **Docstrings > Docstring format**, select _Google_.
 
 ### Running Unit Tests
 
-Right-click on the `tests` folder in the project explorer and choose **Run 'pytest in tests'**.  Make sure that all of the tests pass. 
+Right click on the `tests` folder in the project explorer and choose **Run
+'pytest in tests'**.  Make sure that all of the tests pass.  If you see a slightly
+different option (i.e. for "Unittest" instead of "pytest") then you probably
+skipped the preferences setup discussed above.  You may need to remove the
+run configuration before PyCharm will find the right test suite.
+
+> _Note:_ Keep in mind that the specialized Limnoria test suite can only be run
+> from the command line, not from within PyCharm. 
 
 ### External Tools
 
-Optionally, you might want to set up external tools in PyCharm for some of common developer tasks: code reformatting and the PyLint and MyPy checks.  One nice advantage of doing this is that you can configure an output filter, which makes the Pylint and MyPy errors clickable in IntelliJ.  To set up external tools, go to PyCharm settings and find **Tools > External Tools**.  Add the tools as described below. 
+Optionally, you might want to set up external tools for some of common
+developer tasks: code reformatting and the PyLint and MyPy checks.  One nice
+advantage of doing this is that you can configure an output filter, which makes
+the Pylint and MyPy errors clickable.  To set up external tools, go to PyCharm
+settings and find **Tools > External Tools**.  Add the tools as described
+below.
 
 #### Shell Environment
 
-For this to work, it's important that tools like `poetry` are on the system path used by PyCharm.  On Linux, depending on how you start PyCharm, your normal shell environment may or may not be inherited.  For instance, I had to adjust the target of my LXDE desktop shortcut to be the script below, which sources my profile before running the `pycharm.sh` shell script:
+For this to work, it's important that tools like `poetry` are on the system
+path used by PyCharm.  On Linux, depending on how you start PyCharm, your
+normal shell environment may or may not be inherited.  For instance, I had to
+adjust the target of my LXDE desktop shortcut to be the script below, which
+sources my profile before running the `pycharm.sh` shell script:
 
 ```sh
 #!/bin/bash
@@ -252,7 +306,7 @@ source ~/.bash_profile
 |Make console active on message in stderr|_Unchecked_|
 |Output filters|_Empty_|
 
-##### Run MyPy Checks
+#### Run MyPy Checks
 
 |Field|Value|
 |-----|-----|
@@ -268,7 +322,7 @@ source ~/.bash_profile
 |Make console active on message in stderr|_Checked_|
 |Output filters|`$FILE_PATH$:$LINE$:$COLUMN$:.*`|
 
-##### Run Pylint Checks
+#### Run Pylint Checks
 
 |Field|Value|
 |-----|-----|
@@ -284,7 +338,7 @@ source ~/.bash_profile
 |Make console active on message in stderr|_Checked_|
 |Output filters|`$FILE_PATH$:$LINE$:$COLUMN.*`|
 
-##### Run Safety Checks
+#### Run Safety Checks
 
 |Field|Value|
 |-----|-----|
@@ -304,29 +358,40 @@ source ~/.bash_profile
 
 ### Documentation
 
-Documentation at [Read the Docs](https://hcoop-meetbot.readthedocs.io/en/stable/) is generated via a GitHub hook each time code is pushed to master.  So, there is no formal release process for the documentation.
+Documentation at [Read the Docs](https://hcoop-meetbot.readthedocs.io/en/stable/)
+is generated via a GitHub hook each time code is pushed to master.  So, there
+is no formal release process for the documentation.
 
 ### Code
 
-Code is released to [PyPI](https://pypi.org/project/hcoop-meetbot/).  There is a partially-automated process to publish a new release.  
+Code is released to [PyPI](https://pypi.org/project/hcoop-meetbot/).  There is a
+partially-automated process to publish a new release.
 
-> _Note:_ In order to publish code, you must must have push permissions to the GitHub repo and be a collaborator on the PyPI project.  Before running this process for the first time, you must set up a PyPI API token and configure Poetry to use it.  (See notes below.)
+> _Note:_ In order to publish code, you must must have push permissions to the
+> GitHub repo and be a collaborator on the PyPI project.  Before running this
+> process for the first time, you must set up a PyPI API token and configure
+> Poetry to use it.  (See notes below.)
 
-Ensure that you are on the `master` branch.  Releases must always be done from `master`.
+Ensure that you are on the `master` branch.  Releases must always be done from
+`master`.
 
-Ensure that the `Changelog` is up-to-date and reflects all of the changes that will be published.  The top line must show your version as unreleased:
+Ensure that the `Changelog` is up-to-date and reflects all of the changes that
+will be published.  The top line must show your version as unreleased:
 
 ```
-Version 0.1.0      unreleased
+Version 0.1.29     unreleased
 ```
 
 Run the release step:
 
 ```
-$ run release 0.1.0
+$ run release 0.1.29
 ```
 
-This updates `pyproject.toml` and the `Changelog` to reflect the released version, then commits those changes and tags the code.  Nothing has been pushed or published yet, so you can always remove the tag (i.e. `git tag -d v0.1.0`) and revert your commit (`git reset HEAD~1`) if you made a mistake.
+This updates `pyproject.toml` and the `Changelog` to reflect the released
+version, then commits those changes and tags the code.  Nothing has been pushed
+or published yet, so you can always remove the tag (i.e. `git tag -d v0.1.29`)
+and revert your commit (`git reset HEAD~1`) if you made a mistake.
 
 Finally, publish the release:
 
@@ -334,48 +399,62 @@ Finally, publish the release:
 $ run publish
 ```
 
-This builds the deployment artifacts, publishes the artifacts to PyPI, and pushes the repo to GitHub.  The code will be available on PyPI for others to use after a little while, sometimes within a minute or two, and sometimes as much as half an hour later.
+This builds the deployment artifacts, publishes the artifacts to PyPI, and
+pushes the repo to GitHub.  The code will be available on PyPI for others to
+use after a little while.
 
 ### Configuring the PyPI API Token
 
-First, in your PyPI [account settings](https://pypi.org/manage/account/), create an API token with upload permissions for the hcoop-meetbot project.
+In order to publish to PyPI, you must configure Poetry to use a PyPI API token.  Once
+you have the token, you will configure Poetry to use it.  Poetry relies on
+the Python keyring to store this secret.  On MacOS and Windows, it will use the
+system keyring, and no other setup is required.  If you are using Debian, the
+process is more complicated.  See the notes below.
 
-Once you have the token, you will configure Poetry to use it.  Poetry relies on the Python keyring to store this secret.  On MacOS, it will use the system keyring, and no other setup is required.  
+First, in your PyPI [account settings](https://pypi.org/manage/account/),
+create an API token with upload permissions for the hcoop-meetbot project.
+Once you have a working keyring, configure Poetry following
+the [instructions](https://python-poetry.org/docs/repositories/#configuring-credentials):
 
-On Debian, the process is more complicated (see the the [keyring documentation](https://pypi.org/project/keyring/) for more details).  
+```
+poetry config pypi-token.pypi <the PyPI token>
+```
 
-First, install a keyring manager, and then log out:
+Note that this leaves your actual secret in the command-line history, so make sure
+to scrub it once you're done.
+
+### Python Keyring on Debian
+
+On Debian, the process really only works from an X session.  There is a way to
+manipulate the keyring without being in an X session, and I used to document it
+here. However, it's so ugly that I don't want to encourage anyone to use it.  If
+you want to dig in on your own, see the [keyring documentation](https://pypi.org/project/keyring/)
+under the section **Using Keyring on headless Linux systems**.
+
+Some setup is required to initialize the keyring in your Debian system. First,
+install the `gnome-keyring` package, and then log out:
 
 ```
 $ sudo apt-get install gnome-keyring
 $ exit
 ```
 
-Log back in and initialize your keyring by setting and then removing a dummy value:
+Log back in and initialize your keyring by setting and then removing a dummy
+value:
 
 ```
 $ keyring set testvalue "user"
-Password for 'user' in 'testvalue': 
-Please enter password for encrypted keyring: 
+Password for 'user' in 'testvalue':
+Please enter password for encrypted keyring:
 
 $ keyring get testvalue "user"
-Please enter password for encrypted keyring: 
+Please enter password for encrypted keyring:
 password
 
 $ keyring del testvalue "user"
 Deleting password for 'user' in 'testvalue':
 ```
 
-At this point, the keyring should be fully functional.
-
-Now, configure Poetry following the [instructions](https://python-poetry.org/docs/repositories/#configuring-credentials):
-
-```
-poetry config pypi-token.pypi <the PyPI token>
-```
-
-You will have to type in the same keyring password that you set above.  Note that this leaves your actual secret in the command-line history, so make sure to scrub it once you're done.
-
-> _Note:_ The user experience is frankly terrible if you're trying to work on a simple SSH session outside of a Linux desktop.  The GNOME keyring manager wants to pop up its dialog to accept your credentials to unlock the keyring.  That won't work on an SSH session where there is no GUI.  One alternative is to follow the notes in the [keyring documentation](https://pypi.org/project/keyring/) under **Using Keyring on headless Linux systems**.  This gives you a way to unlock the keyring inside a DBUS session. 
-
-> The documented process does work, but it's slow and clunky.  And _you must keep the DBUS session open in a separate terminal window for as long as you need to use the keyring_.  When the instructions say "enter your password and type CTRL-D", they mean that literally.  Don't press Enter first or anything like that.  I've found that it works best if I enter the password and press CTRL-D twice so I get back to the DBUS `$` prompt before proceeding in another window.
+At this point, the keyring should be fully functional and it should be ready
+for use with Poetry.  Whenever Poetry needs to read a secret from the keyring,
+you'll get a popup window where you need to enter the keyring password.
