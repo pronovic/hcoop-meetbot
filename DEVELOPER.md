@@ -11,8 +11,8 @@ as expected on Windows, so I've decided not to try.
 Limnoria (Supybot) plugins are quite specialized, with a standard code
 structure and a dedicated test framework.  For this implementation, I have
 chosen to make the Limnoria plugin in [`HcoopMeetbot`](src/HcoopMeetbot) as a
-very thin wrapper over functionality implemented in the companion [`hcoopmeetbotlogic`](src/hcoopmeetbotlogic) package.  
-The interface has been abstracted, and the backend logic is not even aware of
+very thin wrapper over functionality implemented in the companion [`hcoopmeetbotlogic`](src/hcoopmeetbotlogic) package.  The 
+interface has been abstracted, and the backend logic is not even aware of
 Limnoria.  By using this design, we can minimize the testing needed to prove
 that the plugin is wired up properly.  It's also easier to unit test the
 business logic, and easier to apply code checks like MyPy.  
@@ -27,7 +27,7 @@ suites and combines the coverage results together into a single report.
 
 This project uses [Poetry](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.  
 
-A coding standard is enforced using [Black](https://github.com/psf/black), [isort](https://pypi.org/project/isort/) and [Pylint](https://www.pylint.org/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  Additional code security standards are enforced [Safety](https://github.com/pyupio/safety).
+A coding standard is enforced using [Black](https://github.com/psf/black), [isort](https://pypi.org/project/isort/) and [Pylint](https://www.pylint.org/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  To reduce boilerplate, classes are defined using [Attrs](https://www.attrs.org/) (see this [rationale](https://glyph.twistedmatrix.com/2016/08/attrs.html)).  Additional code security standards are enforced [Safety](https://github.com/pyupio/safety).
 
 ## Pre-Commit Hooks
 
@@ -130,9 +130,12 @@ Usage: run <command>
 
 ## Local Testing
 
-Local testing is straightforward.  Instructions below are for Debian, but setup should be similar on other platforms.
+Local testing is straightforward.  Instructions below are for Debian, but setup
+should be similar on other platforms.
 
-First, install an IRC server.  The [InspIRCd](https://www.inspircd.org/) server works well and there are are Debian-specific install [instructions](https://wiki.debian.org/InspIRCd) if you need more help:
+First, install an IRC server.  The [InspIRCd](https://www.inspircd.org/) server
+works well and there are are Debian-specific install [instructions](https://wiki.debian.org/InspIRCd) if 
+you need more help:
 
 ```
 $ sudo apt-get install inspircd
@@ -167,17 +170,28 @@ INFO 2021-02-14T17:06:50 Got end of MOTD from irc.local
 INFO 2021-02-14T17:06:54 Join to #localtest on LocalNet synced in 4.01 seconds.
 ```
 
-Notice that this takes a few seconds to complete, and there's always an initial `ConnectionRefusedError`.  Once it's done, if you look over in your IRC window, you should see a notification that the local bot has joined the `#localtest` channel:
+Notice that this takes a few seconds to complete, and there's always an initial
+`ConnectionRefusedError`.  Once it's done, if you look over in your IRC window,
+you should see a notification that the local bot has joined the `#localtest`
+channel:
 
 ```
 17:06 -!- localbot [limnoria@127.0.0.1] has joined #localtest
 ```
 
-You can now interact with the local bot using `localbot: <command>`, or using `@<command>` as a shortcut.  
+You can now interact with the local bot using `localbot: <command>`, or using
+`@<command>` as a shortcut.  
 
-The `HcoopMeetbot` plugin is automatically available in the bot, running out of the source tree.  If you make changes to the code, you can either reload using `@reload HcoopMeetbot` or just CTRL-C the bot and restart it.  If reload doesn't seem to work as expected, just use CTRL-C.
+The `HcoopMeetbot` plugin is automatically available in the bot, running out of
+the source tree.  If you make changes to the code, you can either reload using
+`@reload HcoopMeetbot` or just CTRL-C the bot and restart it.  If reload
+doesn't seem to work as expected, just use CTRL-C.
 
-> `Note:` The first time you use `run bot`, a `localbot` directory is create with a `localbot.conf` file based on the original template in `util/localbot.conf.template`.  If something gets screwed up and you want to start over, just blow away the `localbot` directory and it will be recreated by `run bot`.  
+> `Note:` The first time you use `run bot`, a `localbot` directory is created
+> with a `localbot.conf` file based on the original template in
+> `util/localbot.conf.template`.  If something gets screwed up and you want to
+> start over, just blow away the `localbot` directory and it will be recreated
+> by `run bot`.  
 
 ## Integration with PyCharm
 
