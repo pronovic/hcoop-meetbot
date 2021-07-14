@@ -33,7 +33,7 @@ def _context(plugin, irc, msg) -> interface.Context:
 
     # noinspection PyShadowingNames
     def get_topic(irc, channel):
-        return irc.state.channels[channel].topic
+        return irc.state.channels[channel].topic if channel in irc.state.channels else ""
 
     return interface.Context(
         get_topic=lambda: get_topic(irc, channel),
@@ -53,16 +53,19 @@ class HcoopMeetbot(callbacks.Plugin):
 
     def doPrivmsg(self, irc, msg):
         """Capture all messages from supybot."""
+        channel = msg.args[0]
+        topic = irc.state.channels[channel].topic if channel in irc.state.channels else ""
+        users = irc.state.channels[channel].users if channel in irc.state.channels else []
         context = _context(self, irc, msg)
         message = interface.Message(
             id=uuid4().hex,
             timestamp=now(),
             nick=msg.nick,
-            channel=msg.args[0],
+            channel=channel,
             network=irc.msg.tags["receivedOn"],
             payload=msg.args[1],
-            topic=irc.state.channels[msg.args[0]].topic,
-            channel_nicks=["%s" % n for n in irc.state.channels[msg.args[0]].users],
+            topic=topic,
+            channel_nicks=["%s" % n for n in users],
         )
         handler.irc_message(context=context, message=message)
 
