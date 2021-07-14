@@ -1,6 +1,10 @@
+Version 0.4.0     unreleased
+
+	* Handle case where channel is not found.
+
 Version 0.3.1     17 Apr 2021
 
-	* Minor fixes to documentation at PyPI and readhthedocs.io.
+	* Minor fixes to documentation at PyPI and readthedocs.io.
 
 Version 0.3.0     17 Apr 2021
 
