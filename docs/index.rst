@@ -187,32 +187,40 @@ Next, add configuration.  Create a file ``HcoopMeetbot.conf`` in the ``conf`` di
 
 If you skip this step and don't create a config file, the plugin will try to use sensible defaults as shown below.
 
-+---------------+----------------------------------------+----------------------------------------------------------------------+
-| Parameter     | Default Value                          | Description                                                          |
-+===============+========================================+======================================================================+
-| ``logDir``    | ``$HOME/hcoop-meetbot``                | Absolute path where meeting logs will be written on disk.            |
-+---------------+----------------------------------------+----------------------------------------------------------------------+
-| ``urlPrefix`` | ``/``                                  | URL prefix to place on generated links to logfiles that are reported |
-|               |                                        | when the meeting ends.  This can be a simple path, but it is more    |
-|               |                                        | useful if you set it to the base URL where the files will be served  |
-|               |                                        | from, so participants see the entire public URL.                     |
-+---------------+----------------------------------------+----------------------------------------------------------------------+
-| ``pattern``   | ``%Y/{name}.%Y%m%d.%H%M``              | Pattern for files generated in ``logDir``. The following variables   |
-|               |                                        | may be used to substitute in attributes of the meeting: ``{id}``     |
-|               |                                        | ``{name}``, ``{channel}``, ``{network}``, and ``{founder}``.         |
-|               |                                        | Additionally, you may use strftime_ codes for date fields from the   |
-|               |                                        | meeting start date. *Unlike* with the original MeetBot, you do *not* |
-|               |                                        | need to double the ``%`` characters.  The meeting name defaults to   |
-|               |                                        | the channel.  Anywhere in the path, only ``./a-zA-Z0-9_-`` are       |
-|               |                                        | allowed, and any other character will be replaced with ``_``.  You   |
-|               |                                        | may imply a subdirectory by using the ``/`` character as a path      |
-|               |                                        | separator, but directory traversal is not allowed, and the resulting |
-|               |                                        | file must be within ``logDir``.                                      |
-+---------------+----------------------------------------+----------------------------------------------------------------------+
-| ``timezone``  | ``UTC``                                | The timezone to use for files names and in generated content.        |
-|               |                                        | May be any standard IANA_ value, like ``UTC``, ``US/Eastern``,       |
-|               |                                        | or ``America/Chicago``, etc.                                         |
-+---------------+----------------------------------------+----------------------------------------------------------------------+
++---------------------+---------------------------+------------------------------------------------------------------------+
+| Parameter           | Default Value             | Description                                                            |
++=====================+===========================+========================================================================+
+| ``logDir``          | ``$HOME/hcoop-meetbot``   | Absolute path where meeting logs will be written on disk.              |
++---------------------+---------------------------+------------------------------------------------------------------------+
+| ``urlPrefix``       | ``/``                     | URL prefix to place on generated links to logfiles that are reported   |
+|                     |                           | when the meeting ends.  This can be a simple path, but it is more      |
+|                     |                           | useful if you set it to the base URL where the files will be served    |
+|                     |                           | from, so participants see the entire public URL.                       |
++---------------------+---------------------------+------------------------------------------------------------------------+
+| ``pattern``         | ``%Y/{name}.%Y%m%d.%H%M`` | Pattern for files generated in ``logDir``. The following variables     |
+|                     |                           | may be used to substitute in attributes of the meeting: ``{id}``       |
+|                     |                           | ``{name}``, ``{channel}``, ``{network}``, and ``{founder}``.           |
+|                     |                           | Additionally, you may use strftime_ codes for date fields from the     |
+|                     |                           | meeting start date. *Unlike* with the original MeetBot, you do *not*   |
+|                     |                           | need to double the ``%`` characters.  The meeting name defaults to     |
+|                     |                           | the channel.  Anywhere in the path, only ``./a-zA-Z0-9_-`` are         |
+|                     |                           | allowed, and any other character will be replaced with ``_``.  You     |
+|                     |                           | may imply a subdirectory by using the ``/`` character as a path        |
+|                     |                           | separator, but directory traversal is not allowed, and the resulting   |
+|                     |                           | file must be within ``logDir``.                                        |
++---------------------+---------------------------+------------------------------------------------------------------------+
+| ``timezone``        | ``UTC``                   | The timezone to use for files names and in generated content.          |
+|                     |                           | May be any standard IANA_ value, like ``UTC``, ``US/Eastern``,         |
+|                     |                           | or ``America/Chicago``, etc.                                           |
++---------------------+---------------------------+------------------------------------------------------------------------+
+| ``useChannelTopic`` | ``False``                 | Whether the bot should use the channel topic. If set to ``True``,      |
+|                     |                           | the bot will attempt to change the channel topic when the meeting      |
+|                     |                           | starts, when it ends, and whenever the ``#topic`` command is used.     |
+|                     |                           | This often fails with an error like ``You're not a channel operator``, |
+|                     |                           | shown in the Limnoria logs.  However, if you know your bot does have   |
+|                     |                           | permissions to set the channel topic, then can set this to ``True``    | 
+|                     |                           | and the topic will be updated to reflect the state of the meeting.     |
++---------------------+---------------------------+------------------------------------------------------------------------+
 
 Run the Bot
 ~~~~~~~~~~~
@@ -275,4 +283,5 @@ The administrator who owns the Limnoria bot has access to some additional featur
 .. _getting-started: https://docs.limnoria.net/use/getting_started.html
 .. _strftime: https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 .. _IANA: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
 
