@@ -169,13 +169,40 @@ class TestCommandDispatcher:
         meeting.original_topic = None
         meeting.is_chair.return_value = True
         meeting.chairs = ["x", "y"]
+        meeting.current_topic = "The Topic"
         meeting.start_time = datetime(2021, 3, 7, 13, 14, 0)
-        config.return_value = MagicMock(timezone="America/Chicago")
+        config.return_value = MagicMock(timezone="America/Chicago", use_channel_topic=True)
         formatdate.return_value = "11111"
         context.get_topic = MagicMock(return_value="original")
         dispatcher.do_startmeeting(meeting, context, "a", "b", message)
         meeting.track_event.assert_called_once_with(EventType.START_MEETING, message)
-        context.set_topic("b")
+        context.set_topic.assert_called_once_with("The Topic")
+        context.send_reply.assert_has_calls(
+            [
+                call("Meeting started at 11111"),
+                call("Current chairs: x, y"),
+                call("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting"),
+                call("See also: https://hcoop-meetbot.readthedocs.io/en/stable/"),
+            ]
+        )
+        assert meeting.original_topic == "original"
+        formatdate.assert_called_once_with(timestamp=meeting.start_time, zone="America/Chicago")
+
+    @patch("hcoopmeetbotlogic.command.formatdate")
+    @patch("hcoopmeetbotlogic.command.config")
+    def test_startmeeting_as_chair_topic_disabled(self, config, formatdate, dispatcher, meeting, context, message):
+        meeting.active = False
+        meeting.original_topic = None
+        meeting.is_chair.return_value = True
+        meeting.chairs = ["x", "y"]
+        meeting.current_topic = "The Topic"
+        meeting.start_time = datetime(2021, 3, 7, 13, 14, 0)
+        config.return_value = MagicMock(timezone="America/Chicago", use_channel_topic=False)
+        formatdate.return_value = "11111"
+        context.get_topic = MagicMock(return_value="original")
+        dispatcher.do_startmeeting(meeting, context, "a", "b", message)
+        meeting.track_event.assert_called_once_with(EventType.START_MEETING, message)
+        context.set_topic.assert_not_called()
         context.send_reply.assert_has_calls(
             [
                 call("Meeting started at 11111"),
@@ -271,7 +298,9 @@ class TestCommandDispatcher:
         meeting.track_event.assert_not_called()
         context.send_reply.assert_not_called()
 
-    def test_topic_as_chair_empty(self, dispatcher, meeting, context, message):
+    @patch("hcoopmeetbotlogic.command.config")
+    def test_topic_as_chair_empty(self, config, dispatcher, meeting, context, message):
+        config.return_value = MagicMock(use_channel_topic=True)
         meeting.current_topic = None
         meeting.is_chair.return_value = True
         dispatcher.do_topic(meeting, context, "a", "", message)
@@ -279,7 +308,9 @@ class TestCommandDispatcher:
         context.set_topic.assert_called_once_with("Meeting Active")
         assert meeting.current_topic == ""
 
-    def test_topic_as_chair_not_empty(self, dispatcher, meeting, context, message):
+    @patch("hcoopmeetbotlogic.command.config")
+    def test_topic_as_chair_not_empty(self, config, dispatcher, meeting, context, message):
+        config.return_value = MagicMock(use_channel_topic=True)
         meeting.current_topic = None
         meeting.is_chair.return_value = True
         dispatcher.do_topic(meeting, context, "a", "b", message)
@@ -287,7 +318,19 @@ class TestCommandDispatcher:
         context.set_topic.assert_called_once_with("b")
         assert meeting.current_topic == "b"
 
-    def test_topic_as_not_chair(self, dispatcher, meeting, context, message):
+    @patch("hcoopmeetbotlogic.command.config")
+    def test_topic_as_chair_topic_disabled(self, config, dispatcher, meeting, context, message):
+        config.return_value = MagicMock(use_channel_topic=False)
+        meeting.current_topic = None
+        meeting.is_chair.return_value = True
+        dispatcher.do_topic(meeting, context, "a", "b", message)
+        meeting.track_event.assert_called_once_with(EventType.TOPIC, message, operand="b")
+        context.set_topic.assert_not_called()
+        assert meeting.current_topic == "b"
+
+    @patch("hcoopmeetbotlogic.command.config")
+    def test_topic_as_not_chair(self, config, dispatcher, meeting, context, message):
+        config.return_value = MagicMock(use_channel_topic=True)
         meeting.current_topic = None
         meeting.is_chair.return_value = False
         dispatcher.do_topic(meeting, context, "a", "b", message)

@@ -232,13 +232,27 @@ class CommandDispatcher:
 
     def _set_channel_topic(self, meeting: Meeting, context: Context) -> None:
         """Set the channel topic based on the current state of the meeting."""
-        if meeting.active:
-            if meeting.current_topic:
-                context.set_topic("%s" % meeting.current_topic)
+
+        # Attempting to set the topic will sometimes result in an error message like this
+        # in the Limnoria logs:
+        #
+        #   Unhandled error message from server: IrcMsg(server_tags={}, prefix="sodium.libera.chat",
+        #       command="482", args=('mybot', '#mychannel', "You're not a channel operator"))
+        #
+        # As far as I can tell, there's nothing we can do about this.  There does not seem
+        # to be a way to detect whether the bot is a channel operator prior to issuing the
+        # set topic command.  So, if a user knows that the bot won't be able to set the
+        # topic, then they can explicitly configure config.use_channel_topic=False, and we
+        # won't try to set it.
+
+        if config().use_channel_topic:
+            if meeting.active:
+                if meeting.current_topic:
+                    context.set_topic("%s" % meeting.current_topic)
+                else:
+                    context.set_topic("Meeting Active")
             else:
-                context.set_topic("Meeting Active")
-        else:
-            context.set_topic(meeting.original_topic if meeting.original_topic else "")
+                context.set_topic(meeting.original_topic if meeting.original_topic else "")
 
 
 # Singleton command dispatcher

@@ -11,6 +11,7 @@ from hcoopmeetbotlogic.config import Config, load_config
 
 MISSING_DIR = "bogus"
 VALID_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/valid")
+NO_CHANNEL_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/nochannel")
 EMPTY_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/empty")
 INVALID_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/invalid")
 
@@ -24,12 +25,13 @@ def context():
 
 class TestConfig:
     def test_constructor(self):
-        config = Config("conf_file", "log_dir", "url_prefix", "pattern", "timezone")
+        config = Config("conf_file", "log_dir", "url_prefix", "pattern", "timezone", True)
         assert config.conf_file == "conf_file"
         assert config.log_dir == "log_dir"
         assert config.url_prefix == "url_prefix"
         assert config.pattern == "pattern"
         assert config.timezone == "timezone"
+        assert config.use_channel_topic is True
 
 
 class TestParsing:
@@ -42,6 +44,18 @@ class TestParsing:
         assert config.url_prefix == "https://whatever/meetings"
         assert config.pattern == "{name}-%Y%m%d"
         assert config.timezone == "America/Chicago"
+        assert config.use_channel_topic is True
+
+    def test_no_channel_configuration(self):
+        logger = MagicMock()
+        conf_dir = NO_CHANNEL_DIR
+        config = load_config(logger, conf_dir)
+        assert config.conf_file == os.path.join(NO_CHANNEL_DIR, "HcoopMeetbot.conf")
+        assert config.log_dir == "/tmp/meetings"
+        assert config.url_prefix == "https://whatever/meetings"
+        assert config.pattern == "{name}-%Y%m%d"
+        assert config.timezone == "America/Chicago"
+        assert config.use_channel_topic is False
 
     def test_empty_configuration(self):
         logger = MagicMock()
@@ -52,6 +66,7 @@ class TestParsing:
         assert config.url_prefix == "/"
         assert config.pattern == "%Y/{name}.%Y%m%d.%H%M"
         assert config.timezone == "UTC"
+        assert config.use_channel_topic is False
 
     def test_invalid_configuration(self):
         logger = MagicMock()
@@ -62,6 +77,7 @@ class TestParsing:
         assert config.url_prefix == "/"
         assert config.pattern == "%Y/{name}.%Y%m%d.%H%M"
         assert config.timezone == "UTC"
+        assert config.use_channel_topic is False
 
     def test_missing_configuration(self):
         logger = MagicMock()

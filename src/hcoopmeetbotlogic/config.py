@@ -20,11 +20,13 @@ LOG_DIR_KEY = "logDir"
 URL_PREFIX_KEY = "urlPrefix"
 PATTERN_KEY = "pattern"
 TIMEZONE_KEY = "timezone"
+USE_CHANNEL_TOPIC_KEY = "useChannelTopic"
 
 LOG_DIR_DEFAULT = os.path.join(Path.home(), "hcoop-meetbot")
 URL_PREFIX_DEFAULT = "/"
 PATTERN_DEFAULT = "%Y/{name}.%Y%m%d.%H%M"
 TIMEZONE_DEFAULT = "UTC"
+USE_CHANNEL_TOPIC_DEFAULT = False
 
 
 @attr.s(frozen=True)
@@ -38,6 +40,7 @@ class Config:
         url_prefix(str): URL prefix to place on generated links to logfiles
         pattern(str): Pattern for files generated in logFileDir
         timezone(str): Timezone string, any value valid for pytz
+        use_channel_topic(bool): Whether the bot should attempt to use the channel topic
     """
 
     conf_file = attr.ib(type=Optional[str])
@@ -45,6 +48,7 @@ class Config:
     url_prefix = attr.ib(type=str, default=URL_PREFIX_DEFAULT)
     pattern = attr.ib(type=str, default=PATTERN_DEFAULT)
     timezone = attr.ib(type=str, default=TIMEZONE_DEFAULT)
+    use_channel_topic = attr.ib(type=bool, default=USE_CHANNEL_TOPIC_DEFAULT)
 
 
 def load_config(logger: Logger, conf_dir: str) -> Config:
@@ -71,6 +75,7 @@ def load_config(logger: Logger, conf_dir: str) -> Config:
                 url_prefix=parser.get(CONF_SECTION, URL_PREFIX_KEY, fallback=URL_PREFIX_DEFAULT),
                 pattern=parser.get(CONF_SECTION, PATTERN_KEY, fallback=PATTERN_DEFAULT),
                 timezone=parser.get(CONF_SECTION, TIMEZONE_KEY, fallback=TIMEZONE_DEFAULT),
+                use_channel_topic=parser.getboolean(CONF_SECTION, USE_CHANNEL_TOPIC_KEY, fallback=USE_CHANNEL_TOPIC_DEFAULT),
             )
         except Exception:  # pylint: disable=broad-except:
             logger.exception("Failed to parse %s; using defaults", conf_file)
