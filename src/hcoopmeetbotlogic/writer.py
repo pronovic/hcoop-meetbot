@@ -267,7 +267,7 @@ def _write_log(config: Config, locations: Locations, meeting: Meeting) -> None:
         "messages": [_LogMessage.for_message(config, message) for message in meeting.messages],
     }
     os.makedirs(os.path.dirname(locations.log.path), exist_ok=True)
-    with open(locations.log.path, "w") as out:
+    with open(locations.log.path, "w", encoding="utf-8") as out:
         _render_html(template="log.html", context=context, out=out)
 
 
@@ -280,7 +280,7 @@ def _write_minutes(config: Config, locations: Locations, meeting: Meeting) -> No
         "minutes": _MeetingMinutes.for_meeting(config, meeting),
     }
     os.makedirs(os.path.dirname(locations.minutes.path), exist_ok=True)
-    with open(locations.minutes.path, "w") as out:
+    with open(locations.minutes.path, "w", encoding="utf-8") as out:
         _render_html(template="minutes.html", context=context, out=out)
 
 
