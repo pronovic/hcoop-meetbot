@@ -1,3 +1,7 @@
+Version 0.4.1     unreleased
+
+	* Adjust dependencies and build process to support Python 3.10.
+
 Version 0.4.0     14 Jul 2021
 
 	* Handle case where channel is not found.
