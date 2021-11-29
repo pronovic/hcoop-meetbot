@@ -27,7 +27,7 @@ suites and combines the coverage results together into a single report.
 
 This project uses [Poetry](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.  
 
-A coding standard is enforced using [Black](https://github.com/psf/black), [isort](https://pypi.org/project/isort/) and [Pylint](https://www.pylint.org/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  To reduce boilerplate, classes are defined using [Attrs](https://www.attrs.org/) (see this [rationale](https://glyph.twistedmatrix.com/2016/08/attrs.html)).  Additional code security standards are enforced [Safety](https://github.com/pyupio/safety).
+A coding standard is enforced using [Black](https://github.com/psf/black), [isort](https://pypi.org/project/isort/) and [Pylint](https://www.pylint.org/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  To reduce boilerplate, classes are defined using [Attrs](https://www.attrs.org/) (see this [rationale](https://glyph.twistedmatrix.com/2016/08/attrs.html)).
 
 ## Pre-Commit Hooks
 
@@ -349,22 +349,6 @@ source ~/.bash_profile
 |Make console active on message in stdout|_Checked_|
 |Make console active on message in stderr|_Checked_|
 |Output filters|`$FILE_PATH$:$LINE$:$COLUMN.*`|
-
-#### Run Safety Checks
-
-|Field|Value|
-|-----|-----|
-|Name|`Run Safety Checks`|
-|Description|`Run the Safety code checks`|
-|Group|`Developer Tools`|
-|Program|`$ProjectFileDir$/run`|
-|Arguments|`safety`|
-|Working directory|`$ProjectFileDir$`|
-|Synchronize files after execution|_Checked_|
-|Open console for tool outout|_Checked_|
-|Make console active on message in stdout|_Unchecked_|
-|Make console active on message in stderr|_Unchecked_|
-|Output filters|_Empty_|
 
 ## Release Process
 
