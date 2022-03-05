@@ -24,7 +24,7 @@ Release v\ |version|
 .. image:: https://coveralls.io/repos/github/pronovic/hcoop-meetbot/badge.svg?branch=master
     :target: https://coveralls.io/github/pronovic/hcoop-meetbot?branch=master
 
-hcoop-meetbot_ is a plugin for Limnoria_, a bot framework for IRC.  It is designed to help run meetings on IRC.  At HCoop_, we use it to run our quarterly board meetings.
+hcoop-meetbot_ is a plugin for Limnoria_, a bot framework for IRC.  It is designed to help run meetings on IRC.  It was originally written for quarterly board meetings at HCoop_, when Ken was on the board there.
 
 The code is based in part on the MeetBot_ plugin for Supybot written by Richard Darst. Supybot is the predecessor to Limnoria.  Richard's MeetBot was "inspired by the original MeetBot, by Holger Levsen, which was itself a derivative of Mootbot by the Ubuntu Scribes team".  So, this code has a relatively long history.  For this version, much of the plugin was rewritten using Python 3, but it generally follows the pattern set by Richard's original code.
 
