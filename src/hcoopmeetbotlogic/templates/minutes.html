@@ -90,7 +90,7 @@ ol.decimal {
         <h3>Action Items</h3>
         <ol class="decimal">
             <py:for each="action in minutes.actions">
-            <li>${action.text}</li>
+            <li id="${action.id}">${action.text} (<a href="#${action.id}">link</a>)</li>
             </py:for>
         </ol>
 
