@@ -150,6 +150,14 @@ class _MeetingEvent:
 
 
 @attr.s(frozen=True)
+class _MeetingAction:
+    """An action assigned to a meeting attendee."""
+
+    id = attr.ib(type=str)
+    text = attr.ib(type=str)
+
+
+@attr.s(frozen=True)
 class _MeetingTopic:
     """A meeting topic within the minutes, including all of the events tied to it."""
 
@@ -171,7 +179,7 @@ class _MeetingMinutes:
     start_time = attr.ib(type=str)
     end_time = attr.ib(type=str)
     founder = attr.ib(type=str)
-    actions = attr.ib(type=List[str])
+    actions = attr.ib(type=List[_MeetingAction])
     attendees = attr.ib(type=List[_MeetingAttendee])
     topics = attr.ib(type=List[_MeetingTopic])
 
@@ -188,7 +196,12 @@ class _MeetingMinutes:
 
     @staticmethod
     def _actions(meeting: Meeting) -> List[str]:
-        return [event.operand for event in meeting.events if event.event_type == EventType.ACTION and event.operand]
+        actions = []
+        for event in meeting.events:
+            if event.event_type == EventType.ACTION and event.operand:
+                action = _MeetingAction(id="action-%s" % event.id, text=event.operand)
+                actions.append(action)
+        return actions
 
     @staticmethod
     def _attendees(meeting: Meeting) -> List[_MeetingAttendee]:
