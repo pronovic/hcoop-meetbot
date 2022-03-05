@@ -101,7 +101,7 @@ ol.decimal {
                     ${attendee.nick}
                     <ol>
                         <py:for each="action in attendee.actions">
-                        <li>${action.text}</li>
+                        <li>${action.text} (<a href="#${action.id}">link</a>)</li>
                         </py:for>
                     </ol>
                 </li>
