@@ -51,6 +51,7 @@ _EXCLUDED = [
     EventType.TRACK_NICK,
     EventType.ADD_CHAIR,
     EventType.REMOVE_CHAIR,
+    EventType.ATTENDEE,
 ]
 
 
