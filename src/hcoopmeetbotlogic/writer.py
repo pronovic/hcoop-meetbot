@@ -195,7 +195,7 @@ class _MeetingMinutes:
         )
 
     @staticmethod
-    def _actions(meeting: Meeting) -> List[str]:
+    def _actions(meeting: Meeting) -> List[_MeetingAction]:
         actions = []
         for event in meeting.events:
             if event.event_type == EventType.ACTION and event.operand:
