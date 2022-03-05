@@ -1,4 +1,4 @@
-Version 0.4.2     unreleased
+Version 0.5.0     unreleased
 
 	* Remove the Safety scanner from the pre-commit hooks and GitHub action.
 	* Provide deep links for actions in meeting minutes (closes: #14).
