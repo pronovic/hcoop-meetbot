@@ -89,8 +89,9 @@ ol.decimal {
 
         <h3>Action Items</h3>
         <ol class="decimal">
-            <li py:for="action in minutes.actions">${action.text}
-            </li>
+            <py:for each="action in minutes.actions">
+            <li>${action.text}</li>
+            </py:for>
         </ol>
 
         <h3>Action Items by Attendee</h3>
