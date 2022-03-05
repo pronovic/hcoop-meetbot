@@ -56,6 +56,13 @@ ol.decimal {
     <div>
         <span class="details">Meeting started by ${minutes.founder} at ${minutes.start_time} (<a href="${logpath}">full logs</a>).</span>
 
+        <h3>Attendees</h3>
+        <ol class="decimal">
+            <li py:for="attendee in minutes.attendees">
+                ${attendee.nick}<span py:if="attendee.alias"> (aka ${attendee.alias})</span> - ${attendee.count} lines (${attendee.percentage}%)
+            </li>
+        </ol>
+
         <h3>Meeting Summary</h3>
         <ol class="decimal">
             <li py:for="topic in minutes.topics">
@@ -79,13 +86,6 @@ ol.decimal {
         </ol>
 
         <span class="details">Meeting ended at ${minutes.end_time} (<a href="${logpath}">full logs</a>).</span>
-
-        <h3>Attendees</h3>
-        <ol class="decimal">
-            <li py:for="attendee in minutes.attendees">
-                ${attendee.nick}<span py:if="attendee.alias"> (aka ${attendee.alias})</span> - ${attendee.count} lines
-            </li>
-        </ol>
 
         <h3>Action Items</h3>
         <ol class="decimal">

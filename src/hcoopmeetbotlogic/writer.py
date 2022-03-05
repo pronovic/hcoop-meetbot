@@ -51,6 +51,7 @@ _EXCLUDED = [
     EventType.TRACK_NICK,
     EventType.ADD_CHAIR,
     EventType.REMOVE_CHAIR,
+    EventType.ATTENDEE,
 ]
 
 
@@ -132,6 +133,7 @@ class _MeetingAttendee:
     nick = attr.ib(type=str)
     alias = attr.ib(type=Optional[str])
     count = attr.ib(type=int)
+    percentage = attr.ib(type=str)  # stored as a string so we control rounding and format
     actions = attr.ib(type=List[str])
 
 
@@ -191,11 +193,13 @@ class _MeetingMinutes:
     @staticmethod
     def _attendees(meeting: Meeting) -> List[_MeetingAttendee]:
         attendees = []
+        total = sum(meeting.nicks.values())
         for nick in sorted(meeting.nicks.keys()):
             count = meeting.nicks[nick]
+            percentage = "%d" % (round(count / total * 100.0) if total > 0.0 else 0.0)
             alias = meeting.aliases[nick] if nick in meeting.aliases else None
             actions = _MeetingMinutes._attendee_actions(meeting, nick, alias)
-            attendee = _MeetingAttendee(nick=nick, alias=alias, count=count, actions=actions)
+            attendee = _MeetingAttendee(nick=nick, alias=alias, count=count, percentage=percentage, actions=actions)
             attendees.append(attendee)
         return attendees
 
