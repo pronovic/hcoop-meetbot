@@ -100,7 +100,9 @@ ol.decimal {
                 <li py:if="len(attendee.actions) > 0">
                     ${attendee.nick}
                     <ol>
-                        <li py:for="action in attendee.actions">${action}</li>
+                        <py:for each="action in attendee.actions">
+                        <li>${action.text}</li>
+                        </py:for>
                     </ol>
                 </li>
             </py:for>
