@@ -1,6 +1,7 @@
 Version 0.4.2     unreleased
 
 	* Remove the Safety scanner from the pre-commit hooks and GitHub action.
+	* Adjust rendering of attendees in minutes (closes: #15).
 
 Version 0.4.1     15 Nov 2021
 
