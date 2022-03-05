@@ -14,6 +14,7 @@ __pycache__
 /backup
 /test-data
 /test-conf
+/test-logs
 /logs
 
 # Python coverage data
