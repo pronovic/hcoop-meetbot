@@ -127,6 +127,14 @@ class _LogMessage:
 
 
 @attr.s(frozen=True)
+class _MeetingAction:
+    """An action assigned to a meeting attendee."""
+
+    id = attr.ib(type=str)
+    text = attr.ib(type=str)
+
+
+@attr.s(frozen=True)
 class _MeetingAttendee:
     """A meeting attendee, including count of chat lines and all associated actions."""
 
@@ -134,7 +142,7 @@ class _MeetingAttendee:
     alias = attr.ib(type=Optional[str])
     count = attr.ib(type=int)
     percentage = attr.ib(type=str)  # stored as a string so we control rounding and format
-    actions = attr.ib(type=List[str])
+    actions = attr.ib(type=List[_MeetingAction])
 
 
 @attr.s(frozen=True)
@@ -171,7 +179,7 @@ class _MeetingMinutes:
     start_time = attr.ib(type=str)
     end_time = attr.ib(type=str)
     founder = attr.ib(type=str)
-    actions = attr.ib(type=List[str])
+    actions = attr.ib(type=List[_MeetingAction])
     attendees = attr.ib(type=List[_MeetingAttendee])
     topics = attr.ib(type=List[_MeetingTopic])
 
@@ -187,8 +195,13 @@ class _MeetingMinutes:
         )
 
     @staticmethod
-    def _actions(meeting: Meeting) -> List[str]:
-        return [event.operand for event in meeting.events if event.event_type == EventType.ACTION and event.operand]
+    def _actions(meeting: Meeting) -> List[_MeetingAction]:
+        actions = []
+        for event in meeting.events:
+            if event.event_type == EventType.ACTION and event.operand:
+                action = _MeetingAction(id="action-%s" % event.id, text=event.operand)
+                actions.append(action)
+        return actions
 
     @staticmethod
     def _attendees(meeting: Meeting) -> List[_MeetingAttendee]:
@@ -204,14 +217,15 @@ class _MeetingMinutes:
         return attendees
 
     @staticmethod
-    def _attendee_actions(meeting: Meeting, nick: str, alias: Optional[str]) -> List[str]:
+    def _attendee_actions(meeting: Meeting, nick: str, alias: Optional[str]) -> List[_MeetingAction]:
         actions = []
         nick_pattern = re.compile(r"\b%s\b" % nick, re.IGNORECASE)
         alias_pattern = re.compile(r"\b%s\b" % alias, re.IGNORECASE) if alias else None
         for event in meeting.events:
             if event.event_type == EventType.ACTION and event.operand:
                 if nick_pattern.search(event.operand) or (alias_pattern and alias_pattern.search(event.operand)):
-                    actions.append(event.operand)
+                    action = _MeetingAction(id="action-%s" % event.id, text=event.operand)
+                    actions.append(action)
         return actions
 
     @staticmethod
