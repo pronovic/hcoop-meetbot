@@ -6,7 +6,14 @@ authors = ["Kenneth J. Pronovici <pronovic@ieee.org>"]
 license = "Apache-2.0"
 readme = "PyPI.md"
 homepage = "https://pypi.org/project/hcoop-meetbot/"
-include = [ "Changelog", "LICENSE", "CREDITS", "README.md", "docs", "tests" ]
+include = [
+   { path = 'Changelog', format = 'sdist' },
+   { path = 'LICENSE', format = 'sdist' },
+   { path = 'CREDITS', format = 'sdist' },
+   { path = 'README.md', format = 'sdist' },
+   { path = 'docs', format = 'sdist' },
+   { path = 'tests', format = 'sdist' },
+]
 exclude = [ "HcoopMeetbot/test.py" ] # annoyingly, bot tests must live in the source tree
 packages = [ { include = "HcoopMeetbot", from = "src" },
              { include = "hcoopmeetbotlogic", from = "src" } ]
