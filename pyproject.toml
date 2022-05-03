@@ -44,7 +44,7 @@ pytest-testdox = "^3.0.1"
 coverage = "^6.3.2"
 tox = "^3.25.0"
 pylint = "^2.13.8"
-sphinx = "^4.3"
+Sphinx = "^4.5.0"
 toml = "^0.10.2"
 pre-commit = "^2.18.1"
 black = "^22.3.0"
@@ -53,7 +53,6 @@ isort = "^5.10.1"
 sphinx-autoapi = "^1.8.4"
 coveralls = "^3.3.1"
 types-pytz = "^2021.3.7"
-Sphinx = "^4.5.0"
 
 [tool.black]
 line-length = 132
