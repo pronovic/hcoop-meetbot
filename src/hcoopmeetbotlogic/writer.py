@@ -218,9 +218,16 @@ class _MeetingMinutes:
 
     @staticmethod
     def _attendee_actions(meeting: Meeting, nick: str, alias: Optional[str]) -> List[_MeetingAction]:
+        # There are some kinds of nicks or aliases that we can't successfully identify,
+        # especially ones with special characters in them that aren't word characters in
+        # regular expressions.  For instance, we can detect a nick like "k[n", but not a
+        # nick like "ken[" or "[ken", because the leading or trailing non-word character
+        # "[" messes with the regular expression word boundary behavior and .search()
+        # doesn't return a match.  IRC nicks won't normally include characters like this,
+        # so I'm just going to live with it.
         actions = []
-        nick_pattern = re.compile(r"\b%s\b" % nick, re.IGNORECASE)
-        alias_pattern = re.compile(r"\b%s\b" % alias, re.IGNORECASE) if alias else None
+        nick_pattern = re.compile(r"\b%s\b" % re.escape(nick), re.IGNORECASE)
+        alias_pattern = re.compile(r"\b%s\b" % re.escape(alias), re.IGNORECASE) if alias else None
         for event in meeting.events:
             if event.event_type == EventType.ACTION and event.operand:
                 if nick_pattern.search(event.operand) or (alias_pattern and alias_pattern.search(event.operand)):

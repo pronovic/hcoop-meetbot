@@ -119,8 +119,30 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(29, "pronovic", "#close", 559))
     meeting.track_event(event_type=EventType.ACCEPTED, message=tracked, operand="Motion accepted: 2 in favor to 1 opposed")
 
+    # There are some nicks that we will have a hard time identifying, especially ones
+    # containing non-word characters.  In this case, "k[n" does work and we can associate
+    # actions with the nick.  However, nicks that start or end with non-word characters are
+    # problematic.  We don't crash, but we also don't successfully identify their actions.
+    tracked = meeting.track_message(message=_message(30, "k[n", "#here", 560))
+    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="k[n")
+    meeting.track_attendee(nick="k[n", alias="k[n")
+    tracked = meeting.track_message(
+        message=_message(31, "unknown_lamer", "#action hey k[n, your nick has regex special characters", 561)
+    )
+    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="hey k[n, your nick has regex special characters")
+    tracked = meeting.track_message(message=_message(32, "ken[", "#here", 562))
+    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="ke[")
+    meeting.track_attendee(nick="ken[", alias="ken[")
+    tracked = meeting.track_message(message=_message(33, "layline", "#action ken] fix your nick!", 563))
+    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="ken] fix your nick!")
+    tracked = meeting.track_message(message=_message(34, "[ken", "#here", 564))
+    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="[ken")
+    meeting.track_attendee(nick="[ken", alias="[ken")
+    tracked = meeting.track_message(message=_message(35, "pronovic", "#action not you too, [ken", 565))
+    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="not you too, [ken")
+
     # End the meeting
-    tracked = meeting.track_message(message=_message(30, "pronovic", "#endmeeting", 567))
+    tracked = meeting.track_message(message=_message(32, "pronovic", "#endmeeting", 567))
     meeting.track_event(event_type=EventType.END_MEETING, message=tracked)
     meeting.active = False
     meeting.end_time = _time(567)
@@ -270,8 +292,8 @@ class TestRendering:
             config = MagicMock(timezone="America/Chicago")
             meeting = _meeting()
             assert write_meeting(config, meeting) is locations
-            # print("\n" + _contents(log.path))
-            # print("\n" + _contents(minutes.path))
+            print("\n" + _contents(log.path))
+            print("\n" + _contents(minutes.path))
             derive_locations.assert_called_once_with(config, meeting)
             assert _contents(log.path) == _contents(EXPECTED_LOG)
             assert _contents(minutes.path) == _contents(EXPECTED_MINUTES)
