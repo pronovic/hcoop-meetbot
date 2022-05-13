@@ -127,7 +127,7 @@ def _meeting() -> Meeting:
     meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="k[n")
     meeting.track_attendee(nick="k[n", alias="k[n")
     tracked = meeting.track_message(
-        message=_message(31, "unknown_lamer", "#action hey k[n, your nick has regex special characters", 561)
+        message=_message(31, "unknown_lamer", "#action hey k[n, your nick has regex special chars", 561)
     )
     meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="hey k[n, your nick has regex special characters")
     tracked = meeting.track_message(message=_message(32, "ken[", "#here", 562))
@@ -140,12 +140,16 @@ def _meeting() -> Meeting:
     meeting.track_attendee(nick="[ken", alias="[ken")
     tracked = meeting.track_message(message=_message(35, "pronovic", "#action not you too, [ken", 565))
     meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="not you too, [ken")
+    tracked = meeting.track_message(message=_message(36, "[m]", "#here", 566))
+    meeting.track_attendee(nick="[m]", alias="[m]")
+    tracked = meeting.track_message(message=_message(37, "keverets", "#action A Matrix [m] nick", 567))
+    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="A Matrix [m] nick")
 
     # End the meeting
-    tracked = meeting.track_message(message=_message(32, "pronovic", "#endmeeting", 567))
+    tracked = meeting.track_message(message=_message(38, "pronovic", "#endmeeting", 570))
     meeting.track_event(event_type=EventType.END_MEETING, message=tracked)
     meeting.active = False
-    meeting.end_time = _time(567)
+    meeting.end_time = _time(570)
 
     return meeting
 
@@ -292,8 +296,8 @@ class TestRendering:
             config = MagicMock(timezone="America/Chicago")
             meeting = _meeting()
             assert write_meeting(config, meeting) is locations
-            print("\n" + _contents(log.path))
-            print("\n" + _contents(minutes.path))
+            # print("\n" + _contents(log.path))
+            # print("\n" + _contents(minutes.path))
             derive_locations.assert_called_once_with(config, meeting)
             assert _contents(log.path) == _contents(EXPECTED_LOG)
             assert _contents(minutes.path) == _contents(EXPECTED_MINUTES)
