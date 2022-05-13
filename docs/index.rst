@@ -78,6 +78,14 @@ You can optionally document attendance using these commands.
 |                   |        | ``#nick whoever``.                                                                                 |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
 
+*Note:* If you use a nick or assign an alias that contains any regular
+expression special characters, it may not always be possible to identify
+actions associated with that nick.  For instance, a nick ``k[n`` generally can
+be identified, but not ``[ken`` or ``ken]``.  For the latter two, this is
+because the special character ``[`` occurs on a regular expression word
+boundary.  If a meeting participant has a nick that contains a special
+character like this, it's best to identify that participant with a simpler
+alias that can be more easily identified when parsing the IRC transcript.
 
 Agreement and Disagrement
 ~~~~~~~~~~~~~~~~~~~~~~~~~
