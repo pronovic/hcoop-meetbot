@@ -1,4 +1,4 @@
-Verson  0.5.2     unreleased
+Version 0.5.2     13 May 2022
 
 	* Fix a bug when an IRC nick or alias includes regex special characters.
 
