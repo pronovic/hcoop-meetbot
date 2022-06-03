@@ -9,6 +9,8 @@ from pytz import utc
 from hcoopmeetbotlogic.interface import Message
 from hcoopmeetbotlogic.meeting import EventType, Meeting, TrackedEvent, TrackedMessage
 
+from .testdata import sample_meeting
+
 
 class TestTrackedMessage:
     def test_constructor(self):
@@ -72,6 +74,12 @@ class TestMeeting:
         assert meeting.aliases == {}
         assert meeting.key() == "channel/network"
         assert meeting.active is False
+
+    def test_json_roundtrip(self):
+        left = sample_meeting()
+        serialized = left.to_json()
+        right = Meeting.from_json(serialized)
+        assert left == right
 
     def test_meeting_key(self):
         assert Meeting.meeting_key("channel", "network") == "channel/network"

@@ -7,6 +7,7 @@ Plugin configuration and parsing.
 
 import configparser
 import os
+from enum import Enum
 from logging import Logger
 from pathlib import Path
 from typing import Optional
@@ -21,12 +22,22 @@ URL_PREFIX_KEY = "urlPrefix"
 PATTERN_KEY = "pattern"
 TIMEZONE_KEY = "timezone"
 USE_CHANNEL_TOPIC_KEY = "useChannelTopic"
+OUTPUT_FORMAT_KEY = "outputFormat"
 
 LOG_DIR_DEFAULT = os.path.join(Path.home(), "hcoop-meetbot")
 URL_PREFIX_DEFAULT = "/"
 PATTERN_DEFAULT = "%Y/{name}.%Y%m%d.%H%M"
 TIMEZONE_DEFAULT = "UTC"
 USE_CHANNEL_TOPIC_DEFAULT = False
+
+
+class OutputFormat(str, Enum):
+    """Legal output formats."""
+
+    HTML = "HTML"
+
+
+OUTPUT_FORMAT_DEFAULT = OutputFormat.HTML
 
 
 @attr.s(frozen=True)
@@ -41,6 +52,7 @@ class Config:
         pattern(str): Pattern for files generated in logFileDir
         timezone(str): Timezone string, any value valid for pytz
         use_channel_topic(bool): Whether the bot should attempt to use the channel topic
+        output_format(OutputFormat): The output format to use
     """
 
     conf_file = attr.ib(type=Optional[str])
@@ -49,6 +61,7 @@ class Config:
     pattern = attr.ib(type=str, default=PATTERN_DEFAULT)
     timezone = attr.ib(type=str, default=TIMEZONE_DEFAULT)
     use_channel_topic = attr.ib(type=bool, default=USE_CHANNEL_TOPIC_DEFAULT)
+    output_format = attr.ib(type=OutputFormat, default=OUTPUT_FORMAT_DEFAULT)
 
 
 def load_config(logger: Logger, conf_dir: str) -> Config:
@@ -76,6 +89,9 @@ def load_config(logger: Logger, conf_dir: str) -> Config:
                 pattern=parser.get(CONF_SECTION, PATTERN_KEY, fallback=PATTERN_DEFAULT),
                 timezone=parser.get(CONF_SECTION, TIMEZONE_KEY, fallback=TIMEZONE_DEFAULT),
                 use_channel_topic=parser.getboolean(CONF_SECTION, USE_CHANNEL_TOPIC_KEY, fallback=USE_CHANNEL_TOPIC_DEFAULT),
+                output_format=OutputFormat[
+                    parser.get(CONF_SECTION, OUTPUT_FORMAT_KEY, fallback=OUTPUT_FORMAT_DEFAULT.name).upper()
+                ],
             )
         except Exception:  # pylint: disable=broad-except:
             logger.exception("Failed to parse %s; using defaults", conf_file)

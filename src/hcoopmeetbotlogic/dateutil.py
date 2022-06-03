@@ -2,7 +2,7 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 
 """
-Common utilities.
+Date utilities.
 """
 from datetime import datetime
 from typing import Optional

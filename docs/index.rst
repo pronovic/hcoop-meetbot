@@ -238,6 +238,9 @@ If you skip this step and don't create a config file, the plugin will try to use
 |                     |                           | permissions to set the channel topic, then can set this to ``True``    | 
 |                     |                           | and the topic will be updated to reflect the state of the meeting.     |
 +---------------------+---------------------------+------------------------------------------------------------------------+
+| ``outputFormat``    | ``HTML``                  | The output format to use.  Optional. Currently, the only allowed value |
+|                     |                           | is ``HTML``, but it's configurable to facilitate future enhancements.  |
++---------------------+---------------------------+------------------------------------------------------------------------+
 
 Run the Bot
 ~~~~~~~~~~~

@@ -70,8 +70,9 @@ class CommandDispatcher:
             self._set_channel_topic(meeting, context)
             locations = write_meeting(config=config(), meeting=meeting)
             context.send_reply("Meeting ended at %s" % self._formatdate(meeting.end_time))
-            context.send_reply("Raw log: %s" % locations.log.url)
-            context.send_reply("Minutes: %s" % locations.minutes.url)
+            context.send_reply("Raw log: %s" % locations.raw_log.url)
+            context.send_reply("Formatted log: %s" % locations.formatted_log.url)
+            context.send_reply("Minutes: %s" % locations.formatted_minutes.url)
             deactivate_meeting(meeting, retain=True)
 
     def do_save(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
@@ -80,8 +81,9 @@ class CommandDispatcher:
             meeting.track_event(EventType.SAVE_MEETING, message)
             locations = write_meeting(config=config(), meeting=meeting)
             context.send_reply("Meeting saved")
-            context.send_reply("Raw log: %s" % locations.log.url)
-            context.send_reply("Minutes: %s" % locations.minutes.url)
+            context.send_reply("Raw log: %s" % locations.raw_log.url)
+            context.send_reply("Formatted log: %s" % locations.formatted_log.url)
+            context.send_reply("Minutes: %s" % locations.formatted_minutes.url)
 
     def do_topic(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Set a new topic in the channel."""

@@ -5,6 +5,9 @@
 Meeting state.
 """
 
+from __future__ import annotations  # see: https://stackoverflow.com/a/33533514/2907667
+
+import json
 import uuid
 from datetime import datetime
 from enum import Enum
@@ -12,11 +15,15 @@ from typing import Any, Dict, List, Optional
 
 import attr
 
+from hcoopmeetbotlogic.jsonutil import CattrConverter
+
 from .dateutil import formatdate, now
 from .interface import Message
 
+_CONVERTER = CattrConverter()
 
-class EventType(Enum):
+
+class EventType(str, Enum):
     """Legal event types for TrackedEvent."""
 
     START_MEETING = "START_MEETING"
@@ -41,16 +48,17 @@ class EventType(Enum):
     LINK = "LINK"
 
 
-class VotingAction(Enum):
+class VotingAction(str, Enum):
     """Voting actions"""
 
     IN_FAVOR = "+1"
     OPPOSED = "-1"
 
 
+# noinspection PyUnresolvedReferences
 @attr.s(frozen=True)
 class TrackedMessage:
-    # noinspection PyUnresolvedReferences
+
     """
     A message tracked as part of a meeting.
 
@@ -73,9 +81,10 @@ class TrackedMessage:
         return "%s@%s" % (self.id, formatdate(self.timestamp))
 
 
+# noinspection PyUnresolvedReferences
 @attr.s(frozen=True)
 class TrackedEvent:
-    # noinspection PyUnresolvedReferences
+
     """
     An event tracked as part of a meeting, always tied to a specific message.
 
@@ -106,17 +115,29 @@ class TrackedEvent:
         return "%s@%s" % (self.id, formatdate(self.timestamp))
 
 
+# noinspection PyUnresolvedReferences
 # pylint: disable=too-many-instance-attributes:
 @attr.s
 class Meeting:
-    # noinspection PyUnresolvedReferences
+
     """
     A meeting on a particular IRC channel.
+
+    The meeting can be serialized and deserialized to and from JSON.  This is the mechanism we use
+    to persist the raw log to disk.  If you round trip the JSON (generate JSON and then use that
+    JSON to create a new meeting), the resulting object contains data that is equivalent, but not
+    exactly identical to, the original object.  Each tracked event has an associated message.  In
+    the original object, the tracked event always refers to one of the message objects that is
+    already in the messages list.  When you deserialize from JSON, the object in the message list
+    will be different than the one on the tracked event, although they will be equivalent by value.
+    So, if you deserialize from JSON, it's best to treat the resulting object as a read-only copy.
+    The copy won't always work exactly like a meeting that was created at runtime based on actual
+    IRC traffic.
 
     Attributes:
         id(str): Unique identifier for the meeting
         name(str): The name of the meeting, which defaults to the channel name
-        founder(str): IRC nick of the meeting founder always a member of chairs
+        founder(str): IRC nick of the meeting founder, always a member of chairs
         channel(str): Channel the meeting is running on
         network(str): Network associated with the channel
         chair(str): IRC nick of primary meeting chair, always a member of chairs
@@ -196,6 +217,15 @@ class Meeting:
     def meeting_key(channel: str, network: str) -> str:
         """Build the dict key for a network and channel."""
         return "%s/%s" % (channel, network)
+
+    def to_json(self) -> str:
+        """Serialize a meeting to JSON."""
+        return json.dumps(_CONVERTER.unstructure(self), indent="  ")
+
+    @staticmethod
+    def from_json(data: str) -> Meeting:
+        """Deserialize a meeting from JSON."""
+        return _CONVERTER.structure(json.loads(data), Meeting)
 
     def key(self) -> str:
         return Meeting.meeting_key(self.channel, self.network)

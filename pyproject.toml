@@ -37,6 +37,7 @@ limnoria = "^2021.01.15"
 attrs = "^21.2.0"
 pytz = "^2021.3"
 genshi = "^0.7.5"
+cattrs = "^22.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
