@@ -59,6 +59,7 @@ class CommandDispatcher:
             context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
             context.send_reply("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting")
             context.send_reply("See also: %s" % DOCS)
+            context.send_reply("Participants should now identify themselves with '#here' or with an alias like '#here FirstLast'")
 
     def do_endmeeting(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """End an active meeting and save to disk."""

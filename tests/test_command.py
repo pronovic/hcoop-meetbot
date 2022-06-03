@@ -183,6 +183,7 @@ class TestCommandDispatcher:
                 call("Current chairs: x, y"),
                 call("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting"),
                 call("See also: https://hcoop-meetbot.readthedocs.io/en/stable/"),
+                call("Participants should now identify themselves with '#here' or with an alias like '#here FirstLast'"),
             ]
         )
         assert meeting.original_topic == "original"
@@ -209,6 +210,7 @@ class TestCommandDispatcher:
                 call("Current chairs: x, y"),
                 call("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting"),
                 call("See also: https://hcoop-meetbot.readthedocs.io/en/stable/"),
+                call("Participants should now identify themselves with '#here' or with an alias like '#here FirstLast'"),
             ]
         )
         assert meeting.original_topic == "original"
