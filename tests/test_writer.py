@@ -65,9 +65,9 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(4, "pronovic", "#topic Attendance", 125))
     meeting.track_event(event_type=EventType.TOPIC, message=tracked, operand="Attendance")
     tracked = meeting.track_message(message=_message(5, "pronovic", 'If you are present please write "#here $hcoop_username"', 126))
-    tracked = meeting.track_message(message=_message(6, "pronovic", "#here Pronovic", 127))  # note: alias != nick
-    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="Pronovic")
-    meeting.track_attendee(nick="pronovic", alias="Pronovic")
+    tracked = meeting.track_message(message=_message(6, "pronovic", "#here Pronovici", 127))  # note: alias != nick
+    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="Pronovici")
+    meeting.track_attendee(nick="pronovic", alias="Pronovici")
     tracked = meeting.track_message(message=_message(7, "unknown_lamer", "#here Clinton Alias", 128))  # note: alias != nick
     meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="Clinton Alias")
     meeting.track_attendee(nick="unknown_lamer", alias="Clinton Alias")
@@ -101,8 +101,8 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(20, "pronovic", "#idea we should improve MeetBot", 414))
     meeting.track_event(event_type=EventType.IDEA, message=tracked, operand="we should improve MeetBot")
     tracked = meeting.track_message(message=_message(21, "pronovic", "I'll just take this one myself", 435))
-    tracked = meeting.track_message(message=_message(22, "pronovic", "#action Pronovic will deal with it", 449))
-    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="Pronovic will deal with it")
+    tracked = meeting.track_message(message=_message(22, "pronovic", "#action pronovici will deal with it", 449))
+    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="pronovici will deal with it")
 
     # these messages and events are associated with the final topic
     tracked = meeting.track_message(message=_message(23, "pronovic", "#topic Cross-site Scripting", 453))
