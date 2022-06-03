@@ -362,8 +362,15 @@ class TestAliasMatcher:
         alias_matcher = _AliasMatcher("bogus", identifier)  # checks matching for alias, since nick will never match
 
         for message in match:
-            for testcase in [message, message.upper(), message.lower(), message.title()]:  # match is not case-sensitive
+            for testcase in [message, message.upper(), message.lower(), message.title()]:  # nicks/aliases are not case-sensitive
                 if not nick_matcher.matches(testcase):
                     pytest.fail("nick '%s' not found in message '%s'" % (identifier, testcase))
                 if not alias_matcher.matches(testcase):
                     pytest.fail("alias '%s' not found in message '%s'" % (identifier, testcase))
+
+        for message in no_match:
+            for testcase in [message, message.upper(), message.lower(), message.title()]:  # nicks/aliases are not case-sensitive
+                if nick_matcher.matches(testcase):
+                    pytest.fail("nick '%s' incorrectly found in message '%s'" % (identifier, testcase))
+                if alias_matcher.matches(testcase):
+                    pytest.fail("alias '%s' incorrectly found in message '%s'" % (identifier, testcase))
