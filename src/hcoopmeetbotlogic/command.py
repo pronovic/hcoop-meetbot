@@ -143,6 +143,7 @@ class CommandDispatcher:
             context.send_reply("Meeting name set to: %s" % operand)
 
     def do_motion(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
+        """Open a motion."""
         if meeting.is_chair(message.sender):
             meeting.track_event(EventType.MOTION, message, operand=operand)
             meeting.vote_in_progress = True
@@ -150,6 +151,7 @@ class CommandDispatcher:
             context.send_reply("Voting is open")
 
     def do_vote(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
+        """Record a vote."""
         if meeting.vote_in_progress:
             action = VotingAction.IN_FAVOR if operand.startswith("+") else VotingAction.OPPOSED
             meeting.track_event(EventType.VOTE, message, operand=action)
@@ -157,6 +159,7 @@ class CommandDispatcher:
             context.send_reply("No vote is in progress")
 
     def do_close(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
+        """Close a motion."""
         if meeting.is_chair(message.sender) and meeting.vote_in_progress:
             votes = meeting.events[meeting.motion_index + 1 :]  # type: ignore
             in_favor = [event.message.sender for event in votes if event.operand == VotingAction.IN_FAVOR]
@@ -196,7 +199,7 @@ class CommandDispatcher:
             meeting.track_event(EventType.FAILED, message, operand=operand)
 
     def do_inconclusive(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
-        """Indicate that a motion has failed."""
+        """Indicate that a motion was inconclusive."""
         if meeting.is_chair(message.sender):
             meeting.vote_in_progress = False
             meeting.motion_index = None
