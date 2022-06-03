@@ -39,6 +39,8 @@ class TestFunctions:
         )
         meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
+        assert locations.raw_log.path == "/data/meetings/hcoop/constant.log.json"
+        assert locations.raw_log.url == "https://whatever/constant.log.json"
         assert locations.formatted_log.path == "/data/meetings/hcoop/constant.log.html"
         assert locations.formatted_log.url == "https://whatever/constant.log.html"
         assert locations.formatted_minutes.path == "/data/meetings/hcoop/constant.html"
@@ -54,6 +56,8 @@ class TestFunctions:
         )
         meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
+        assert locations.raw_log.path == "/data/meetings/hcoop/i-n-f-c-n.log.json"
+        assert locations.raw_log.url == "https://whatever/i-n-f-c-n.log.json"
         assert locations.formatted_log.path == "/data/meetings/hcoop/i-n-f-c-n.log.html"
         assert locations.formatted_log.url == "https://whatever/i-n-f-c-n.log.html"
         assert locations.formatted_minutes.path == "/data/meetings/hcoop/i-n-f-c-n.html"
@@ -69,6 +73,8 @@ class TestFunctions:
         )
         meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
+        assert locations.raw_log.path == "/data/meetings/hcoop/20210307.1314.log.json"
+        assert locations.raw_log.url == "https://whatever/20210307.1314.log.json"
         assert locations.formatted_log.path == "/data/meetings/hcoop/20210307.1314.log.html"
         assert locations.formatted_log.url == "https://whatever/20210307.1314.log.html"
         assert locations.formatted_minutes.path == "/data/meetings/hcoop/20210307.1314.html"
@@ -91,6 +97,8 @@ class TestFunctions:
             start_time=datetime(2021, 3, 7, 13, 14, 0),
         )
         locations = derive_locations(config, meeting)
+        assert locations.raw_log.path == "/data/meetings/hcoop/_network_.log.json"
+        assert locations.raw_log.url == "https://whatever/_network_.log.json"
         assert locations.formatted_log.path == "/data/meetings/hcoop/_network_.log.html"
         assert locations.formatted_log.url == "https://whatever/_network_.log.html"
         assert locations.formatted_minutes.path == "/data/meetings/hcoop/_network_.html"
@@ -106,6 +114,8 @@ class TestFunctions:
         )
         meeting = Meeting(id="i", name="#n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
+        assert locations.raw_log.path == "/data/meetings/hcoop/2021/n.20210307.1314.log.json"
+        assert locations.raw_log.url == "https://whatever/2021/n.20210307.1314.log.json"
         assert locations.formatted_log.path == "/data/meetings/hcoop/2021/n.20210307.1314.log.html"
         assert locations.formatted_log.url == "https://whatever/2021/n.20210307.1314.log.html"
         assert locations.formatted_minutes.path == "/data/meetings/hcoop/2021/n.20210307.1314.html"
@@ -117,6 +127,8 @@ class TestFunctions:
         )
         meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
+        assert locations.raw_log.path == "/data/meetings/hcoop/20210307.1314.log.json"
+        assert locations.raw_log.url == "https://whatever/20210307.1314.log.json"
         assert locations.formatted_log.path == "/data/meetings/hcoop/20210307.1314.log.html"
         assert locations.formatted_log.url == "https://whatever/20210307.1314.log.html"
         assert locations.formatted_minutes.path == "/data/meetings/hcoop/20210307.1314.html"
