@@ -11,7 +11,7 @@ import pytest
 from hcoopmeetbotlogic.interface import Message
 from hcoopmeetbotlogic.location import Location, Locations
 from hcoopmeetbotlogic.meeting import EventType, Meeting, VotingAction
-from hcoopmeetbotlogic.writer import _LogMessage, write_meeting
+from hcoopmeetbotlogic.writer import _AliasMatcher, _LogMessage, write_meeting
 
 EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log.html")
 EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/minutes.html")
@@ -297,3 +297,64 @@ class TestRendering:
             derive_locations.assert_called_once_with(config, meeting)
             assert _contents(log.path) == _contents(EXPECTED_LOG)
             assert _contents(minutes.path) == _contents(EXPECTED_MINUTES)
+
+
+class TestAliasMatcher:
+    @pytest.mark.parametrize(
+        "identifier",
+        [
+            pytest.param("ken"),
+            pytest.param("Ken"),
+            pytest.param("Ken Pronovici"),
+            pytest.param("k[n"),
+            pytest.param("K[n"),
+            pytest.param("K[n Pronovici"),
+            pytest.param("[ken"),
+            pytest.param("[Ken"),
+            pytest.param("[Ken Pronovici"),
+            pytest.param("ken]"),
+            pytest.param("Ken]"),
+            pytest.param("Ken Pronovici]"),
+            pytest.param("[ken]"),
+            pytest.param("[Ken]"),
+            pytest.param("[Ken Pronovici]"),
+        ],
+    )
+    def test_matches(self, identifier):
+
+        match = []
+        no_match = []
+
+        # These should be considered a match because the identifier is found unambiguously
+        match.append("%s" % identifier)
+        match.append("%s got assigned a task" % identifier)
+        match.append("assign that to %s please" % identifier)
+        match.append("that task goes to %s" % identifier)
+
+        # These should NOT be considered a match because the identifier has a prefix
+        no_match.append("prefix%s" % identifier)
+        no_match.append("prefix%s got assigned a task" % identifier)
+        no_match.append("assign that to prefix%s please" % identifier)
+        no_match.append("that task goes to prefix%s" % identifier)
+
+        # These should NOT be considered a match because the identifier has a suffix
+        no_match.append("%ssuffix" % identifier)
+        no_match.append("%ssuffix got assigned a task" % identifier)
+        no_match.append("assign that to %ssuffix please" % identifier)
+        no_match.append("that task goes to %ssuffix" % identifier)
+
+        # These should NOT be considered a match because the identifier is embedded in another string
+        no_match.append("prefix%ssuffix" % identifier)
+        no_match.append("prefix%ssuffix got assigned a task" % identifier)
+        no_match.append("assign that to prefix%ssuffix please" % identifier)
+        no_match.append("that task goes to prefix%ssuffix" % identifier)
+
+        nick_matcher = _AliasMatcher(identifier, None)  # checks matching for nick
+        alias_matcher = _AliasMatcher("bogus", identifier)  # checks matching for alias, since nick will never match
+
+        for message in match:
+            for testcase in [message, message.upper(), message.lower(), message.title()]:  # match is not case-sensitive
+                if not nick_matcher.matches(testcase):
+                    pytest.fail("nick '%s' not found in message '%s'" % (identifier, testcase))
+                if not alias_matcher.matches(testcase):
+                    pytest.fail("alias '%s' not found in message '%s'" % (identifier, testcase))
