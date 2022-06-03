@@ -10,9 +10,10 @@ from typing import Callable, Iterable, Optional
 import attr
 
 
+# noinspection PyUnresolvedReferences
 @attr.s(frozen=True)
 class Context:
-    # noinspection PyUnresolvedReferences
+
     """
     Context for a message or command, including callbacks that can be invoked.
 
@@ -29,9 +30,10 @@ class Context:
     send_message = attr.ib(type=Callable[[str], None])
 
 
+# noinspection PyUnresolvedReferences
 @attr.s(frozen=True)
 class Message:
-    # noinspection PyUnresolvedReferences
+
     """
     A message to be processed.
 
