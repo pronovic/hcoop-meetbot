@@ -146,6 +146,28 @@ class _MeetingAttendee:
 
 
 @attr.s(frozen=True)
+class _AliasMatcher:
+    """Utility class to identify whether an attendee nick or alias is found in a message."""
+
+    nick = attr.ib(type=str)
+    alias = attr.ib(type=Optional[str])
+    nick_pattern = attr.ib(type=re.Pattern)
+    alias_pattern = attr.ib(type=Optional[re.Pattern])
+
+    @nick_pattern.default
+    def _nick_pattern_default(self) -> re.Pattern:
+        return re.compile(r"\b%s\b" % re.escape(self.nick), re.IGNORECASE)
+
+    @alias_pattern.default
+    def _alias_pattern_default(self) -> Optional[re.Pattern]:
+        return re.compile(r"\b%s\b" % re.escape(self.alias), re.IGNORECASE) if self.alias else None
+
+    def matches(self, message: str) -> bool:
+        """Return true if the attendee nick or alias is found in the message."""
+        return self.nick_pattern.search(message) or (self.alias_pattern and self.alias_pattern.search(message))
+
+
+@attr.s(frozen=True)
 class _MeetingEvent:
     """A meeting event tied to a topic."""
 
@@ -218,21 +240,11 @@ class _MeetingMinutes:
 
     @staticmethod
     def _attendee_actions(meeting: Meeting, nick: str, alias: Optional[str]) -> List[_MeetingAction]:
-        # There are some kinds of nicks or aliases that we can't successfully identify,
-        # especially ones with special characters in them that aren't word characters in
-        # regular expressions.  For instance, we can detect a nick like "k[n", but not a
-        # nick like "ken[" or "[ken", because the leading or trailing non-word character
-        # "[" messes with the regular expression word boundary behavior and .search()
-        # doesn't return a match.  Apparently nicks from the Matrix IRC bridge do come
-        # across with brackets (like "[m]"), so I do need a longer term fix, but I'm not
-        # sure what that will look like yet.  For the time being, the workaround is to
-        # set an alias that doesn't include the brackets.
         actions = []
-        nick_pattern = re.compile(r"\b%s\b" % re.escape(nick), re.IGNORECASE)
-        alias_pattern = re.compile(r"\b%s\b" % re.escape(alias), re.IGNORECASE) if alias else None
+        matcher = _AliasMatcher(nick, alias)
         for event in meeting.events:
             if event.event_type == EventType.ACTION and event.operand:
-                if nick_pattern.search(event.operand) or (alias_pattern and alias_pattern.search(event.operand)):
+                if matcher.matches(event.operand):
                     action = _MeetingAction(id="action-%s" % event.id, text=event.operand)
                     actions.append(action)
         return actions

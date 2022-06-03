@@ -119,10 +119,6 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(29, "pronovic", "#close", 559))
     meeting.track_event(event_type=EventType.ACCEPTED, message=tracked, operand="Motion accepted: 2 in favor to 1 opposed")
 
-    # There are some nicks that we will have a hard time identifying, especially ones
-    # containing non-word characters.  In this case, "k[n" does work and we can associate
-    # actions with the nick.  However, nicks that start or end with non-word characters are
-    # problematic.  We don't crash, but we also don't successfully identify their actions.
     tracked = meeting.track_message(message=_message(30, "k[n", "#here", 560))
     meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="k[n")
     meeting.track_attendee(nick="k[n", alias="k[n")
