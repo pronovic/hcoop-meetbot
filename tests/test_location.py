@@ -19,11 +19,13 @@ class TestLocation:
 
 class TestLocations:
     def test_constructor(self):
-        log = Location("log-path", "log-url")
-        minutes = Location("minutes-path", "minutes-url")
-        locations = Locations(log, minutes)
-        assert locations.log is log
-        assert locations.minutes is minutes
+        raw_log = Location("raw-path", "raw-url")
+        formatted_log = Location("log-path", "log-url")
+        formatted_minutes = Location("minutes-path", "minutes-url")
+        locations = Locations(raw_log, formatted_log, formatted_minutes)
+        assert locations.raw_log is raw_log
+        assert locations.formatted_log is formatted_log
+        assert locations.formatted_minutes is formatted_minutes
 
 
 class TestFunctions:
@@ -37,10 +39,10 @@ class TestFunctions:
         )
         meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
-        assert locations.log.path == "/data/meetings/hcoop/constant.log.html"
-        assert locations.log.url == "https://whatever/constant.log.html"
-        assert locations.minutes.path == "/data/meetings/hcoop/constant.html"
-        assert locations.minutes.url == "https://whatever/constant.html"
+        assert locations.formatted_log.path == "/data/meetings/hcoop/constant.log.html"
+        assert locations.formatted_log.url == "https://whatever/constant.log.html"
+        assert locations.formatted_minutes.path == "/data/meetings/hcoop/constant.html"
+        assert locations.formatted_minutes.url == "https://whatever/constant.html"
 
     def test_derive_locations_with_subsitution_variables(self):
         config = Config(
@@ -52,10 +54,10 @@ class TestFunctions:
         )
         meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
-        assert locations.log.path == "/data/meetings/hcoop/i-n-f-c-n.log.html"
-        assert locations.log.url == "https://whatever/i-n-f-c-n.log.html"
-        assert locations.minutes.path == "/data/meetings/hcoop/i-n-f-c-n.html"
-        assert locations.minutes.url == "https://whatever/i-n-f-c-n.html"
+        assert locations.formatted_log.path == "/data/meetings/hcoop/i-n-f-c-n.log.html"
+        assert locations.formatted_log.url == "https://whatever/i-n-f-c-n.log.html"
+        assert locations.formatted_minutes.path == "/data/meetings/hcoop/i-n-f-c-n.html"
+        assert locations.formatted_minutes.url == "https://whatever/i-n-f-c-n.html"
 
     def test_derive_locations_with_date_fields(self):
         config = Config(
@@ -67,10 +69,10 @@ class TestFunctions:
         )
         meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
-        assert locations.log.path == "/data/meetings/hcoop/20210307.1314.log.html"
-        assert locations.log.url == "https://whatever/20210307.1314.log.html"
-        assert locations.minutes.path == "/data/meetings/hcoop/20210307.1314.html"
-        assert locations.minutes.url == "https://whatever/20210307.1314.html"
+        assert locations.formatted_log.path == "/data/meetings/hcoop/20210307.1314.log.html"
+        assert locations.formatted_log.url == "https://whatever/20210307.1314.log.html"
+        assert locations.formatted_minutes.path == "/data/meetings/hcoop/20210307.1314.html"
+        assert locations.formatted_minutes.url == "https://whatever/20210307.1314.html"
 
     def test_derive_locations_with_normalization(self):
         config = Config(
@@ -89,10 +91,10 @@ class TestFunctions:
             start_time=datetime(2021, 3, 7, 13, 14, 0),
         )
         locations = derive_locations(config, meeting)
-        assert locations.log.path == "/data/meetings/hcoop/_network_.log.html"
-        assert locations.log.url == "https://whatever/_network_.log.html"
-        assert locations.minutes.path == "/data/meetings/hcoop/_network_.html"
-        assert locations.minutes.url == "https://whatever/_network_.html"
+        assert locations.formatted_log.path == "/data/meetings/hcoop/_network_.log.html"
+        assert locations.formatted_log.url == "https://whatever/_network_.log.html"
+        assert locations.formatted_minutes.path == "/data/meetings/hcoop/_network_.html"
+        assert locations.formatted_minutes.url == "https://whatever/_network_.html"
 
     def test_derive_locations_with_multiple(self):
         config = Config(
@@ -104,10 +106,10 @@ class TestFunctions:
         )
         meeting = Meeting(id="i", name="#n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
-        assert locations.log.path == "/data/meetings/hcoop/2021/n.20210307.1314.log.html"
-        assert locations.log.url == "https://whatever/2021/n.20210307.1314.log.html"
-        assert locations.minutes.path == "/data/meetings/hcoop/2021/n.20210307.1314.html"
-        assert locations.minutes.url == "https://whatever/2021/n.20210307.1314.html"
+        assert locations.formatted_log.path == "/data/meetings/hcoop/2021/n.20210307.1314.log.html"
+        assert locations.formatted_log.url == "https://whatever/2021/n.20210307.1314.log.html"
+        assert locations.formatted_minutes.path == "/data/meetings/hcoop/2021/n.20210307.1314.html"
+        assert locations.formatted_minutes.url == "https://whatever/2021/n.20210307.1314.html"
 
     def test_derive_locations_with_attempted_path_traversal_absolute(self):
         config = Config(
@@ -115,10 +117,10 @@ class TestFunctions:
         )
         meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
         locations = derive_locations(config, meeting)
-        assert locations.log.path == "/data/meetings/hcoop/20210307.1314.log.html"
-        assert locations.log.url == "https://whatever/20210307.1314.log.html"
-        assert locations.minutes.path == "/data/meetings/hcoop/20210307.1314.html"
-        assert locations.minutes.url == "https://whatever/20210307.1314.html"
+        assert locations.formatted_log.path == "/data/meetings/hcoop/20210307.1314.log.html"
+        assert locations.formatted_log.url == "https://whatever/20210307.1314.log.html"
+        assert locations.formatted_minutes.path == "/data/meetings/hcoop/20210307.1314.html"
+        assert locations.formatted_minutes.url == "https://whatever/20210307.1314.html"
 
     def test_derive_locations_with_attempted_path_traversal_relative(self):
         config = Config(

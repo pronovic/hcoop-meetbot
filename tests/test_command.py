@@ -254,12 +254,15 @@ class TestCommandDispatcher:
         now.return_value = datetime(2021, 3, 7, 13, 14, 0)
         meeting.is_chair.return_value = True
         write_meeting.return_value = MagicMock()
-        write_meeting.return_value.log = MagicMock(url="logurl")
-        write_meeting.return_value.minutes = MagicMock(url="minutesurl")
+        write_meeting.return_value.raw_log = MagicMock(url="rawurl")
+        write_meeting.return_value.formatted_log = MagicMock(url="logurl")
+        write_meeting.return_value.formatted_minutes = MagicMock(url="minutesurl")
         dispatcher.do_endmeeting(meeting, context, "a", "b", message)
         meeting.track_event.assert_called_once_with(EventType.END_MEETING, message)
         write_meeting.assert_called_once_with(config=config.return_value, meeting=meeting)
-        context.send_reply.assert_has_calls([call("Meeting ended at 11111"), call("Raw log: logurl"), call("Minutes: minutesurl")])
+        context.send_reply.assert_has_calls(
+            [call("Meeting ended at 11111"), call("Raw log: rawurl"), call("Formatted log: logurl"), call("Minutes: minutesurl")]
+        )
         context.set_topic.assert_called_once_with("original")
         formatdate.assert_called_once_with(timestamp=now.return_value, zone="America/Chicago")
         deactivate_meeting.assert_called_once_with(meeting, retain=True)
@@ -285,12 +288,15 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         config.return_value = MagicMock()
         write_meeting.return_value = MagicMock()
-        write_meeting.return_value.log = MagicMock(url="logurl")
-        write_meeting.return_value.minutes = MagicMock(url="minutesurl")
+        write_meeting.return_value.raw_log = MagicMock(url="rawurl")
+        write_meeting.return_value.formatted_log = MagicMock(url="logurl")
+        write_meeting.return_value.formatted_minutes = MagicMock(url="minutesurl")
         dispatcher.do_save(meeting, context, "a", "b", message)
         meeting.track_event.assert_called_once_with(EventType.SAVE_MEETING, message)
         write_meeting.assert_called_once_with(config=config.return_value, meeting=meeting)
-        context.send_reply.assert_has_calls([call("Meeting saved"), call("Raw log: logurl"), call("Minutes: minutesurl")])
+        context.send_reply.assert_has_calls(
+            [call("Meeting saved"), call("Raw log: rawurl"), call("Formatted log: logurl"), call("Minutes: minutesurl")]
+        )
 
     @patch("hcoopmeetbotlogic.command.write_meeting")
     def test_save_as_not_chair(self, write_meeting, dispatcher, meeting, context, message):

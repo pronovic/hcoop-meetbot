@@ -10,6 +10,7 @@ import pytest
 
 from hcoopmeetbotlogic.config import OutputFormat
 from hcoopmeetbotlogic.location import Location, Locations
+from hcoopmeetbotlogic.meeting import Meeting
 from hcoopmeetbotlogic.writer import _AliasMatcher, _LogMessage, write_meeting
 
 from .testdata import contents, sample_meeting
@@ -154,9 +155,10 @@ class TestRendering:
         # valid, and that files are written as expected.  We don't necessarily verify every
         # different scenario - there are tests elsewhere that delve into some of the details.
         with TemporaryDirectory() as temp:
-            log = Location(path=os.path.join(temp, "log.html"), url="http://")
-            minutes = Location(path=os.path.join(temp, "minutes.html"), url="http://")
-            locations = Locations(log=log, minutes=minutes)
+            raw_log = Location(path=os.path.join(temp, "log.json"), url="http://raw")
+            formatted_log = Location(path=os.path.join(temp, "log.html"), url="http://log")
+            formatted_minutes = Location(path=os.path.join(temp, "minutes.html"), url="http://minutes")
+            locations = Locations(raw_log=raw_log, formatted_log=formatted_log, formatted_minutes=formatted_minutes)
             derive_locations.return_value = locations
             config = MagicMock(timezone="America/Chicago", output_format=OutputFormat.HTML)
             meeting = sample_meeting()
@@ -164,8 +166,9 @@ class TestRendering:
             # print("\n" + _contents(log.path))
             # print("\n" + _contents(minutes.path))
             derive_locations.assert_called_once_with(config, meeting)
-            assert contents(log.path) == contents(EXPECTED_LOG)
-            assert contents(minutes.path) == contents(EXPECTED_MINUTES)
+            assert meeting == Meeting.from_json(contents(raw_log.path))  # raw log should exactly represent the meeting input
+            assert contents(formatted_log.path) == contents(EXPECTED_LOG)
+            assert contents(formatted_minutes.path) == contents(EXPECTED_MINUTES)
 
 
 class TestAliasMatcher:
