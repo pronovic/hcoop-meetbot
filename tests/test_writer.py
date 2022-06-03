@@ -11,7 +11,7 @@ import pytest
 from hcoopmeetbotlogic.interface import Message
 from hcoopmeetbotlogic.location import Location, Locations
 from hcoopmeetbotlogic.meeting import EventType, Meeting, VotingAction
-from hcoopmeetbotlogic.writer import _LogMessage, write_meeting
+from hcoopmeetbotlogic.writer import _AliasMatcher, _LogMessage, write_meeting
 
 EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log.html")
 EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/minutes.html")
@@ -65,9 +65,9 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(4, "pronovic", "#topic Attendance", 125))
     meeting.track_event(event_type=EventType.TOPIC, message=tracked, operand="Attendance")
     tracked = meeting.track_message(message=_message(5, "pronovic", 'If you are present please write "#here $hcoop_username"', 126))
-    tracked = meeting.track_message(message=_message(6, "pronovic", "#here Pronovic", 127))  # note: alias != nick
-    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="Pronovic")
-    meeting.track_attendee(nick="pronovic", alias="Pronovic")
+    tracked = meeting.track_message(message=_message(6, "pronovic", "#here Pronovici", 127))  # note: alias != nick
+    meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="Pronovici")
+    meeting.track_attendee(nick="pronovic", alias="Pronovici")
     tracked = meeting.track_message(message=_message(7, "unknown_lamer", "#here Clinton Alias", 128))  # note: alias != nick
     meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="Clinton Alias")
     meeting.track_attendee(nick="unknown_lamer", alias="Clinton Alias")
@@ -101,8 +101,8 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(20, "pronovic", "#idea we should improve MeetBot", 414))
     meeting.track_event(event_type=EventType.IDEA, message=tracked, operand="we should improve MeetBot")
     tracked = meeting.track_message(message=_message(21, "pronovic", "I'll just take this one myself", 435))
-    tracked = meeting.track_message(message=_message(22, "pronovic", "#action Pronovic will deal with it", 449))
-    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="Pronovic will deal with it")
+    tracked = meeting.track_message(message=_message(22, "pronovic", "#action pronovici will deal with it", 449))
+    meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="pronovici will deal with it")
 
     # these messages and events are associated with the final topic
     tracked = meeting.track_message(message=_message(23, "pronovic", "#topic Cross-site Scripting", 453))
@@ -119,16 +119,9 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(29, "pronovic", "#close", 559))
     meeting.track_event(event_type=EventType.ACCEPTED, message=tracked, operand="Motion accepted: 2 in favor to 1 opposed")
 
-    # There are some nicks that we will have a hard time identifying, especially ones
-    # containing non-word characters.  In this case, "k[n" does work and we can associate
-    # actions with the nick.  However, nicks that start or end with non-word characters are
-    # problematic.  We don't crash, but we also don't successfully identify their actions.
-    tracked = meeting.track_message(message=_message(30, "k[n", "#here", 560))
+    tracked = meeting.track_message(message=_message(30, "pronovic", "#nick k[n", 560))
     meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="k[n")
-    meeting.track_attendee(nick="k[n", alias="k[n")
-    tracked = meeting.track_message(
-        message=_message(31, "unknown_lamer", "#action hey k[n, your nick has regex special chars", 561)
-    )
+    tracked = meeting.track_message(message=_message(31, "unknown_lamer", "#action hey k[n, your nick has special chars", 561))
     meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="hey k[n, your nick has regex special characters")
     tracked = meeting.track_message(message=_message(32, "ken[", "#here", 562))
     meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="ke[")
@@ -301,3 +294,83 @@ class TestRendering:
             derive_locations.assert_called_once_with(config, meeting)
             assert _contents(log.path) == _contents(EXPECTED_LOG)
             assert _contents(minutes.path) == _contents(EXPECTED_MINUTES)
+
+
+class TestAliasMatcher:
+    @pytest.mark.parametrize(
+        "identifier",
+        [
+            pytest.param("ken"),
+            pytest.param("Ken"),
+            pytest.param("Ken Pronovici"),
+            pytest.param("k[n"),
+            pytest.param("K[n"),
+            pytest.param("K[n Pronovici"),
+            pytest.param("[ken"),
+            pytest.param("[Ken"),
+            pytest.param("[Ken Pronovici"),
+            pytest.param("ken]"),
+            pytest.param("Ken]"),
+            pytest.param("Ken Pronovici]"),
+            pytest.param("[ken]"),
+            pytest.param("[Ken]"),
+            pytest.param("[Ken Pronovici]"),
+        ],
+    )
+    def test_matches(self, identifier):
+
+        match = []
+        no_match = []
+
+        # These should be considered a match because the identifier is found unambiguously
+        match.append("%s" % identifier)
+        match.append("%s got assigned a task" % identifier)
+        match.append("assign that to %s please" % identifier)
+        match.append("that task goes to %s" % identifier)
+        match.append("hey %s: please take care of that" % identifier)
+        match.append("an action item (%s)" % identifier)
+        match.append("(%s) an action item" % identifier)
+
+        # These should NOT be considered a match because the identifier has a prefix
+        no_match.append("prefix%s" % identifier)
+        no_match.append("prefix%s got assigned a task" % identifier)
+        no_match.append("assign that to prefix%s please" % identifier)
+        no_match.append("that task goes to prefix%s" % identifier)
+        no_match.append("hey prefix%s: please take care of that" % identifier)
+        no_match.append("an action item (prefix%s)" % identifier)
+        no_match.append("(prefix%s) an action item" % identifier)
+
+        # These should NOT be considered a match because the identifier has a suffix
+        no_match.append("%ssuffix" % identifier)
+        no_match.append("%ssuffix got assigned a task" % identifier)
+        no_match.append("assign that to %ssuffix please" % identifier)
+        no_match.append("that task goes to %ssuffix" % identifier)
+        no_match.append("hey %ssuffix: please take care of that" % identifier)
+        no_match.append("an action item (%ssuffix)" % identifier)
+        no_match.append("(%ssuffix) an action item" % identifier)
+
+        # These should NOT be considered a match because the identifier is embedded in another string
+        no_match.append("prefix%ssuffix" % identifier)
+        no_match.append("prefix%ssuffix got assigned a task" % identifier)
+        no_match.append("assign that to prefix%ssuffix please" % identifier)
+        no_match.append("that task goes to prefix%ssuffix" % identifier)
+        no_match.append("hey prefix%ssuffix: please take care of that" % identifier)
+        no_match.append("an action item (prefix%ssuffix)" % identifier)
+        no_match.append("(prefix%ssuffix) an action item" % identifier)
+
+        nick_matcher = _AliasMatcher(identifier, None)  # checks matching for nick
+        alias_matcher = _AliasMatcher("bogus", identifier)  # checks matching for alias, since nick will never match
+
+        for message in match:
+            for testcase in [message, message.upper(), message.lower(), message.title()]:  # nicks/aliases are not case-sensitive
+                if not nick_matcher.matches(testcase):
+                    pytest.fail("nick '%s' not found in message '%s'" % (identifier, testcase))
+                if not alias_matcher.matches(testcase):
+                    pytest.fail("alias '%s' not found in message '%s'" % (identifier, testcase))
+
+        for message in no_match:
+            for testcase in [message, message.upper(), message.lower(), message.title()]:  # nicks/aliases are not case-sensitive
+                if nick_matcher.matches(testcase):
+                    pytest.fail("nick '%s' incorrectly found in message '%s'" % (identifier, testcase))
+                if alias_matcher.matches(testcase):
+                    pytest.fail("alias '%s' incorrectly found in message '%s'" % (identifier, testcase))

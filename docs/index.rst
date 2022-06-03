@@ -72,20 +72,17 @@ You can optionally document attendance using these commands.
 | ``#here``         | Anyone | Document attendance and optionally associate an IRC nickname to an alias.  If IRC nick ``ken``     |
 |                   |        | uses ``#here``, that nick is marked as a meeting attendee in the minutes.  If IRC nick ``ken``     |
 |                   |        | includes an alias, like ``#here pronovic`` or ``#here Ken Pronovici``, then the remainder          |
-|                   |        | of the line becomes an alias for ``ken`` and can be used when assigning actions, etc.              |
+|                   |        | of the line becomes an alias for ``ken`` and can be used when assigning actions. Although          |
+|                   |        | aliases can contain whitespace (like ``Ken Pronovici`` as shown in the example above), it's        |
+|                   |        | best to avoid this.  A camel-case identifier like ``KenPronovici`` is less ambiguous.              |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
 | ``#nick``         | Chair  | Identify an IRC nickname for a user who hasn't spoken, so they can be assigned actions, like       |
 |                   |        | ``#nick whoever``.                                                                                 |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
 
-*Note:* If you use a nick or assign an alias that contains any regular
-expression special characters, it may not always be possible to identify
-actions associated with that nick.  For instance, a nick ``k[n`` generally can
-be identified, but not ``[ken`` or ``ken]``.  For the latter two, this is
-because the special character ``[`` occurs on a regular expression word
-boundary.  If a meeting participant has a nick that contains a special
-character like this, it's best to identify that participant with a simpler
-alias that can be more easily identified when parsing the IRC transcript.
+*Note:* When generating the minutes, nicks and aliases are always matched
+case-insensitively, as in IRC itself.
+
 
 Agreement and Disagrement
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -127,8 +124,9 @@ Anyone can use these commands to log important information in the minutes.
 +===================+========+====================================================================================================+
 | ``#info``         | Anyone | Log important information in the minutes, like ``#info Happy hour starts at 6pm``.                 |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
-| ``#action``       | Anyone | Document an action, like ``#action ken will pick up dinner``.  If you include a known IRC          |
-|                   |        | nickname, the action will be assigned to that user.                                                |
+| ``#action``       | Anyone | Document an action, like ``#action ken will pick up dinner`` or ``#action ken and ed own snacks``. |
+|                   |        | If you include one or more unambiguous nicks or aliases in the action text, the action will be     |
+|                   |        | assigned to those user(s). See below for some caveats.                                             |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
 | ``#idea``         | Anyone | Add an idea to the minutes, like ``#idea we should start using HCoop Meetbot``.                    |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
@@ -140,6 +138,17 @@ Anyone can use these commands to log important information in the minutes.
 |                   |        | ``#link Agenda at https://whatever/agenda.html like usual``. The URL portion of the                |
 |                   |        | message will be turned into an ``<a href>`` in the generated minutes.                              |
 +-------------------+--------+----------------------------------------------------------------------------------------------------+
+
+*Note:* When you document an action with ``#action``, the bot will try to
+identify any nick or alias associated with that action, so it can be listed in
+the **Action Items by Attendee** section of the minutes.  This works for any
+nick or alias identified with ``#here`` or ``#nick``, but *only* if the nick or
+alias can be identified *unambiguously* in the action text --- either
+surrounded by whitespace or found at the very start or end of the text.  There
+are also some special cases for common constructs like parenthesis and colons.
+To avoid confusion, it's best to make your action text as simple and as clear
+as possible. Remember that nicks and aliases are matched case-insensitively, as
+in IRC itself.
 
 Administrative Commands
 ~~~~~~~~~~~~~~~~~~~~~~~
