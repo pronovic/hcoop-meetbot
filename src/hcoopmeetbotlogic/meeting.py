@@ -123,10 +123,21 @@ class Meeting:
     """
     A meeting on a particular IRC channel.
 
+    The meeting can be serialized and deserialized to and from JSON.  This is the mechanism we use
+    to persist the raw log to disk.  If you round trip the JSON (generate JSON and then use that
+    JSON to create a new meeting), the resulting object contains data that is equivalent, but not
+    exactly identical to, the original object.  Each tracked event has an associated message.  In
+    the original object, the tracked event always refers to one of the message objects that is
+    already in the messages list.  When you deserialize from JSON, the object in the message list
+    will be different than the one on the tracked event, although they will be equivalent by value.
+    So, if you deserialize from JSON, it's best to treat the resulting object as a read-only copy.
+    The copy won't always work exactly like a meeting that was created at runtime based on actual
+    IRC traffic.
+
     Attributes:
         id(str): Unique identifier for the meeting
         name(str): The name of the meeting, which defaults to the channel name
-        founder(str): IRC nick of the meeting founder always a member of chairs
+        founder(str): IRC nick of the meeting founder, always a member of chairs
         channel(str): Channel the meeting is running on
         network(str): Network associated with the channel
         chair(str): IRC nick of primary meeting chair, always a member of chairs
