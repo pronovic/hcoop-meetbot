@@ -327,24 +327,36 @@ class TestAliasMatcher:
         match.append("%s got assigned a task" % identifier)
         match.append("assign that to %s please" % identifier)
         match.append("that task goes to %s" % identifier)
+        match.append("hey %s: please take care of that" % identifier)
+        match.append("an action item (%s)" % identifier)
+        match.append("(%s) an action item" % identifier)
 
         # These should NOT be considered a match because the identifier has a prefix
         no_match.append("prefix%s" % identifier)
         no_match.append("prefix%s got assigned a task" % identifier)
         no_match.append("assign that to prefix%s please" % identifier)
         no_match.append("that task goes to prefix%s" % identifier)
+        no_match.append("hey prefix%s: please take care of that" % identifier)
+        no_match.append("an action item (prefix%s)" % identifier)
+        no_match.append("(prefix%s) an action item" % identifier)
 
         # These should NOT be considered a match because the identifier has a suffix
         no_match.append("%ssuffix" % identifier)
         no_match.append("%ssuffix got assigned a task" % identifier)
         no_match.append("assign that to %ssuffix please" % identifier)
         no_match.append("that task goes to %ssuffix" % identifier)
+        no_match.append("hey %ssuffix: please take care of that" % identifier)
+        no_match.append("an action item (%ssuffix)" % identifier)
+        no_match.append("(%ssuffix) an action item" % identifier)
 
         # These should NOT be considered a match because the identifier is embedded in another string
         no_match.append("prefix%ssuffix" % identifier)
         no_match.append("prefix%ssuffix got assigned a task" % identifier)
         no_match.append("assign that to prefix%ssuffix please" % identifier)
         no_match.append("that task goes to prefix%ssuffix" % identifier)
+        no_match.append("hey prefix%ssuffix: please take care of that" % identifier)
+        no_match.append("an action item (prefix%ssuffix)" % identifier)
+        no_match.append("(prefix%ssuffix) an action item" % identifier)
 
         nick_matcher = _AliasMatcher(identifier, None)  # checks matching for nick
         alias_matcher = _AliasMatcher("bogus", identifier)  # checks matching for alias, since nick will never match

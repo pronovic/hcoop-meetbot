@@ -156,11 +156,17 @@ class _AliasMatcher:
 
     @nick_pattern.default
     def _nick_pattern_default(self) -> re.Pattern:
-        return re.compile(r"(^|\s)(%s)($|\s)" % re.escape(self.nick), re.IGNORECASE)
+        return _AliasMatcher._regex(self.nick)
 
     @alias_pattern.default
     def _alias_pattern_default(self) -> Optional[re.Pattern]:
-        return re.compile(r"(^|\s)(%s)($|\s)" % re.escape(self.alias), re.IGNORECASE) if self.alias else None
+        return _AliasMatcher._regex(self.alias) if self.alias else None
+
+    @staticmethod
+    def _regex(identifier) -> re.Pattern:
+        escaped = re.escape(identifier)
+        regex = r"(^|\s)(%s|%s:|\(%s\))($|\s)" % (escaped, escaped, escaped)
+        return re.compile(regex, re.IGNORECASE)
 
     def matches(self, message: str) -> bool:
         """Return true if the attendee nick or alias is found in the message."""
