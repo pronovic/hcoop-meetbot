@@ -119,12 +119,9 @@ def _meeting() -> Meeting:
     tracked = meeting.track_message(message=_message(29, "pronovic", "#close", 559))
     meeting.track_event(event_type=EventType.ACCEPTED, message=tracked, operand="Motion accepted: 2 in favor to 1 opposed")
 
-    tracked = meeting.track_message(message=_message(30, "k[n", "#here", 560))
+    tracked = meeting.track_message(message=_message(30, "pronovic", "#nick k[n", 560))
     meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="k[n")
-    meeting.track_attendee(nick="k[n", alias="k[n")
-    tracked = meeting.track_message(
-        message=_message(31, "unknown_lamer", "#action hey k[n, your nick has regex special chars", 561)
-    )
+    tracked = meeting.track_message(message=_message(31, "unknown_lamer", "#action hey k[n, your nick has special chars", 561))
     meeting.track_event(event_type=EventType.ACTION, message=tracked, operand="hey k[n, your nick has regex special characters")
     tracked = meeting.track_message(message=_message(32, "ken[", "#here", 562))
     meeting.track_event(event_type=EventType.ATTENDEE, message=tracked, operand="ke[")
