@@ -10,7 +10,7 @@ from pathlib import Path
 
 import attr
 
-from .config import Config
+from .config import Config, OutputFormat
 from .dateutil import formatdate
 from .meeting import Meeting
 
@@ -64,6 +64,9 @@ def _location(config: Config, file_prefix: str, suffix: str) -> Location:
 def derive_locations(config: Config, meeting: Meeting) -> Locations:
     """Derive the locations where meeting files will be written."""
     file_prefix = _file_prefix(config, meeting)
-    log = _location(config, file_prefix, ".log.html")
-    minutes = _location(config, file_prefix, ".html")
-    return Locations(log=log, minutes=minutes)
+    if config.output_format == OutputFormat.HTML:
+        log = _location(config, file_prefix, ".log.html")
+        minutes = _location(config, file_prefix, ".html")
+        return Locations(log=log, minutes=minutes)
+    else:
+        raise ValueError("Unsupported output format: %s" % config.output_format)

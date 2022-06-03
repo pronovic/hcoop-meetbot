@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from hcoopmeetbotlogic.config import OutputFormat
 from hcoopmeetbotlogic.interface import Message
 from hcoopmeetbotlogic.location import Location, Locations
 from hcoopmeetbotlogic.meeting import EventType, Meeting, VotingAction
@@ -277,16 +278,16 @@ class TestRendering:
     @patch("hcoopmeetbotlogic.writer.DATE", "2001-02-03")
     @patch("hcoopmeetbotlogic.writer.VERSION", "1.2.3")
     @patch("hcoopmeetbotlogic.writer.derive_locations")
-    def test_write_meeting_wiring(self, derive_locations):
+    def test_html_rendering(self, derive_locations):
         # The goal here is to prove that rendering is wired up properly, the templates are
         # valid, and that files are written as expected.  We don't necessarily verify every
-        # different scenario - there are other tests above that delve into some of the details.
+        # different scenario - there are tests elsewhere that delve into some of the details.
         with TemporaryDirectory() as temp:
             log = Location(path=os.path.join(temp, "log.html"), url="http://")
             minutes = Location(path=os.path.join(temp, "minutes.html"), url="http://")
             locations = Locations(log=log, minutes=minutes)
             derive_locations.return_value = locations
-            config = MagicMock(timezone="America/Chicago")
+            config = MagicMock(timezone="America/Chicago", output_format=OutputFormat.HTML)
             meeting = _meeting()
             assert write_meeting(config, meeting) is locations
             # print("\n" + _contents(log.path))

@@ -16,7 +16,7 @@ import attr
 from genshi.builder import Element, tag
 from genshi.template import MarkupTemplate, TemplateLoader
 
-from .config import Config
+from .config import Config, OutputFormat
 from .dateutil import formatdate
 from .location import Locations, derive_locations
 from .meeting import EventType, Meeting, TrackedMessage
@@ -305,19 +305,22 @@ def _render_html(template: str, context: Dict[str, Any], out: TextIO) -> None:
     renderer.generate(**context).render(method="html", doctype="html", out=out)
 
 
-def _write_log(config: Config, locations: Locations, meeting: Meeting) -> None:
-    """Write the meeting log to disk."""
+def write_formatted_log(config: Config, locations: Locations, meeting: Meeting) -> None:
+    """Write the formatted meeting log to disk."""
     context = {
         "title": "%s Log" % meeting.name,
         "messages": [_LogMessage.for_message(config, message) for message in meeting.messages],
     }
     os.makedirs(os.path.dirname(locations.log.path), exist_ok=True)
     with open(locations.log.path, "w", encoding="utf-8") as out:
-        _render_html(template="log.html", context=context, out=out)
+        if config.output_format == OutputFormat.HTML:
+            _render_html(template="log.html", context=context, out=out)
+        else:
+            raise ValueError("Unsupported output format: %s" % config.output_format)
 
 
-def _write_minutes(config: Config, locations: Locations, meeting: Meeting) -> None:
-    """Write the meeting minutes to disk."""
+def write_formatted_minutes(config: Config, locations: Locations, meeting: Meeting) -> None:
+    """Write the formatted meeting minutes to disk."""
     context = {
         "title": "%s Minutes" % meeting.name,
         "software": {"version": VERSION, "url": URL, "date": DATE},
@@ -326,12 +329,15 @@ def _write_minutes(config: Config, locations: Locations, meeting: Meeting) -> No
     }
     os.makedirs(os.path.dirname(locations.minutes.path), exist_ok=True)
     with open(locations.minutes.path, "w", encoding="utf-8") as out:
-        _render_html(template="minutes.html", context=context, out=out)
+        if config.output_format == OutputFormat.HTML:
+            _render_html(template="minutes.html", context=context, out=out)
+        else:
+            raise ValueError("Unsupported output format: %s" % config.output_format)
 
 
 def write_meeting(config: Config, meeting: Meeting) -> Locations:
     """Write meeting files to disk, returning the file locations."""
     locations = derive_locations(config, meeting)
-    _write_log(config, locations, meeting)
-    _write_minutes(config, locations, meeting)
+    write_formatted_log(config, locations, meeting)
+    write_formatted_minutes(config, locations, meeting)
     return locations
