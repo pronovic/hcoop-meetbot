@@ -31,7 +31,7 @@ TIMEZONE_DEFAULT = "UTC"
 USE_CHANNEL_TOPIC_DEFAULT = False
 
 
-class OutputFormat(Enum):
+class OutputFormat(str, Enum):
     """Legal output formats."""
 
     HTML = "HTML"
