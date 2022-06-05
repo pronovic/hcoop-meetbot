@@ -67,9 +67,14 @@ def _location(config: Config, file_prefix: str, suffix: str, output_dir: Optiona
     return Location(path=path, url=url)
 
 
+def _removesuffix(content: str, suffix: str) -> str:
+    # equivalent to string.removesuffix, which is only available in Python 3.9
+    return content[: -len(suffix)] if content.endswith(suffix) else content
+
+
 def derive_prefix(raw_log_path: str) -> str:
     """Derive the prefix associated with a raw log path, for use when regenerating output."""
-    return os.path.basename(raw_log_path).removesuffix(RAW_LOG_EXTENSION)
+    return _removesuffix(os.path.basename(raw_log_path), RAW_LOG_EXTENSION)
 
 
 def derive_locations(config: Config, meeting: Meeting, prefix: Optional[str] = None, output_dir: Optional[str] = None) -> Locations:
