@@ -1,4 +1,4 @@
-Version 0.6.0     unreleased
+Version 0.6.0     05 Jun 2022
 
 	* Better handle nicks/aliases containing special characters.
 	* Add a suggestion at meeting start for users to identify themselves.
