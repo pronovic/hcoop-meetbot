@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
 import os
+import sys
 from tempfile import TemporaryDirectory
 from typing import List
 from unittest.mock import ANY, MagicMock, patch
 
+import pytest
 from click.testing import CliRunner, Result
 
 from hcoopmeetbotlogic.cli import meetbot as command
@@ -33,8 +35,22 @@ class TestCommon:
         result = invoke(["--help"])
         assert result.exit_code == 0
 
+    @pytest.mark.skipif(sys.version_info >= (3, 9), reason="see comments")
+    def test_version(self):
+        # This tests the --version switch, without fully verifying its output.  This test should
+        # succeed on all versions of Python that we support, including older versions that rely
+        # on the importlib-metadata backport package.
+        result = invoke(["--version"])
+        assert result.exit_code == 0
+        assert result.output.startswith("hcoop-meetbot, version")
+
     @patch("importlib.metadata.version")  # this is used underneath by @click.version_option()
-    def test_version(self, version):
+    @pytest.mark.skipif(sys.version_info < (3, 9), reason="see comments")
+    def test_version_output(self, version):
+        # This tests the --version switch, and fully verifies its output.  It will only succeed on
+        # Python >= 3.9, where importlib.metadata.version exists in the standard library.  We use the
+        # importlib-metadata backport for earlier versions of Python, but for some reason @patch doesn't
+        # work when using the backport package.
         version.return_value = "1234"
         result = invoke(["--version"])
         assert result.exit_code == 0
