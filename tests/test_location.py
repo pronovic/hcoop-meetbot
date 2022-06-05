@@ -6,7 +6,7 @@ from datetime import datetime
 import pytest
 
 from hcoopmeetbotlogic.config import Config
-from hcoopmeetbotlogic.location import Location, Locations, derive_locations
+from hcoopmeetbotlogic.location import Location, Locations, derive_locations, derive_prefix
 from hcoopmeetbotlogic.meeting import Meeting
 
 
@@ -29,6 +29,10 @@ class TestLocations:
 
 
 class TestFunctions:
+    def test_derive_prefix(self):
+        path = "/path/to/whatever/something.log.json"
+        assert derive_prefix(path) == "something"
+
     def test_derive_locations_with_constant_pattern(self):
         config = Config(
             conf_file=None,

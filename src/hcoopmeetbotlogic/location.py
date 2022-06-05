@@ -4,15 +4,20 @@
 """
 Location logic.
 """
-
+import os
 import re
 from pathlib import Path
+from typing import Optional
 
 import attr
 
 from .config import Config, OutputFormat
 from .dateutil import formatdate
 from .meeting import Meeting
+
+RAW_LOG_EXTENSION = ".log.json"
+HTML_LOG_EXTENSION = ".log.html"
+HTML_MINUTES_EXTENSION = ".html"
 
 
 @attr.s(frozen=True)
@@ -62,14 +67,19 @@ def _location(config: Config, file_prefix: str, suffix: str) -> Location:
     return Location(path=path, url=url)
 
 
-def derive_locations(config: Config, meeting: Meeting) -> Locations:
+def derive_prefix(raw_log_path: str) -> str:
+    """Derive the prefix associated with a raw log path, for use when regenerating output."""
+    return os.path.basename(raw_log_path).removesuffix(RAW_LOG_EXTENSION)
+
+
+def derive_locations(config: Config, meeting: Meeting, prefix: Optional[str] = None) -> Locations:
     """Derive the locations where meeting files will be written."""
-    file_prefix = _file_prefix(config, meeting)
+    file_prefix = prefix if prefix else _file_prefix(config, meeting)
     if config.output_format == OutputFormat.HTML:
         return Locations(
-            raw_log=_location(config, file_prefix, ".log.json"),
-            formatted_log=_location(config, file_prefix, ".log.html"),
-            formatted_minutes=_location(config, file_prefix, ".html"),
+            raw_log=_location(config, file_prefix, RAW_LOG_EXTENSION),
+            formatted_log=_location(config, file_prefix, HTML_LOG_EXTENSION),
+            formatted_minutes=_location(config, file_prefix, HTML_MINUTES_EXTENSION),
         )
     else:
         raise ValueError("Unsupported output format: %s" % config.output_format)
