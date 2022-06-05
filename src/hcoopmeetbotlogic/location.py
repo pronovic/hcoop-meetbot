@@ -46,9 +46,9 @@ def _file_prefix(config: Config, meeting: Meeting) -> str:
     return normalized
 
 
-def _abs_path(config: Config, file_prefix: str, suffix: str) -> str:
+def _abs_path(config: Config, file_prefix: str, suffix: str, output_dir: Optional[str]) -> str:
     """Build an absolute path for a file in the log directory, preventing path traversal."""
-    log_dir = Path(config.log_dir)
+    log_dir = Path(output_dir) if output_dir else Path(config.log_dir)
     target = "%s%s" % (file_prefix, suffix)  # might include slashes and other traversal like ".."
     safe = log_dir.joinpath(target).resolve().relative_to(log_dir.resolve())  # blows up if outside of log dir
     return log_dir.joinpath(safe).absolute().as_posix()
@@ -60,9 +60,9 @@ def _url(config: Config, file_prefix: str, suffix: str) -> str:
     return "%s/%s%s" % (config.url_prefix, file_prefix, suffix)
 
 
-def _location(config: Config, file_prefix: str, suffix: str) -> Location:
+def _location(config: Config, file_prefix: str, suffix: str, output_dir: Optional[str]) -> Location:
     """Build a location for a file in the log directory"""
-    path = _abs_path(config, file_prefix, suffix)
+    path = _abs_path(config, file_prefix, suffix, output_dir)
     url = _url(config, file_prefix, suffix)
     return Location(path=path, url=url)
 
@@ -72,14 +72,19 @@ def derive_prefix(raw_log_path: str) -> str:
     return os.path.basename(raw_log_path).removesuffix(RAW_LOG_EXTENSION)
 
 
-def derive_locations(config: Config, meeting: Meeting, prefix: Optional[str] = None) -> Locations:
-    """Derive the locations where meeting files will be written."""
+def derive_locations(config: Config, meeting: Meeting, prefix: Optional[str] = None, output_dir: Optional[str] = None) -> Locations:
+    """
+    Derive the locations where meeting files will be written.
+
+    Use prefix and output_dir to override the file prefix and output log directory
+    that would normally be generated based on configuration.
+    """
     file_prefix = prefix if prefix else _file_prefix(config, meeting)
     if config.output_format == OutputFormat.HTML:
         return Locations(
-            raw_log=_location(config, file_prefix, RAW_LOG_EXTENSION),
-            formatted_log=_location(config, file_prefix, HTML_LOG_EXTENSION),
-            formatted_minutes=_location(config, file_prefix, HTML_MINUTES_EXTENSION),
+            raw_log=_location(config, file_prefix, RAW_LOG_EXTENSION, output_dir),
+            formatted_log=_location(config, file_prefix, HTML_LOG_EXTENSION, output_dir),
+            formatted_minutes=_location(config, file_prefix, HTML_MINUTES_EXTENSION, output_dir),
         )
     else:
         raise ValueError("Unsupported output format: %s" % config.output_format)
