@@ -3,6 +3,7 @@ Version 0.5.3     unreleased
 	* Better handle nicks/aliases containing special characters.
 	* Add a suggestion at meeting start for users to identify themselves.
 	* Generate a raw meeting log in JSON format along with HTML logs.
+	* Implement a command-line tool "meetbot" and a "regenerate" utility.
 
 Version 0.5.2     13 May 2022
 
