@@ -64,7 +64,7 @@ class Config:
     output_format = attr.ib(type=OutputFormat, default=OUTPUT_FORMAT_DEFAULT)
 
 
-def load_config(logger: Logger, conf_dir: str) -> Config:
+def load_config(logger: Optional[Logger], conf_dir: str) -> Config:
     """
     Load configuration from disk.
 
@@ -98,5 +98,6 @@ def load_config(logger: Logger, conf_dir: str) -> Config:
             config = Config(conf_file=None)
     else:
         config = Config(conf_file=None)
-    logger.info("HcoopMeetbot config: %s", config)
+    if logger:
+        logger.info("HcoopMeetbot config: %s", config)
     return config

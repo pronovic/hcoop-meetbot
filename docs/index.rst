@@ -295,6 +295,55 @@ The administrator who owns the Limnoria bot has access to some additional featur
 |                   | then use ``@deletemeeting #channel false``.                                                                 |
 +-------------------+-------------------------------------------------------------------------------------------------------------+
 
+Command Line Tool
+-----------------
+
+The Python package ships with a command line tool named ``meetbot``.  This tool
+implements utilities to be used outside of IRC::
+
+   $ meetbot --help
+   Usage: meetbot [OPTIONS] COMMAND [ARGS]...
+
+     Meetbot command line utilities.
+
+   Options:
+     --version   Show the version and exit.
+     -h, --help  Show this message and exit.
+
+   Commands:
+     regenerate  Regenerate formatted output based on a raw log file.
+
+Currently, the only utility available is ``regenerate``::
+
+   $ meetbot regenerate --help
+   Usage: meetbot regenerate [OPTIONS]
+
+     Regenerate formatted output based on a raw log file.
+
+     This parses a raw meeting log and regenerates formatted output into the
+     specified output directory.  By default, the output directory is the current
+     working directory, but you can adjust that using the --output-dir switch.
+
+     The formatted output will be generated based on the rules in the meetbot
+     configuration file, which controls the output format, date format, time
+     zone, etc.  Configuration for the file prefix is ignored and the new files
+     will be generated using the exact same prefix as the raw log file itself.
+
+   Options:
+     -c, --config <config>          Path to meetbot config file  [required]
+     -r, --raw-log <raw-log>        Path to the raw JSON log  [required]
+     -d, --output-dir <output-dir>  Where to write output, defaults to .
+     -h, --help                     Show this message and exit.
+
+You can use this as an error-recovery tool (if for some reason the bot
+crashes when generating formatted output) or as a way to take advantage
+of new features in the bot (for instance, if output has been improved
+or there is a new output format).
+
+*Note:* This utility only works for meetings that were run using v0.6.0 or
+later of the plugin, since earlier versions do not generate the raw JSON
+meeting log that is used as input.  
+
 .. _hcoop-meetbot: https://github.com/pronovic/hcoop-meetbot
 .. _Limnoria: https://github.com/ProgVal/Limnoria
 .. _HCoop: https://hcoop.net/
@@ -303,5 +352,4 @@ The administrator who owns the Limnoria bot has access to some additional featur
 .. _getting-started: https://docs.limnoria.net/use/getting_started.html
 .. _strftime: https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 .. _IANA: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-
 

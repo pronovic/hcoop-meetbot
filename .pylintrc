@@ -360,6 +360,7 @@ good-names=e,
            p,
            r,
            id,
+           fp,
            _
 
 # Include a hint for the correct naming format with invalid-name.

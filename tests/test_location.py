@@ -6,7 +6,7 @@ from datetime import datetime
 import pytest
 
 from hcoopmeetbotlogic.config import Config
-from hcoopmeetbotlogic.location import Location, Locations, derive_locations
+from hcoopmeetbotlogic.location import Location, Locations, derive_locations, derive_prefix
 from hcoopmeetbotlogic.meeting import Meeting
 
 
@@ -29,6 +29,10 @@ class TestLocations:
 
 
 class TestFunctions:
+    def test_derive_prefix(self):
+        path = "/path/to/whatever/something.log.json"
+        assert derive_prefix(path) == "something"
+
     def test_derive_locations_with_constant_pattern(self):
         config = Config(
             conf_file=None,
@@ -44,6 +48,40 @@ class TestFunctions:
         assert locations.formatted_log.path == "/data/meetings/hcoop/constant.log.html"
         assert locations.formatted_log.url == "https://whatever/constant.log.html"
         assert locations.formatted_minutes.path == "/data/meetings/hcoop/constant.html"
+        assert locations.formatted_minutes.url == "https://whatever/constant.html"
+
+    def test_derive_locations_with_prefix_override(self):
+        config = Config(
+            conf_file=None,
+            log_dir="/data/meetings/hcoop",
+            url_prefix="https://whatever",
+            timezone="UTC",
+            pattern="constant",
+        )
+        meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        locations = derive_locations(config, meeting, prefix="prefix")
+        assert locations.raw_log.path == "/data/meetings/hcoop/prefix.log.json"
+        assert locations.raw_log.url == "https://whatever/prefix.log.json"
+        assert locations.formatted_log.path == "/data/meetings/hcoop/prefix.log.html"
+        assert locations.formatted_log.url == "https://whatever/prefix.log.html"
+        assert locations.formatted_minutes.path == "/data/meetings/hcoop/prefix.html"
+        assert locations.formatted_minutes.url == "https://whatever/prefix.html"
+
+    def test_derive_locations_with_output_override(self):
+        config = Config(
+            conf_file=None,
+            log_dir="/data/meetings/hcoop",
+            url_prefix="https://whatever",
+            timezone="UTC",
+            pattern="constant",
+        )
+        meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        locations = derive_locations(config, meeting, output_dir="/tmp")
+        assert locations.raw_log.path == "/tmp/constant.log.json"
+        assert locations.raw_log.url == "https://whatever/constant.log.json"
+        assert locations.formatted_log.path == "/tmp/constant.log.html"
+        assert locations.formatted_log.url == "https://whatever/constant.log.html"
+        assert locations.formatted_minutes.path == "/tmp/constant.html"
         assert locations.formatted_minutes.url == "https://whatever/constant.html"
 
     def test_derive_locations_with_subsitution_variables(self):
