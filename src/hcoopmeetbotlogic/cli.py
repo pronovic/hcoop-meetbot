@@ -15,7 +15,7 @@ from hcoopmeetbotlogic.writer import write_formatted_log, write_formatted_minute
 
 
 @click.group(context_settings=dict(help_option_names=["-h", "--help"]))
-@click.version_option(package_name="hcoopmeetbotlogic", prog_name="meetbot")
+@click.version_option(package_name="hcoop-meetbot", prog_name="hcoop-meetbot")
 def meetbot() -> None:
     """Meetbot command line utilities."""
 
@@ -32,7 +32,7 @@ def meetbot() -> None:
 @click.option(
     "--raw-log",
     "-r",
-    "raw_log_path",
+    "raw_log",
     metavar="<raw-log>",
     help="Path to the raw JSON log",
     required=True,
@@ -40,7 +40,7 @@ def meetbot() -> None:
 @click.option(
     "--output-dir",
     "-d",
-    "output_dir_path",
+    "output_dir",
     metavar="<output-dir>",
     help="Where to write output, defaults to .",
     default=".",
@@ -64,7 +64,7 @@ def regenerate(config_path: str, raw_log: str, output_dir: str) -> None:
     if not os.path.isfile(raw_log):
         raise click.UsageError("Could not find raw log: %s" % raw_log)
     if not os.path.isdir(output_dir):
-        raise click.UsageError("Could not find output dir: %s" % raw_log)
+        raise click.UsageError("Could not find output dir: %s" % output_dir)
     config = load_config(None, config_path)
     prefix = derive_prefix(raw_log)
     with open(raw_log, "r", encoding="utf-8") as fp:
@@ -72,4 +72,3 @@ def regenerate(config_path: str, raw_log: str, output_dir: str) -> None:
     locations = derive_locations(config, meeting, prefix, output_dir)
     write_formatted_log(config, locations, meeting)
     write_formatted_minutes(config, locations, meeting)
-    return locations

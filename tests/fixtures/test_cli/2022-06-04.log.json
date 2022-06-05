@@ -1,0 +1,678 @@
+{
+  "founder": "pronovic",
+  "channel": "#hcoop",
+  "network": "network",
+  "id": "59ace2dcad434344ba909c8439b4ff45",
+  "name": "#hcoop",
+  "chair": "pronovic",
+  "chairs": [
+    "pronovic"
+  ],
+  "nicks": {
+    "pronovic": 24,
+    "unknown_lamer": 18,
+    "layline": 37,
+    "bhkl": 3,
+    "keverets": 2,
+    "ken[": 1,
+    "[ken": 1,
+    "[m]": 1
+  },
+  "start_time": "2021-04-13T02:06:12",
+  "end_time": "2021-04-13T02:15:42",
+  "active": false,
+  "original_topic": null,
+  "current_topic": null,
+  "messages": [
+    {
+      "id": "id-0",
+      "sender": "pronovic",
+      "payload": "#startmeeting",
+      "action": false,
+      "timestamp": "2021-04-13T02:06:12"
+    },
+    {
+      "id": "id-1",
+      "sender": "pronovic",
+      "payload": "Hello everyone, is it ok to get started?",
+      "action": false,
+      "timestamp": "2021-04-13T02:06:44"
+    },
+    {
+      "id": "id-2",
+      "sender": "unknown_lamer",
+      "payload": "Yeah, let's do it",
+      "action": false,
+      "timestamp": "2021-04-13T02:07:49"
+    },
+    {
+      "id": "id-3",
+      "sender": "pronovic",
+      "payload": "#link Agenda at https://whatever/agenda.html like usual",
+      "action": false,
+      "timestamp": "2021-04-13T02:08:15"
+    },
+    {
+      "id": "id-4",
+      "sender": "pronovic",
+      "payload": "#topic Attendance",
+      "action": false,
+      "timestamp": "2021-04-13T02:08:17"
+    },
+    {
+      "id": "id-5",
+      "sender": "pronovic",
+      "payload": "If you are present please write \"#here $hcoop_username\"",
+      "action": false,
+      "timestamp": "2021-04-13T02:08:18"
+    },
+    {
+      "id": "id-6",
+      "sender": "pronovic",
+      "payload": "#here Pronovici",
+      "action": false,
+      "timestamp": "2021-04-13T02:08:19"
+    },
+    {
+      "id": "id-7",
+      "sender": "unknown_lamer",
+      "payload": "#here Clinton Alias",
+      "action": false,
+      "timestamp": "2021-04-13T02:08:20"
+    },
+    {
+      "id": "id-8",
+      "sender": "keverets",
+      "payload": "#here keverets",
+      "action": false,
+      "timestamp": "2021-04-13T02:08:21"
+    },
+    {
+      "id": "id-9",
+      "sender": "layline",
+      "payload": "#here",
+      "action": false,
+      "timestamp": "2021-04-13T02:08:22"
+    },
+    {
+      "id": "id-10",
+      "sender": "pronovic",
+      "payload": "Thanks, everyone",
+      "action": false,
+      "timestamp": "2021-04-13T02:08:22"
+    },
+    {
+      "id": "id-11",
+      "sender": "pronovic",
+      "payload": "#topic The first topic",
+      "action": false,
+      "timestamp": "2021-04-13T02:09:31"
+    },
+    {
+      "id": "id-12",
+      "sender": "pronovic",
+      "payload": "Does anyone have any discussion?",
+      "action": false,
+      "timestamp": "2021-04-13T02:10:03"
+    },
+    {
+      "id": "id-13",
+      "sender": "layline",
+      "payload": "Is this important?",
+      "action": false,
+      "timestamp": "2021-04-13T02:10:04"
+    },
+    {
+      "id": "id-14",
+      "sender": "unknown_lamer",
+      "payload": "Yes it is",
+      "action": false,
+      "timestamp": "2021-04-13T02:11:11"
+    },
+    {
+      "id": "id-15",
+      "sender": "pronovic",
+      "payload": "#info moving on then",
+      "action": false,
+      "timestamp": "2021-04-13T02:11:17"
+    },
+    {
+      "id": "id-16",
+      "sender": "pronovic",
+      "payload": "#topic The second topic",
+      "action": false,
+      "timestamp": "2021-04-13T02:11:44"
+    },
+    {
+      "id": "id-17",
+      "sender": "layline",
+      "payload": "unknown_lamer: I need you for this action",
+      "action": false,
+      "timestamp": "2021-04-13T02:11:46"
+    },
+    {
+      "id": "id-18",
+      "sender": "pronovic",
+      "payload": "#action clinton alias will work with layline on this",
+      "action": false,
+      "timestamp": "2021-04-13T02:12:53"
+    },
+    {
+      "id": "id-19",
+      "sender": "pronovic",
+      "payload": "#topic The third topic",
+      "action": false,
+      "timestamp": "2021-04-13T02:12:59"
+    },
+    {
+      "id": "id-20",
+      "sender": "pronovic",
+      "payload": "#idea we should improve MeetBot",
+      "action": false,
+      "timestamp": "2021-04-13T02:13:06"
+    },
+    {
+      "id": "id-21",
+      "sender": "pronovic",
+      "payload": "I'll just take this one myself",
+      "action": false,
+      "timestamp": "2021-04-13T02:13:27"
+    },
+    {
+      "id": "id-22",
+      "sender": "pronovic",
+      "payload": "#action pronovici will deal with it",
+      "action": false,
+      "timestamp": "2021-04-13T02:13:41"
+    },
+    {
+      "id": "id-23",
+      "sender": "pronovic",
+      "payload": "#topic Cross-site Scripting",
+      "action": false,
+      "timestamp": "2021-04-13T02:13:45"
+    },
+    {
+      "id": "id-24",
+      "sender": "pronovic",
+      "payload": "#action <script>alert('malicious')</script>",
+      "action": false,
+      "timestamp": "2021-04-13T02:14:29"
+    },
+    {
+      "id": "id-25",
+      "sender": "pronovic",
+      "payload": "#motion the motion",
+      "action": false,
+      "timestamp": "2021-04-13T02:14:34"
+    },
+    {
+      "id": "id-26",
+      "sender": "pronovic",
+      "payload": "#vote +1",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:25"
+    },
+    {
+      "id": "id-27",
+      "sender": "unknown_lamer",
+      "payload": "#vote +1",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:27"
+    },
+    {
+      "id": "id-28",
+      "sender": "layline",
+      "payload": "#vote -1",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:29"
+    },
+    {
+      "id": "id-29",
+      "sender": "pronovic",
+      "payload": "#close",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:31"
+    },
+    {
+      "id": "id-30",
+      "sender": "pronovic",
+      "payload": "#nick k[n",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:32"
+    },
+    {
+      "id": "id-31",
+      "sender": "unknown_lamer",
+      "payload": "#action hey k[n, your nick has special chars",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:33"
+    },
+    {
+      "id": "id-32",
+      "sender": "ken[",
+      "payload": "#here",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:34"
+    },
+    {
+      "id": "id-33",
+      "sender": "layline",
+      "payload": "#action ken] fix your nick!",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:35"
+    },
+    {
+      "id": "id-34",
+      "sender": "[ken",
+      "payload": "#here",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:36"
+    },
+    {
+      "id": "id-35",
+      "sender": "pronovic",
+      "payload": "#action not you too, [ken",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:37"
+    },
+    {
+      "id": "id-36",
+      "sender": "[m]",
+      "payload": "#here",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:38"
+    },
+    {
+      "id": "id-37",
+      "sender": "keverets",
+      "payload": "#action A Matrix [m] nick",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:39"
+    },
+    {
+      "id": "id-38",
+      "sender": "pronovic",
+      "payload": "#endmeeting",
+      "action": false,
+      "timestamp": "2021-04-13T02:15:42"
+    }
+  ],
+  "events": [
+    {
+      "event_type": "START_MEETING",
+      "message": {
+        "id": "id-0",
+        "sender": "pronovic",
+        "payload": "#startmeeting",
+        "action": false,
+        "timestamp": "2021-04-13T02:06:12"
+      },
+      "operand": null,
+      "id": "id-0",
+      "timestamp": "2021-04-13T02:06:12"
+    },
+    {
+      "event_type": "LINK",
+      "message": {
+        "id": "id-3",
+        "sender": "pronovic",
+        "payload": "#link Agenda at https://whatever/agenda.html like usual",
+        "action": false,
+        "timestamp": "2021-04-13T02:08:15"
+      },
+      "operand": "Agenda at https://whatever/agenda.html like usual",
+      "id": "id-3",
+      "timestamp": "2021-04-13T02:08:15"
+    },
+    {
+      "event_type": "TOPIC",
+      "message": {
+        "id": "id-4",
+        "sender": "pronovic",
+        "payload": "#topic Attendance",
+        "action": false,
+        "timestamp": "2021-04-13T02:08:17"
+      },
+      "operand": "Attendance",
+      "id": "id-4",
+      "timestamp": "2021-04-13T02:08:17"
+    },
+    {
+      "event_type": "ATTENDEE",
+      "message": {
+        "id": "id-6",
+        "sender": "pronovic",
+        "payload": "#here Pronovici",
+        "action": false,
+        "timestamp": "2021-04-13T02:08:19"
+      },
+      "operand": "Pronovici",
+      "id": "id-6",
+      "timestamp": "2021-04-13T02:08:19"
+    },
+    {
+      "event_type": "ATTENDEE",
+      "message": {
+        "id": "id-7",
+        "sender": "unknown_lamer",
+        "payload": "#here Clinton Alias",
+        "action": false,
+        "timestamp": "2021-04-13T02:08:20"
+      },
+      "operand": "Clinton Alias",
+      "id": "id-7",
+      "timestamp": "2021-04-13T02:08:20"
+    },
+    {
+      "event_type": "ATTENDEE",
+      "message": {
+        "id": "id-8",
+        "sender": "keverets",
+        "payload": "#here keverets",
+        "action": false,
+        "timestamp": "2021-04-13T02:08:21"
+      },
+      "operand": "keverets",
+      "id": "id-8",
+      "timestamp": "2021-04-13T02:08:21"
+    },
+    {
+      "event_type": "ATTENDEE",
+      "message": {
+        "id": "id-9",
+        "sender": "layline",
+        "payload": "#here",
+        "action": false,
+        "timestamp": "2021-04-13T02:08:22"
+      },
+      "operand": "layline",
+      "id": "id-9",
+      "timestamp": "2021-04-13T02:08:22"
+    },
+    {
+      "event_type": "TOPIC",
+      "message": {
+        "id": "id-11",
+        "sender": "pronovic",
+        "payload": "#topic The first topic",
+        "action": false,
+        "timestamp": "2021-04-13T02:09:31"
+      },
+      "operand": "The first topic",
+      "id": "id-11",
+      "timestamp": "2021-04-13T02:09:31"
+    },
+    {
+      "event_type": "INFO",
+      "message": {
+        "id": "id-15",
+        "sender": "pronovic",
+        "payload": "#info moving on then",
+        "action": false,
+        "timestamp": "2021-04-13T02:11:17"
+      },
+      "operand": "moving on then",
+      "id": "id-15",
+      "timestamp": "2021-04-13T02:11:17"
+    },
+    {
+      "event_type": "TOPIC",
+      "message": {
+        "id": "id-16",
+        "sender": "pronovic",
+        "payload": "#topic The second topic",
+        "action": false,
+        "timestamp": "2021-04-13T02:11:44"
+      },
+      "operand": "The second topic",
+      "id": "id-16",
+      "timestamp": "2021-04-13T02:11:44"
+    },
+    {
+      "event_type": "ACTION",
+      "message": {
+        "id": "id-18",
+        "sender": "pronovic",
+        "payload": "#action clinton alias will work with layline on this",
+        "action": false,
+        "timestamp": "2021-04-13T02:12:53"
+      },
+      "operand": "clinton alias will work with layline on this",
+      "id": "id-18",
+      "timestamp": "2021-04-13T02:12:53"
+    },
+    {
+      "event_type": "TOPIC",
+      "message": {
+        "id": "id-19",
+        "sender": "pronovic",
+        "payload": "#topic The third topic",
+        "action": false,
+        "timestamp": "2021-04-13T02:12:59"
+      },
+      "operand": "The third topic",
+      "id": "id-19",
+      "timestamp": "2021-04-13T02:12:59"
+    },
+    {
+      "event_type": "IDEA",
+      "message": {
+        "id": "id-20",
+        "sender": "pronovic",
+        "payload": "#idea we should improve MeetBot",
+        "action": false,
+        "timestamp": "2021-04-13T02:13:06"
+      },
+      "operand": "we should improve MeetBot",
+      "id": "id-20",
+      "timestamp": "2021-04-13T02:13:06"
+    },
+    {
+      "event_type": "ACTION",
+      "message": {
+        "id": "id-22",
+        "sender": "pronovic",
+        "payload": "#action pronovici will deal with it",
+        "action": false,
+        "timestamp": "2021-04-13T02:13:41"
+      },
+      "operand": "pronovici will deal with it",
+      "id": "id-22",
+      "timestamp": "2021-04-13T02:13:41"
+    },
+    {
+      "event_type": "ACTION",
+      "message": {
+        "id": "id-24",
+        "sender": "pronovic",
+        "payload": "#action <script>alert('malicious')</script>",
+        "action": false,
+        "timestamp": "2021-04-13T02:14:29"
+      },
+      "operand": "<script>alert('malicious')</script>",
+      "id": "id-24",
+      "timestamp": "2021-04-13T02:14:29"
+    },
+    {
+      "event_type": "MOTION",
+      "message": {
+        "id": "id-25",
+        "sender": "pronovic",
+        "payload": "#motion the motion",
+        "action": false,
+        "timestamp": "2021-04-13T02:14:34"
+      },
+      "operand": "the motion",
+      "id": "id-25",
+      "timestamp": "2021-04-13T02:14:34"
+    },
+    {
+      "event_type": "VOTE",
+      "message": {
+        "id": "id-26",
+        "sender": "pronovic",
+        "payload": "#vote +1",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:25"
+      },
+      "operand": "+1",
+      "id": "id-26",
+      "timestamp": "2021-04-13T02:15:25"
+    },
+    {
+      "event_type": "VOTE",
+      "message": {
+        "id": "id-27",
+        "sender": "unknown_lamer",
+        "payload": "#vote +1",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:27"
+      },
+      "operand": "+1",
+      "id": "id-27",
+      "timestamp": "2021-04-13T02:15:27"
+    },
+    {
+      "event_type": "VOTE",
+      "message": {
+        "id": "id-28",
+        "sender": "layline",
+        "payload": "#vote -1",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:29"
+      },
+      "operand": "-1",
+      "id": "id-28",
+      "timestamp": "2021-04-13T02:15:29"
+    },
+    {
+      "event_type": "ACCEPTED",
+      "message": {
+        "id": "id-29",
+        "sender": "pronovic",
+        "payload": "#close",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:31"
+      },
+      "operand": "Motion accepted: 2 in favor to 1 opposed",
+      "id": "id-29",
+      "timestamp": "2021-04-13T02:15:31"
+    },
+    {
+      "event_type": "ATTENDEE",
+      "message": {
+        "id": "id-30",
+        "sender": "pronovic",
+        "payload": "#nick k[n",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:32"
+      },
+      "operand": "k[n",
+      "id": "id-30",
+      "timestamp": "2021-04-13T02:15:32"
+    },
+    {
+      "event_type": "ACTION",
+      "message": {
+        "id": "id-31",
+        "sender": "unknown_lamer",
+        "payload": "#action hey k[n, your nick has special chars",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:33"
+      },
+      "operand": "hey k[n, your nick has regex special characters",
+      "id": "id-31",
+      "timestamp": "2021-04-13T02:15:33"
+    },
+    {
+      "event_type": "ATTENDEE",
+      "message": {
+        "id": "id-32",
+        "sender": "ken[",
+        "payload": "#here",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:34"
+      },
+      "operand": "ke[",
+      "id": "id-32",
+      "timestamp": "2021-04-13T02:15:34"
+    },
+    {
+      "event_type": "ACTION",
+      "message": {
+        "id": "id-33",
+        "sender": "layline",
+        "payload": "#action ken] fix your nick!",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:35"
+      },
+      "operand": "ken] fix your nick!",
+      "id": "id-33",
+      "timestamp": "2021-04-13T02:15:35"
+    },
+    {
+      "event_type": "ATTENDEE",
+      "message": {
+        "id": "id-34",
+        "sender": "[ken",
+        "payload": "#here",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:36"
+      },
+      "operand": "[ken",
+      "id": "id-34",
+      "timestamp": "2021-04-13T02:15:36"
+    },
+    {
+      "event_type": "ACTION",
+      "message": {
+        "id": "id-35",
+        "sender": "pronovic",
+        "payload": "#action not you too, [ken",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:37"
+      },
+      "operand": "not you too, [ken",
+      "id": "id-35",
+      "timestamp": "2021-04-13T02:15:37"
+    },
+    {
+      "event_type": "ACTION",
+      "message": {
+        "id": "id-37",
+        "sender": "keverets",
+        "payload": "#action A Matrix [m] nick",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:39"
+      },
+      "operand": "A Matrix [m] nick",
+      "id": "id-37",
+      "timestamp": "2021-04-13T02:15:39"
+    },
+    {
+      "event_type": "END_MEETING",
+      "message": {
+        "id": "id-38",
+        "sender": "pronovic",
+        "payload": "#endmeeting",
+        "action": false,
+        "timestamp": "2021-04-13T02:15:42"
+      },
+      "operand": null,
+      "id": "id-38",
+      "timestamp": "2021-04-13T02:15:42"
+    }
+  ],
+  "aliases": {
+    "pronovic": "Pronovici",
+    "unknown_lamer": "Clinton Alias",
+    "keverets": null,
+    "layline": null,
+    "ken[": null,
+    "[ken": null,
+    "[m]": null
+  },
+  "vote_in_progress": false,
+  "motion_index": null
+}
