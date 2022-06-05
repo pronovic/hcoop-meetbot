@@ -1,4 +1,4 @@
-Version 0.5.3     unreleased
+Version 0.6.0     unreleased
 
 	* Better handle nicks/aliases containing special characters.
 	* Add a suggestion at meeting start for users to identify themselves.

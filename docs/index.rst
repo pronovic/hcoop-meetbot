@@ -340,7 +340,7 @@ crashes when generating formatted output) or as a way to take advantage
 of new features in the bot (for instance, if output has been improved
 or there is a new output format).
 
-*Note:* This utility only works for meetings that were run using v0.5.3 or
+*Note:* This utility only works for meetings that were run using v0.6.0 or
 later of the plugin, since earlier versions do not generate the raw JSON
 meeting log that is used as input.  
 
