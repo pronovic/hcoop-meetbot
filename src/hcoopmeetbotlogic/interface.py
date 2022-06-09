@@ -7,13 +7,12 @@ Object interface used by plugin to access code in the local package.
 from datetime import datetime
 from typing import Callable, Iterable, Optional
 
-import attr
+from attrs import frozen
 
 
-# noinspection PyUnresolvedReferences
-@attr.s(frozen=True)
+@frozen
 class Context:
-
+    # noinspection PyUnresolvedReferences
     """
     Context for a message or command, including callbacks that can be invoked.
 
@@ -24,16 +23,15 @@ class Context:
         send_message(Callable[[str], None]): Send a message to the server immediately
     """
 
-    get_topic = attr.ib(type=Callable[[], str])
-    set_topic = attr.ib(type=Callable[[str], None])
-    send_reply = attr.ib(type=Callable[[str], None])
-    send_message = attr.ib(type=Callable[[str], None])
+    get_topic: Callable[[], str]
+    set_topic: Callable[[str], None]
+    send_reply: Callable[[str], None]
+    send_message: Callable[[str], None]
 
 
-# noinspection PyUnresolvedReferences
-@attr.s(frozen=True)
+@frozen
 class Message:
-
+    # noinspection PyUnresolvedReferences
     """
     A message to be processed.
 
@@ -48,11 +46,11 @@ class Message:
         channel_nicks(Optional[Iterable[str]]): List of nicknames currently in the channel
     """
 
-    id = attr.ib(type=str)
-    timestamp = attr.ib(type=datetime)
-    nick = attr.ib(type=str)
-    channel = attr.ib(type=str)
-    network = attr.ib(type=str)
-    payload = attr.ib(type=str)
-    topic = attr.ib(type=Optional[str], default=None)
-    channel_nicks = attr.ib(type=Optional[Iterable[str]], default=None)
+    id: str
+    timestamp: datetime
+    nick: str
+    channel: str
+    network: str
+    payload: str
+    topic: Optional[str] = None
+    channel_nicks: Optional[Iterable[str]] = None

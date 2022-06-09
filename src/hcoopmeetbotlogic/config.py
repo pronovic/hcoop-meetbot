@@ -12,7 +12,7 @@ from logging import Logger
 from pathlib import Path
 from typing import Optional
 
-import attr
+from attrs import frozen
 
 CONF_FILE = "HcoopMeetbot.conf"
 CONF_SECTION = "HcoopMeetbot"
@@ -40,8 +40,9 @@ class OutputFormat(str, Enum):
 OUTPUT_FORMAT_DEFAULT = OutputFormat.HTML
 
 
-@attr.s(frozen=True)
+@frozen
 class Config:
+    # noinspection PyUnresolvedReferences
     """
     Configuration for the plugin.
 
@@ -55,13 +56,13 @@ class Config:
         output_format(OutputFormat): The output format to use
     """
 
-    conf_file = attr.ib(type=Optional[str])
-    log_dir = attr.ib(type=str, default=LOG_DIR_DEFAULT)
-    url_prefix = attr.ib(type=str, default=URL_PREFIX_DEFAULT)
-    pattern = attr.ib(type=str, default=PATTERN_DEFAULT)
-    timezone = attr.ib(type=str, default=TIMEZONE_DEFAULT)
-    use_channel_topic = attr.ib(type=bool, default=USE_CHANNEL_TOPIC_DEFAULT)
-    output_format = attr.ib(type=OutputFormat, default=OUTPUT_FORMAT_DEFAULT)
+    conf_file: Optional[str]
+    log_dir: str = LOG_DIR_DEFAULT
+    url_prefix: str = URL_PREFIX_DEFAULT
+    pattern: str = PATTERN_DEFAULT
+    timezone: str = TIMEZONE_DEFAULT
+    use_channel_topic: bool = USE_CHANNEL_TOPIC_DEFAULT
+    output_format: OutputFormat = OUTPUT_FORMAT_DEFAULT
 
 
 def load_config(logger: Optional[Logger], conf_dir: str) -> Config:

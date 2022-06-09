@@ -12,7 +12,7 @@ import re
 from enum import Enum
 from typing import Any, Dict, List, Optional, TextIO
 
-import attr
+from attrs import field, frozen
 from genshi.builder import Element, tag
 from genshi.template import MarkupTemplate, TemplateLoader
 
@@ -55,7 +55,7 @@ _EXCLUDED = [
 ]
 
 
-@attr.s(frozen=True)
+@frozen
 class _LogMessage:
     """A rendered version of a message in the log."""
 
@@ -66,10 +66,10 @@ class _LogMessage:
     # if someone pastes Javascript into an IRC conversation, that Javascript will show up
     # as literal text in the raw log - it won't be rendered or executed.
 
-    id = attr.ib(type=Element)
-    timestamp = attr.ib(type=Element)
-    nick = attr.ib(type=Element)
-    content = attr.ib(type=Element)
+    id: Element
+    timestamp: Element
+    nick: Element
+    content: Element
 
     @staticmethod
     def for_message(config: Config, message: TrackedMessage) -> _LogMessage:
@@ -126,33 +126,33 @@ class _LogMessage:
         )
 
 
-@attr.s(frozen=True)
+@frozen
 class _MeetingAction:
     """An action assigned to a meeting attendee."""
 
-    id = attr.ib(type=str)
-    text = attr.ib(type=str)
+    id: str
+    text: str
 
 
-@attr.s(frozen=True)
+@frozen
 class _MeetingAttendee:
     """A meeting attendee, including count of chat lines and all associated actions."""
 
-    nick = attr.ib(type=str)
-    alias = attr.ib(type=Optional[str])
-    count = attr.ib(type=int)
-    percentage = attr.ib(type=str)  # stored as a string so we control rounding and format
-    actions = attr.ib(type=List[_MeetingAction])
+    nick: str
+    alias: Optional[str]
+    count: int
+    percentage: str  # stored as a string so we control rounding and format
+    actions: List[_MeetingAction]
 
 
-@attr.s(frozen=True)
+@frozen
 class _AliasMatcher:
     """Utility class to identify whether an attendee nick or alias is found in a message."""
 
-    nick = attr.ib(type=str)
-    alias = attr.ib(type=Optional[str])
-    nick_pattern = attr.ib(type=re.Pattern)
-    alias_pattern = attr.ib(type=Optional[re.Pattern])
+    nick: str
+    alias: Optional[str]
+    nick_pattern: re.Pattern = field()
+    alias_pattern: Optional[re.Pattern] = field()
 
     @nick_pattern.default
     def _nick_pattern_default(self) -> re.Pattern:
@@ -170,46 +170,42 @@ class _AliasMatcher:
 
     def matches(self, message: str) -> bool:
         """Return true if the attendee nick or alias is found in the message."""
-        return self.nick_pattern.search(message) or (self.alias_pattern and self.alias_pattern.search(message))
+        return bool(self.nick_pattern.search(message)) or (self.alias_pattern and self.alias_pattern.search(message))
 
 
-@attr.s(frozen=True)
+@frozen
 class _MeetingEvent:
     """A meeting event tied to a topic."""
 
-    id = attr.ib(type=str)
-    event_type = attr.ib(type=str)
-    timestamp = attr.ib(type=str)
-    nick = attr.ib(type=str)
-    payload = attr.ib(type=str)
-    link = attr.ib(type=Optional[str], default=None)
+    id: str
+    event_type: str
+    timestamp: str
+    nick: str
+    payload: str
+    link: Optional[str] = None
 
 
-@attr.s(frozen=True)
+@frozen
 class _MeetingTopic:
     """A meeting topic within the minutes, including all of the events tied to it."""
 
-    id = attr.ib(type=str)
-    name = attr.ib(type=str)
-    timestamp = attr.ib(type=str)
-    nick = attr.ib(type=str)
-    events = attr.ib(type=List[_MeetingEvent])
-
-    @events.default
-    def _default_events(self) -> List[_MeetingEvent]:
-        return []
+    id: str
+    name: str
+    timestamp: str
+    nick: str
+    events: List[_MeetingEvent] = field(factory=list)
 
 
-@attr.s(frozen=True)
+@frozen
 class _MeetingMinutes:
     """A summarized version of the meeting minutes."""
 
-    start_time = attr.ib(type=str)
-    end_time = attr.ib(type=str)
-    founder = attr.ib(type=str)
-    actions = attr.ib(type=List[_MeetingAction])
-    attendees = attr.ib(type=List[_MeetingAttendee])
-    topics = attr.ib(type=List[_MeetingTopic])
+    start_time: str
+    end_time: str
+    founder: str
+    actions: List[_MeetingAction]
+    attendees: List[_MeetingAttendee]
+    topics: List[_MeetingTopic]
 
     @staticmethod
     def for_meeting(config: Config, meeting: Meeting) -> _MeetingMinutes:

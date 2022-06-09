@@ -126,13 +126,13 @@ class TestFunctions:
 
     @patch("hcoopmeetbotlogic.command.hasattr")
     @patch("hcoopmeetbotlogic.command.getattr")
-    def test_dispatch_invalid_command(self, getattr, hasattr):  # pylint: disable=redefined-builtin:
+    def test_dispatch_invalid_command(self, _getattr, _hasattr):  # pylint: disable=redefined-builtin:
         meeting = MagicMock()
         context = MagicMock()
         message = MagicMock(payload="#bogus")
-        hasattr.return_value = False
+        _hasattr.return_value = False
         dispatch(meeting, context, message)
-        getattr.assert_not_called()
+        _getattr.assert_not_called()
         context.send_reply.assert_called_once_with("Unknown command: #bogus")
 
     # noinspection PyTypeChecker

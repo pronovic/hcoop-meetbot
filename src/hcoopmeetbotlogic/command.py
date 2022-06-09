@@ -9,7 +9,7 @@ import re
 from datetime import datetime
 from typing import List, Optional
 
-import attr
+from attrs import define
 
 from .dateutil import formatdate, now
 from .interface import Context, Message
@@ -34,8 +34,9 @@ _URL_GROUP = 2
 _METHOD_PREFIX = "do_"
 
 # pylint: disable=unused-argument, too-many-public-methods:
-@attr.s
+@define
 class CommandDispatcher:
+
     """
     Identify and dispatch meeting commands.
 

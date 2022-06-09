@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 from typing import Optional
 
-import attr
+from attrs import frozen
 
 from .config import Config, OutputFormat
 from .dateutil import formatdate
@@ -20,21 +20,21 @@ HTML_LOG_EXTENSION = ".log.html"
 HTML_MINUTES_EXTENSION = ".html"
 
 
-@attr.s(frozen=True)
+@frozen
 class Location:
     """Path and URL for some persisted data."""
 
-    path = attr.ib(type=str)
-    url = attr.ib(type=str)
+    path: str
+    url: str
 
 
-@attr.s(frozen=True)
+@frozen
 class Locations:
     """Locations where meeting results were written."""
 
-    raw_log = attr.ib(type=Location)
-    formatted_log = attr.ib(type=Location)
-    formatted_minutes = attr.ib(type=Location)
+    raw_log: Location
+    formatted_log: Location
+    formatted_minutes: Location
 
 
 def _file_prefix(config: Config, meeting: Meeting) -> str:
