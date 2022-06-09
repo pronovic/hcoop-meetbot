@@ -13,14 +13,27 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-import attr
-
-from hcoopmeetbotlogic.jsonutil import CattrConverter
+import cattrs
+from attrs import define, field, frozen
 
 from .dateutil import formatdate, now
 from .interface import Message
 
-_CONVERTER = CattrConverter()
+
+class _CattrConverter(cattrs.GenConverter):
+    """
+    Cattr converter to serialize Meeting to and from JSON.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.register_unstructure_hook(datetime, lambda d: d.isoformat() if d else None)  # type: ignore
+        self.register_structure_hook(datetime, lambda s, _: datetime.fromisoformat(s) if s else None)
+
+
+_CONVERTER = _CattrConverter()
+
+# Note: we use (str, Enum) so that the enum value gets serialized rather than the enum name
 
 
 class EventType(str, Enum):
@@ -55,10 +68,9 @@ class VotingAction(str, Enum):
     OPPOSED = "-1"
 
 
-# noinspection PyUnresolvedReferences
-@attr.s(frozen=True)
+@frozen
 class TrackedMessage:
-
+    # noinspection PyUnresolvedReferences
     """
     A message tracked as part of a meeting.
 
@@ -70,21 +82,20 @@ class TrackedMessage:
         timestamp(datetime): Message timestamp in UTC
     """
 
-    id = attr.ib(type=str)
-    sender = attr.ib(type=str)
-    payload = attr.ib(type=str)
-    action = attr.ib(type=bool)
-    timestamp = attr.ib(type=datetime)
+    id: str
+    sender: str
+    payload: str
+    action: bool
+    timestamp: datetime
 
     def display_name(self) -> str:
         """Get the message display name."""
         return "%s@%s" % (self.id, formatdate(self.timestamp))
 
 
-# noinspection PyUnresolvedReferences
-@attr.s(frozen=True)
+@frozen
 class TrackedEvent:
-
+    # noinspection PyUnresolvedReferences
     """
     An event tracked as part of a meeting, always tied to a specific message.
 
@@ -96,16 +107,18 @@ class TrackedEvent:
         operand(Optional[str]): The operand (remainder of the payload after the command)
     """
 
-    event_type = attr.ib(type=EventType)
-    message = attr.ib(type=TrackedMessage)
-    operand = attr.ib(type=Optional[Any])
-    id = attr.ib(type=str)
-    timestamp = attr.ib(type=datetime)
+    event_type: EventType
+    message: TrackedMessage
+    operand: Optional[Any]
+    id: str = field()
+    timestamp: datetime = field()
 
+    # noinspection PyUnresolvedReferences
     @id.default
     def _default_id(self) -> str:
         return self.message.id
 
+    # noinspection PyUnresolvedReferences
     @timestamp.default
     def _default_timestamp(self) -> datetime:
         return self.message.timestamp
@@ -115,11 +128,10 @@ class TrackedEvent:
         return "%s@%s" % (self.id, formatdate(self.timestamp))
 
 
-# noinspection PyUnresolvedReferences
 # pylint: disable=too-many-instance-attributes:
-@attr.s
+@define(slots=False)
 class Meeting:
-
+    # noinspection PyUnresolvedReferences
     """
     A meeting on a particular IRC channel.
 
@@ -154,61 +166,41 @@ class Meeting:
         motion_index(int): Index into events for the current motion, when voting is in progress
     """
 
-    founder = attr.ib(type=str)
-    channel = attr.ib(type=str)
-    network = attr.ib(type=str)
-    id = attr.ib(type=str)
-    name = attr.ib(type=str)
-    chair = attr.ib(type=str)
-    chairs = attr.ib(type=List[str])
-    nicks = attr.ib(type=Dict[str, int])
-    start_time = attr.ib(type=datetime)
-    end_time = attr.ib(type=Optional[datetime])
-    active = attr.ib(type=bool, default=False)
-    original_topic = attr.ib(type=Optional[str], default=None)
-    current_topic = attr.ib(type=Optional[str], default=None)
-    messages = attr.ib(type=List[TrackedMessage])
-    events = attr.ib(type=List[TrackedEvent])
-    aliases = attr.ib(type=Dict[str, Optional[str]])
-    vote_in_progress = attr.ib(type=bool, default=False)
-    motion_index = attr.ib(type=Optional[int], default=None)
+    founder: str = field()
+    channel: str = field()
+    network: str = field()
+    id: str = field(factory=lambda: uuid.uuid4().hex)
+    name: str = field()
+    chair: str = field()
+    chairs: List[str] = field()
+    nicks: Dict[str, int] = field()
+    start_time: datetime = field(factory=now)
+    end_time: Optional[datetime] = None
+    active: bool = False
+    original_topic: Optional[str] = None
+    current_topic: Optional[str] = None
+    messages: List[TrackedMessage] = field(factory=list)
+    events: List[TrackedEvent] = field(factory=list)
+    aliases: Dict[str, Optional[str]] = field(factory=dict)
+    vote_in_progress: bool = False
+    motion_index: Optional[int] = None
 
-    @id.default
-    def _default_id(self) -> str:
-        return uuid.uuid4().hex
-
+    # noinspection PyUnresolvedReferences
     @chair.default
     def _default_chair(self) -> str:
         return self.founder
 
+    # noinspection PyUnresolvedReferences
     @chairs.default
     def _default_chairs(self) -> List[str]:
         return [self.chair]
 
+    # noinspection PyUnresolvedReferences
     @nicks.default
     def _default_nicks(self) -> Dict[str, int]:
         return {nick: 0 for nick in self.chairs}
 
-    @start_time.default
-    def _default_start_time(self) -> datetime:
-        return now()
-
-    @end_time.default
-    def _default_end_time(self) -> Optional[datetime]:
-        return None
-
-    @messages.default
-    def _default_messages(self) -> List[TrackedMessage]:
-        return []
-
-    @events.default
-    def _default_events(self) -> List[TrackedEvent]:
-        return []
-
-    @aliases.default
-    def _default_aliases(self) -> Dict[str, Optional[str]]:
-        return {}
-
+    # noinspection PyUnresolvedReferences
     @name.default
     def _default_meeting_name(self) -> str:
         return self.channel

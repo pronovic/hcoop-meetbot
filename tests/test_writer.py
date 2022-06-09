@@ -66,9 +66,9 @@ class TestLogMessage:
         assert (
             "%s" % result.content
             == '<span><span class="topic">'
-            + operation
+            + "%s" % operation
             + ' </span><span class="topicline"><span><span>'
-            + operand
+            + "%s" % operand
             + "</span></span></span></span>"
         )
 
@@ -91,9 +91,9 @@ class TestLogMessage:
         assert (
             "%s" % result.content
             == '<span><span class="cmd">'
-            + operation
+            + "%s" % operation
             + ' </span><span class="cmdline"><span><span>'
-            + operand
+            + "%s" % operand
             + "</span></span></span></span>"
         )
 
@@ -143,7 +143,7 @@ class TestLogMessage:
         assert "%s" % result.id == '<a name="id"/>'
         assert "%s" % result.timestamp == '<span class="tm">13:14:00</span>'
         assert "%s" % result.nick == '<span class="nk">&lt;nick&gt;</span>'
-        assert "%s" % result.content == "<span><span>" + expected + "</span></span>"
+        assert "%s" % result.content == "<span><span>" + "%s" % expected + "</span></span>"
 
 
 class TestRendering:

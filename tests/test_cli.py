@@ -22,6 +22,7 @@ EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log
 EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/minutes.html")
 
 
+# noinspection PyTypeChecker
 def invoke(args: List[str]) -> Result:
     return CliRunner().invoke(command, args)
 
