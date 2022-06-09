@@ -174,7 +174,7 @@ class Meeting:
     chair: str = field()
     chairs: List[str] = field()
     nicks: Dict[str, int] = field()
-    start_time: datetime = field()
+    start_time: datetime = field(factory=now)
     end_time: Optional[datetime] = None
     active: bool = False
     original_topic: Optional[str] = None
@@ -199,11 +199,6 @@ class Meeting:
     @nicks.default
     def _default_nicks(self) -> Dict[str, int]:
         return {nick: 0 for nick in self.chairs}
-
-    # noinspection PyUnresolvedReferences
-    @start_time.default
-    def _default_start_time(self) -> datetime:
-        return now()
 
     # noinspection PyUnresolvedReferences
     @name.default
