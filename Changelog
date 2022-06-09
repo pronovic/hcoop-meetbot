@@ -1,3 +1,7 @@
+Version 0.6.1     unreleased
+
+	* Modernize usage of attrs and cattrs.
+
 Version 0.6.0     05 Jun 2022
 
 	* Better handle nicks/aliases containing special characters.
