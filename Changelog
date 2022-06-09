@@ -1,4 +1,4 @@
-Version 0.6.1     unreleased
+Version 0.6.1     09 Jun 2022
 
 	* Modernize usage of attrs and cattrs.
 
