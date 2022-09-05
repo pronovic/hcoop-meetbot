@@ -25,7 +25,7 @@ suites and combines the coverage results together into a single report.
 
 ## Packaging and Dependencies
 
-This project uses [Poetry](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.  
+This project uses [Poetry](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.
 
 A coding standard is enforced using [Black](https://github.com/psf/black), [isort](https://pypi.org/project/isort/) and [Pylint](https://www.pylint.org/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  To reduce boilerplate, classes are defined using [Attrs](https://www.attrs.org/) (see this [rationale](https://glyph.twistedmatrix.com/2016/08/attrs.html)).
 
@@ -67,25 +67,47 @@ of this writing.
 Nearly all prerequisites are managed by Poetry.  All you need to do is make
 sure that you have a working Python 3 enviroment and install Poetry itself.
 
-### MacOS
+### Poetry Version
 
-On MacOS, it's easiest to use [Homebrew](https://brew.sh/):
+The project is designed to work with Poetry >= 1.2.0.  If you already have an older
+version of Poetry installed on your system, uninstall it before following the setup
+process below:
 
 ```
-$ brew install python3
-$ brew install poetry
+curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 - --uninstall
+```
+
+See the [Announcing Poetry 1.2.0](https://python-poetry.org/blog/announcing-poetry-1.2.0/)
+blog post for more information.
+
+### MacOS
+
+On MacOS, it's easiest to use [Homebrew](https://brew.sh/) to install Python:
+
+```
+brew install python3
 ```
 
 Once that's done, make sure the `python` on your `$PATH` is Python 3 from
 Homebrew (in `/usr/local`), rather than the standard Python 2 that comes with
 MacOS.
 
+Although Poetry can also be installed from Homebrew, it works better to use
+to [official installer](https://python-poetry.org/docs/#installing-with-the-official-installer):
+
+```
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+> _Note:_ The installer prints the location of the installed `poetry` script.
+> Make sure to add this to your `$PATH`, otherwise you won't be able to run it.
+
 ### Debian
 
 First, install Python 3 and related tools:
 
 ```
-$ sudo apt-get install python3 python3-venv python3-pip
+sudo apt-get install python3 python3-venv python3-pip
 ```
 
 Next, make sure that the `python` interpreter on your `$PATH` is Python 3.
@@ -96,7 +118,7 @@ However, by default there is only a `python3` interpreter on your `$PATH`, not
 a `python` interpreter.  To add the `python` interpreter, use:
 
 ```
-$ sudo apt-get install python-is-python3
+sudo apt-get install python-is-python3
 ```
 
 For earlier releases of Debian where both Python 2 and Python 3 are available,
@@ -104,12 +126,14 @@ the process is a little more complicated.  The approach I used before upgrading
 to _bullseye_ was based on `update-alternatives`, as discussed on
 [StackExchange](https://unix.stackexchange.com/a/410851).
 
-Once Python 3 is on your `$PATH` as `python`, install Poetry in your home
-directory:
+Next, install Poetry using the [official installer](https://python-poetry.org/docs/#installing-with-the-official-installer):
 
 ```
-$ curl -sSL https://install.python-poetry.org | python3 -
+curl -sSL https://install.python-poetry.org | python3 -
 ```
+
+> _Note:_ The installer prints the location of the installed `poetry` script.
+> Make sure to add this to your `$PATH`, otherwise you won't be able to run it.
 
 ## Developer Tasks
 
@@ -125,7 +149,6 @@ Shortcuts for common developer tasks
 Usage: run <command>
 
 - run install: Setup the virtualenv via Poetry and install pre-commit hooks
-- run activate: Print command needed to activate the Poetry virtualenv
 - run requirements: Regenerate the docs/requirements.txt file
 - run format: Run the code formatters
 - run checks: Run the code checkers
@@ -150,19 +173,19 @@ works well and there are are Debian-specific install [instructions](https://wiki
 you need more help:
 
 ```
-$ sudo apt-get install inspircd
+sudo apt-get install inspircd
 ```
 
 Next, install an IRC client.  Any client is ok, but [Irssi](https://irssi.org/) works well:
 
 ```
-$ sudo apt-get install irssi
+sudo apt-get install irssi
 ```
 
 Once the IRC server is up, make sure you can connect with the client:
 
 ```
-$ irssi --nick=ken --connect=localhost
+irssi --nick=ken --connect=localhost
 ```
 
 Once you are connected, join the testing channel with `/join #localtest`.
@@ -170,7 +193,7 @@ Once you are connected, join the testing channel with `/join #localtest`.
 Finally, open another terminal window and run the bot:
 
 ```
-$ run bot
+run bot
 Running the local bot...
 INFO 2021-02-14T17:06:34 Connecting to localhost:6667.
 WARNING 2021-02-14T17:06:34 Error connecting to localhost:6667: ConnectionRefusedError: [Errno 111] Connection refused
@@ -226,7 +249,7 @@ order.  In particular, if you do not run the install step, there will be no
 virtualenv for PyCharm to use:
 
 ```
-$ run install && run checks && run test
+run install && run checks && run test
 ```
 
 ### Open the Project
@@ -384,7 +407,7 @@ Version 0.1.29     unreleased
 Run the release step:
 
 ```
-$ run release 0.1.29
+run release 0.1.29
 ```
 
 This updates `pyproject.toml` and the `Changelog` to reflect the released
@@ -395,7 +418,7 @@ and revert your commit (`git reset HEAD~1`) if you made a mistake.
 Finally, publish the release:
 
 ```
-$ run publish
+run publish
 ```
 
 This builds the deployment artifacts, publishes the artifacts to PyPI, and
