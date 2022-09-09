@@ -15,7 +15,7 @@ enable_keyring() {
 # Setup the virtual environment via Poetry and install pre-commit hooks
 run_install() {
 
-# Install the poetry-plugin-export plugin, used to generate requirements.txt
+   # Install the poetry-plugin-export plugin, used to generate requirements.txt
    poetry self add --quiet poetry-plugin-export
    if [ $? != 0 ]; then
       echo "*** Failed to install Poetry plugin: poetry-plugin-export"
@@ -351,6 +351,9 @@ run_bot() {
 
    poetry run supybot localbot/localbot.conf
 }
+
+# Always disable the keyring by default
+disable_keyring
 
 # Execute one of the developer tasks
 case $1 in
