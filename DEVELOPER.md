@@ -217,7 +217,8 @@ channel:
 ```
 
 You can now interact with the local bot using `localbot: <command>`, or using
-`@<command>` as a shortcut.  
+`@<command>` as a shortcut.  When you are done, use `/exit` to exit the IRC
+client.
 
 The `HcoopMeetbot` plugin is automatically available in the bot, running out of
 the source tree.  If you make changes to the code, you can either reload using
