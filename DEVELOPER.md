@@ -15,7 +15,7 @@ very thin wrapper over functionality implemented in the companion [`hcoopmeetbot
 interface has been abstracted, and the backend logic is not even aware of
 Limnoria.  By using this design, we can minimize the testing needed to prove
 that the plugin is wired up properly.  It's also easier to unit test the
-business logic, and easier to apply code checks like MyPy.  
+business logic, and easier to apply code checks like MyPy.
 
 There are two different test suites.  The first, in [`src/HcoopMeetbot/test.py`](src/HcoopMeetbot/test.py), is 
 the Limnoria test suite.  This must be executed via `supybot-test` &mdash; you
@@ -58,9 +58,8 @@ have native platform line endings, and you can't override that behavior.  Even
 with sane configuration in `.gitattributes`, you sometimes still get spurious
 differences, where Git says that a file has changed but then `git diff` shows
 an empty result.  The `run` script and the pre-commit hooks both normalize the
-line endings for `requirements.txt` using [`utils/dos2unix.py`](utils/dos2unix.py).  I wish
-there were a standard way to do this in Poetry or in Python, but there isn't as
-of this writing.
+line endings for `requirements.txt`.  I wish there were a standard way to do
+this in Poetry or in Python, but there isn't as of this writing.
 
 ## Prerequisites
 
@@ -146,21 +145,24 @@ $ run --help
 Shortcuts for common developer tasks
 ------------------------------------
 
-Usage: run <command>
+Basic tasks:
 
 - run install: Setup the virtualenv via Poetry and install pre-commit hooks
-- run requirements: Regenerate the docs/requirements.txt file
 - run format: Run the code formatters
 - run checks: Run the code checkers
-- run test: Run the unit and supybot tests
-- run test -c: Run the unit and supybot tests with coverage
-- run test -ch: Run the tests with coverage and open the HTML report
-- run docs: Build the Spinx documentation for hcoop-meetbot.readthedocs.io
-- run docs -o: Build the Spinx documentation and open in a browser
-- run tox: Run the Tox test suite used by the GitHub CI action
-- run release: Release a specific version and tag the code
-- run publish: Publish the current code to PyPI and push to GitHub
+- run test: Run the unit tests
+- run test -c: Run the unit tests with coverage
+- run test -ch: Run the unit tests with coverage and open the HTML report
+- run suite: Run the complete test suite, as for the GitHub Actions CI build
+
+Additional tasks:
+
 - run bot: Run a bot connected to an IRC server on localhost
+- run docs: Build the Sphinx documentation for readthedocs.io
+- run docs -o: Build the Sphinx documentation and open in a browser
+- run publish: Publish the current code to PyPI and push to GitHub
+- run release: Release a specific version and tag the code
+- run requirements: Regenerate the docs/requirements.txt file
 ```
 
 ## Local Testing
@@ -193,7 +195,7 @@ Once you are connected, join the testing channel with `/join #localtest`.
 Finally, open another terminal window and run the bot:
 
 ```
-run bot
+$ run bot
 Running the local bot...
 INFO 2021-02-14T17:06:34 Connecting to localhost:6667.
 WARNING 2021-02-14T17:06:34 Error connecting to localhost:6667: ConnectionRefusedError: [Errno 111] Connection refused
@@ -226,7 +228,7 @@ doesn't seem to work as expected, just use CTRL-C.
 > with a `localbot.conf` file based on the original template in
 > `util/localbot.conf.template`.  If something gets screwed up and you want to
 > start over, just blow away the `localbot` directory and it will be recreated
-> by `run bot`.  
+> by `run bot`.
 
 ## Integration with PyCharm
 
@@ -249,7 +251,7 @@ order.  In particular, if you do not run the install step, there will be no
 virtualenv for PyCharm to use:
 
 ```
-run install && run checks && run test
+run install && run suite
 ```
 
 ### Open the Project
@@ -275,7 +277,7 @@ Go to the PyCharm settings and find the `hcoop-meetbot` project.  Under
 the **Exclude Files** box, enter the following: 
 
 ```
-LICENSE;NOTICE;PyPI.md;.coverage;.coveragerc;.github;.gitignore;.gitattributes;.htmlcov;.idea;.isort.cfg;.mypy.ini;.mypy_cache;.pre-commit-config.yaml;.pylintrc;.pytest_cache;.readthedocs.yml;.tox;.toxrc;.tabignore;build;dist;docs/_build;out;poetry.lock;poetry.toml;run;localbot;test-conf;test-data;tmp;web;backup
+LICENSE;NOTICE;PyPI.md;.coverage;.coveragerc;.github;.gitignore;.gitattributes;.htmlcov;.idea;.isort.cfg;.mypy.ini;.mypy_cache;.pre-commit-config.yaml;.pylintrc;.pytest_cache;.readthedocs.yml;.tabignore;build;dist;docs/_build;out;poetry.lock;poetry.toml;run;.run;.venv;localbot;test-conf;test-data;tmp;web;backup
 ```
 
 When you're done, click **Ok**.  Then, go to the gear icon in the project panel
