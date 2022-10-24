@@ -1,4 +1,5 @@
 # vim: set ft=bash sw=3 ts=3 expandtab:
+# runscript: customized=true
 
 # Limnoria has a custom type of test suite that needs to be run in a special
 # way, which makes this awkward. We need to run both types of tests and also
