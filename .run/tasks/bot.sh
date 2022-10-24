@@ -1,4 +1,5 @@
 # vim: set ft=bash sw=3 ts=3 expandtab:
+# runscript: customized=true
 
 help_bot() {
    echo "- run bot: Run a bot connected to an IRC server on localhost"
