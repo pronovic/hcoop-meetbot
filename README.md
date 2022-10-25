@@ -15,3 +15,4 @@ The code is based in part on the [MeetBot](https://github.com/rkdarst/MeetBot/) 
 See the [user documentation](https://hcoop-meetbot.readthedocs.io/en/stable/) for more information about how to use the plugin, including installation instructions.
 
 Developer documentation is found in [DEVELOPER.md](DEVELOPER.md).  See that file for notes about how the code is structured, how to set up a development environment, etc.
+
