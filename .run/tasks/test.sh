@@ -49,9 +49,8 @@ task_test() {
 
       poetry_run coverage report
       if [ $html == "yes" ]; then
-         # Use 'start' on Windows, and 'open' on MacOS and Debian (post-bullseye)
          poetry_run coverage html -d .htmlcov
-         $(which start || which open) .htmlcov/index.html 2>/dev/null
+         run_command openfile .htmlcov/index.html
       fi
    else
       poetry run supybot-test --clean --plugins-dir=src HcoopMeetbot
