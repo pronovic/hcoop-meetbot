@@ -8,6 +8,7 @@ readme = "PyPI.md"
 homepage = "https://pypi.org/project/hcoop-meetbot/"
 include = [
    { path = 'Changelog', format = 'sdist' },
+   { path = 'NOTICE', format = 'sdist' },
    { path = 'LICENSE', format = 'sdist' },
    { path = 'CREDITS', format = 'sdist' },
    { path = 'README.md', format = 'sdist' },
