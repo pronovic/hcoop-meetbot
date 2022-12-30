@@ -1,5 +1,6 @@
 Version 0.6.4     unreleased
 
+	* Convert to latest readthedocs.io standard.
 	* Adjust GHA build to run MacOS and Windows tests only on latest Python.
 
 Version 0.6.3     24 Oct 2022
