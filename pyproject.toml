@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hcoop-meetbot"
-version = "0.6.3"
+version = "0.0.0" # published version is managed using Git tags (see below)
 description = "Plugin for Limnoria to help run IRC meetings"
 authors = ["Kenneth J. Pronovici <pronovic@ieee.org>"]
 license = "Apache-2.0"
@@ -28,6 +28,14 @@ classifiers=[
    "Topic :: Utilities",
    "Topic :: Communications :: Chat :: Internet Relay Chat"
 ]
+
+# Published version is managed using Git tags
+# We get either the tag (like "0.24.1") or a snapshot-type version (like "0.24.1+3.e8319c4")
+# If the plugin is not installed, then the version is always "0.0.0", taken from above
+[tool.poetry-dynamic-versioning]
+enable = true
+pattern = '^[vV](?P<base>\d+\.\d+\.\d+)'  # this extracts the version from our vX.Y.Z tag format
+format-jinja = "{% if distance == 0 and not dirty %}{{ base }}{% else %}{{ base }}+{{ distance }}.{{ commit }}{% endif %}"
 
 [tool.poetry.scripts]
 meetbot = "hcoopmeetbotlogic.cli:meetbot"
@@ -93,5 +101,5 @@ filterwarnings = [
 ]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
