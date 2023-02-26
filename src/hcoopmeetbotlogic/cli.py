@@ -14,7 +14,7 @@ from hcoopmeetbotlogic.meeting import Meeting
 from hcoopmeetbotlogic.writer import write_formatted_log, write_formatted_minutes
 
 
-@click.group(context_settings=dict(help_option_names=["-h", "--help"]))
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.version_option(package_name="hcoop-meetbot", prog_name="hcoop-meetbot")
 def meetbot() -> None:
     """Meetbot command line utilities."""
