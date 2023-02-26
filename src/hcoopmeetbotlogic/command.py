@@ -33,6 +33,7 @@ _URL_GROUP = 2
 # Prefix of a method on CommandDispatcher that implements a command
 _METHOD_PREFIX = "do_"
 
+
 # pylint: disable=unused-argument, too-many-public-methods:
 @define
 class CommandDispatcher:

@@ -194,7 +194,6 @@ class TestAliasMatcher:
         ],
     )
     def test_matches(self, identifier):
-
         match = []
         no_match = []
 
