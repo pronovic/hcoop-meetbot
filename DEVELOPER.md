@@ -93,28 +93,6 @@ pipx install poetry
 pipx inject poetry poetry-dynamic-versioning
 ```
 
-### Windows
-
-First, install Python 3 from your preferred source, either a standard
-installer or a meta-installer like Chocolatey.  Make sure the `python`
-on your `$PATH` is Python 3.
-
-Next, install pipx:
-
-```
-python -m pip install --user pipx
-```
-
-Finally, install Poetry itself:
-
-```
-pipx install poetry
-pipx inject poetry poetry-dynamic-versioning
-```
-
-> _Note:_ The development environment (the `run` script, etc.) expects a bash
-> shell to be available.  On Windows, it works fine with the standard Git Bash.
-
 ## Developer Tasks
 
 The [`run`](run) script provides shortcuts for common developer tasks:
