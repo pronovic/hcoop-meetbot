@@ -37,7 +37,6 @@ _METHOD_PREFIX = "do_"
 # pylint: disable=unused-argument, too-many-public-methods:
 @define
 class CommandDispatcher:
-
     """
     Identify and dispatch meeting commands.
 
