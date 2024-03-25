@@ -48,6 +48,7 @@ task_test() {
       poetry_run coverage run -a -m pytest --testdox --force-testdox $color tests  # note -a to append data
 
       poetry_run coverage report
+      poetry_run coverage lcov -o .coverage.lcov
       if [ $html == "yes" ]; then
          poetry_run coverage html -d .htmlcov
          run_command openfile .htmlcov/index.html
