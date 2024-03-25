@@ -1,3 +1,7 @@
+Version 0.6.11     unreleased
+
+	* Pull in latest updates from run-script-framework.
+
 Version 0.6.10     26 Feb 2024
 
 	* Upgrade to Poetry v1.8.0 and make related adjustments.
