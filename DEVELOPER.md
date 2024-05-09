@@ -68,11 +68,18 @@ Once that's done, make sure the `python` on your `$PATH` is Python 3 from
 Homebrew (in `/usr/local`), rather than the standard Python 2 that comes with
 older versions of MacOS.
 
-Finally, install Poetry itself:
+Finally, install Poetry itself and then verify your installation:
 
 ```
 pipx install poetry
 pipx inject poetry poetry-dynamic-versioning
+pipx list --include-injected
+```
+
+To upgrade this installation later, use:
+
+```
+pipx upgrade --include-injected poetry
 ```
 
 ### Debian
@@ -86,11 +93,18 @@ sudo apt-get install python3 python-is-python3 pipx
 Once that's done, make sure that the `python` interpreter on your `$PATH` is
 Python 3.
 
-Finally, install Poetry itself:
+Finally, install Poetry itself and then verify your installation:
 
 ```
 pipx install poetry
 pipx inject poetry poetry-dynamic-versioning
+pipx list --include-injected
+```
+
+To upgrade this installation later, use:
+
+```
+pipx upgrade --include-injected poetry
 ```
 
 ## Developer Tasks
