@@ -65,7 +65,7 @@ class Config:
     output_format: OutputFormat = OUTPUT_FORMAT_DEFAULT
 
 
-def load_config(logger: Optional[Logger], conf_dir: str) -> Config:
+def load_config(logger: Optional[Logger], conf_path: str) -> Config:
     """
     Load configuration from disk.
 
@@ -75,10 +75,12 @@ def load_config(logger: Optional[Logger], conf_dir: str) -> Config:
 
     Args:
         logger(Logger): Python logger instance that should be used during processing
-        conf_dir(str): Limnoria bot conf directory to load configuration from
+        conf_path(str): Limnoria bot conf directory to load configuration from
     """
     config: Config
-    conf_file = os.path.join(conf_dir, CONF_FILE)
+    conf_file = conf_path
+    if os.path.isdir(conf_path):
+        conf_file = os.path.join(conf_path, CONF_FILE)
     if os.path.isfile(conf_file):
         try:
             parser = configparser.ConfigParser(interpolation=None)

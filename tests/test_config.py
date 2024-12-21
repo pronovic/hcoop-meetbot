@@ -51,6 +51,18 @@ class TestParsing:
         assert config.use_channel_topic is True
         assert config.output_format == OutputFormat.HTML
 
+    def test_valid_custom_name_configuration(self):
+        logger = MagicMock()
+        conf_path = os.path.join(VALID_DIR, "CustomName.conf")
+        config = load_config(logger, conf_path)
+        assert config.conf_file == conf_path
+        assert config.log_dir == "/tmp/meetings"
+        assert config.url_prefix == "https://whatever/meetings"
+        assert config.pattern == "{name}-%Y%m%d"
+        assert config.timezone == "America/Chicago"
+        assert config.use_channel_topic is True
+        assert config.output_format == OutputFormat.HTML
+
     def test_valid_configuration_with_optional(self):
         logger = MagicMock()
         conf_dir = OPTIONAL_DIR
