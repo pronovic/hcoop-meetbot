@@ -1,4 +1,4 @@
-Version 0.6.12     unreleased
+Version 0.6.12     31 Dec 2024
 
 	* Fix load_config() to accept file or directory (by @achow101).
 	* Upgrade to gha-shared-workflows@v7 with publish improvements.
