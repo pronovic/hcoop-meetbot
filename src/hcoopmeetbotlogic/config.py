@@ -69,9 +69,13 @@ def load_config(logger: Optional[Logger], conf_path: str) -> Config:
     """
     Load configuration from disk.
 
+    If conf_path is a directory, then HcoopMeetbot.conf will be loaded from
+    that directory.  If conf_path is a file, then that file will be loaded
+    instead.  If the entire file doesn't exist, defaults will be used for
+    all fields.
+
     The configuration on disk may contain any or all of the configuration fields.
     A default (fallback) value will be used for any field that does not exist.
-    If the entire file doesn't exist, defaults will be used for all fields.
 
     Args:
         logger(Logger): Python logger instance that should be used during processing
