@@ -22,16 +22,16 @@ def _send_reply(context: Context, reply: str) -> None:
 
 
 # noinspection PyShadowingNames
-def configure(logger: Logger, conf_dir: str) -> None:  # pylint: disable=redefined-outer-name:
+def configure(logger: Logger, conf_path: str) -> None:  # pylint: disable=redefined-outer-name:
     """
     Configure the plugin.
 
     Args:
         logger(Logger): Python logger instance that should be used during processing
-        conf_dir(str): Limnoria bot conf directory to load configuration from
+        conf_path(str): Limnoria bot config path to load configuration from, either a file or a directory
     """
     logger.debug("Configuring plugin")
-    config = load_config(logger, conf_dir)  # pylint: disable=redefined-outer-name:
+    config = load_config(logger, conf_path)  # pylint: disable=redefined-outer-name:
     set_logger(logger)
     set_config(config)
 

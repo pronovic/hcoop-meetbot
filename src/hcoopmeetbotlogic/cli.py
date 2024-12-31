@@ -26,7 +26,7 @@ def meetbot() -> None:
     "-c",
     "config_path",
     metavar="<config>",
-    help="Path to meetbot config file",
+    help="Path to config file or dir",
     required=True,
 )
 @click.option(
