@@ -65,26 +65,33 @@ class Config:
     output_format: OutputFormat = OUTPUT_FORMAT_DEFAULT
 
 
-def load_config(logger: Optional[Logger], conf_dir: str) -> Config:
+def load_config(logger: Optional[Logger], conf_path: str) -> Config:
     """
     Load configuration from disk.
 
+    If conf_path is a directory, then HcoopMeetbot.conf will be loaded from
+    that directory.  If conf_path is a file, then that file will be loaded
+    instead.  If the entire file doesn't exist, defaults will be used for
+    all fields.
+
     The configuration on disk may contain any or all of the configuration fields.
     A default (fallback) value will be used for any field that does not exist.
-    If the entire file doesn't exist, defaults will be used for all fields.
 
     Args:
         logger(Logger): Python logger instance that should be used during processing
-        conf_dir(str): Limnoria bot conf directory to load configuration from
+        conf_path(str): Limnoria bot config path to load configuration from, either a file or a directory
     """
-    config: Config
-    conf_file = os.path.join(conf_dir, CONF_FILE)
-    if os.path.isfile(conf_file):
+
+    def parse_config(source: str) -> Config:
+        if not os.path.isfile(source):
+            if logger:
+                logger.debug("Could not find %s; using defaults", source)
+            return Config(conf_file=None)
         try:
             parser = configparser.ConfigParser(interpolation=None)
-            parser.read([conf_file], encoding="utf-8")
-            config = Config(
-                conf_file=conf_file,
+            parser.read([source], encoding="utf-8")
+            return Config(
+                conf_file=source,
                 log_dir=parser.get(CONF_SECTION, LOG_DIR_KEY, fallback=LOG_DIR_DEFAULT),
                 url_prefix=parser.get(CONF_SECTION, URL_PREFIX_KEY, fallback=URL_PREFIX_DEFAULT),
                 pattern=parser.get(CONF_SECTION, PATTERN_KEY, fallback=PATTERN_DEFAULT),
@@ -95,10 +102,12 @@ def load_config(logger: Optional[Logger], conf_dir: str) -> Config:
                 ],
             )
         except Exception:  # pylint: disable=broad-except:
-            logger.exception("Failed to parse %s; using defaults", conf_file)
-            config = Config(conf_file=None)
-    else:
-        config = Config(conf_file=None)
+            if logger:
+                logger.exception("Failed to parse %s; using defaults", source)
+            return Config(conf_file=None)
+
+    conf_file = os.path.join(conf_path, CONF_FILE) if os.path.isdir(conf_path) else conf_path
+    config = parse_config(conf_file)
     if logger:
         logger.info("HcoopMeetbot config: %s", config)
     return config

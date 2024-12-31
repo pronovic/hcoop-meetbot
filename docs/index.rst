@@ -330,7 +330,7 @@ Currently, the only utility available is ``regenerate``::
      will be generated using the exact same prefix as the raw log file itself.
 
    Options:
-     -c, --config <config>          Path to meetbot config file  [required]
+     -c, --config <config>          Path to config file or dir  [required]
      -r, --raw-log <raw-log>        Path to the raw JSON log  [required]
      -d, --output-dir <output-dir>  Where to write output, defaults to .
      -h, --help                     Show this message and exit.
