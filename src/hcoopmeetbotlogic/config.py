@@ -81,7 +81,7 @@ def load_config(logger: Optional[Logger], conf_path: str) -> Config:
     def parse_config(source: str) -> Config:
         if not os.path.isfile(source):
             if logger:
-                logger.debug("Could not find %s; using defaults", conf_path)
+                logger.debug("Could not find %s; using defaults", source)
             return Config(conf_file=None)
         try:
             parser = configparser.ConfigParser(interpolation=None)
@@ -99,7 +99,7 @@ def load_config(logger: Optional[Logger], conf_path: str) -> Config:
             )
         except Exception:  # pylint: disable=broad-except:
             if logger:
-                logger.exception("Failed to parse %s; using defaults", conf_path)
+                logger.exception("Failed to parse %s; using defaults", source)
             return Config(conf_file=None)
 
     conf_file = os.path.join(conf_path, CONF_FILE) if os.path.isdir(conf_path) else conf_path
