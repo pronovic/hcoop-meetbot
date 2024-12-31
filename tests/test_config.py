@@ -42,8 +42,10 @@ class TestParsing:
     def test_valid_configuration(self):
         logger = MagicMock()
         conf_dir = VALID_DIR
-        config = load_config(logger, conf_dir)
-        assert config.conf_file == os.path.join(VALID_DIR, "HcoopMeetbot.conf")
+        conf_file = os.path.join(conf_dir, "HcoopMeetbot.conf")
+        conf_path = conf_dir
+        config = load_config(logger, conf_path)
+        assert config.conf_file == conf_file
         assert config.log_dir == "/tmp/meetings"
         assert config.url_prefix == "https://whatever/meetings"
         assert config.pattern == "{name}-%Y%m%d"
@@ -53,11 +55,13 @@ class TestParsing:
 
     def test_valid_custom_name_configuration(self):
         logger = MagicMock()
-        conf_path = os.path.join(VALID_DIR, "CustomName.conf")
+        conf_dir = VALID_DIR
+        conf_file = os.path.join(conf_dir, "CustomName.conf")
+        conf_path = conf_file
         config = load_config(logger, conf_path)
-        assert config.conf_file == conf_path
-        assert config.log_dir == "/tmp/meetings"
-        assert config.url_prefix == "https://whatever/meetings"
+        assert config.conf_file == conf_file
+        assert config.log_dir == "/tmp/custom"
+        assert config.url_prefix == "https://whatever/custom"
         assert config.pattern == "{name}-%Y%m%d"
         assert config.timezone == "America/Chicago"
         assert config.use_channel_topic is True
