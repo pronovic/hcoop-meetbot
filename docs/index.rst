@@ -7,7 +7,7 @@ Release v\ |version|
     :target: https://pypi.org/project/hcoop-meetbot/
 
 .. image:: https://img.shields.io/pypi/l/hcoop-meetbot.svg
-    :target: https://github.com/pronovic/hcoop-meetbot/blob/master/LICENSE
+    :target: https://github.com/pronovic/hcoop-meetbot/blob/main/LICENSE
 
 .. image:: https://img.shields.io/pypi/wheel/hcoop-meetbot.svg
     :target: https://pypi.org/project/hcoop-meetbot/
@@ -21,8 +21,8 @@ Release v\ |version|
 .. image:: https://readthedocs.org/projects/hcoop-meetbot/badge/?version=stable&style=flat
     :target: https://hcoop-meetbot.readthedocs.io/en/stable/
 
-.. image:: https://coveralls.io/repos/github/pronovic/hcoop-meetbot/badge.svg?branch=master
-    :target: https://coveralls.io/github/pronovic/hcoop-meetbot?branch=master
+.. image:: https://coveralls.io/repos/github/pronovic/hcoop-meetbot/badge.svg?branch=main
+    :target: https://coveralls.io/github/pronovic/hcoop-meetbot?branch=main
 
 hcoop-meetbot_ is a plugin for Limnoria_, a bot framework for IRC.  It is designed to help run meetings on IRC.  It was originally written for quarterly board meetings at HCoop_, when Ken was on the board there.
 

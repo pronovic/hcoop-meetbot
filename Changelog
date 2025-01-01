@@ -4,6 +4,7 @@ Version 0.6.13     unreleased
 	* Pull in latest version of run-script-framework.
 	* Update dependencies to address Dependabot warnings.
 	* Add a default .pytest.ini file based on new cookiecutter template.
+	* Change the default branch in GitHub from master to main.
 
 Version 0.6.12     31 Dec 2024
 
