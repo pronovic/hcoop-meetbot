@@ -1,3 +1,7 @@
+Version 0.6.13     unreleased
+
+	* Update dependencies to address Dependabot warnings.
+
 Version 0.6.12     31 Dec 2024
 
 	* Fix load_config() to accept file or directory (by @achow101).
