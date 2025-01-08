@@ -119,8 +119,8 @@ precision = 1
 [tool.pytest.ini_options]
 filterwarnings = [
     'error',  # turn all Python warnings into test failures, so they're hard to miss
-    'ignore:.*Flags not at the start of the expression:genshi', # warning in Genshi code we do not control
-    'ignore:.*_init__ missing 1 required positional argument:genshi', # warning in Genshi code we do not control
+    'ignore:.*Flags not at the start of the expression::genshi', # warning in Genshi code we do not control
+    'ignore:.*_init__ missing 1 required positional argument::genshi', # warning in Genshi code we do not control
 ]
 
 [tool.mypy]
