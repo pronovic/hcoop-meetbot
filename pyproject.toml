@@ -169,5 +169,5 @@ ignore_errors = true
 
 # There is no type hinting for supybot
 [[tool.mypy.overrides]]
-module = [ "supybot", "supybot.commands", "supybot.ircmsgs", "supybot.i18n", "supybot.test" ]
-ignore_errors = true
+module = [ "supybot", "supybot.*" ]
+ignore_missing_imports = true
