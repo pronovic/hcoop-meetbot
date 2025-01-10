@@ -2,6 +2,7 @@ Version 0.6.15     unreleased
 
 	* Pull in latest version of run-script-framework.
 	* Upgrade to poetry-dynamic-versioning v1.5.2 for minor fixes.
+	* Add .python-version in preferred order to support pyenv.
 
 Version 0.6.14     08 Jan 2025
 
