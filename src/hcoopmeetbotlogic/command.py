@@ -280,6 +280,8 @@ def dispatch(meeting: Meeting, context: Context, message: TrackedMessage) -> Non
         operand = operation_match.group(_OPERAND_GROUP).strip()
         if hasattr(_DISPATCHER, "%s%s" % (_METHOD_PREFIX, operation)):
             getattr(_DISPATCHER, "%s%s" % (_METHOD_PREFIX, operation))(meeting, context, operation, operand, message)
+        elif message.payload.lower().strip().startswith(meeting.channel.lower()):
+            return
         else:
             context.send_reply("Unknown command: #%s" % operation)
     elif url_match:
