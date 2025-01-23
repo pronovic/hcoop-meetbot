@@ -22,7 +22,7 @@ from .writer import write_meeting
 _STARTMEETING_REGEX = re.compile(r"(^\s*)(#)(startmeeting)(\s*)(.*$)", re.IGNORECASE)
 
 # Regular expression to identify a command in a message
-_OPERATION_REGEX = re.compile(r"(^\s*)(#)(\w+)(\s*)(.*$)", re.IGNORECASE)
+_OPERATION_REGEX = re.compile(r"(^\s*)(#)([a-zA-Z_]+)($|\s+)(.*$)", re.IGNORECASE)
 _OPERATION_GROUP = 3
 _OPERAND_GROUP = 5
 

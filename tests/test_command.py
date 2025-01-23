@@ -135,6 +135,24 @@ class TestFunctions:
         _getattr.assert_not_called()
         context.send_reply.assert_called_once_with("Unknown command: #bogus")
 
+    @patch("hcoopmeetbotlogic.command.hasattr")
+    @patch("hcoopmeetbotlogic.command.getattr")
+    def test_dispatch_non_commands(self, _getattr, _hasattr):  # pylint: disable=redefined-builtin:
+        def run_ignored_dispatch(payload):
+            meeting = MagicMock()
+            context = MagicMock()
+            message = MagicMock(payload=payload)
+            _hasattr.return_value = False
+            dispatch(meeting, context, message)
+            _getattr.assert_not_called()
+            context.send_reply.assert_not_called()
+
+        run_ignored_dispatch("#1234")
+        run_ignored_dispatch("  #1234")
+        run_ignored_dispatch("#asdf1234")
+        run_ignored_dispatch("#a2s3d4f")
+        run_ignored_dispatch("#2s3d4f")
+
     # noinspection PyTypeChecker
     @patch("hcoopmeetbotlogic.command._DISPATCHER")
     def test_dispatch_command_variations(self, dispatcher):
