@@ -22,7 +22,7 @@ from .writer import write_meeting
 _STARTMEETING_REGEX = re.compile(r"(^\s*)(#)(startmeeting)(\s*)(.*$)", re.IGNORECASE)
 
 # Regular expression to identify a command in a message
-_OPERATION_REGEX = re.compile(r"(^\s*)(#)(\w+)(\s*)(.*$)", re.IGNORECASE)
+_OPERATION_REGEX = re.compile(r"(^\s*)(#)([a-zA-Z_]+)($|\s+)(.*$)", re.IGNORECASE)
 _OPERATION_GROUP = 3
 _OPERAND_GROUP = 5
 
@@ -280,6 +280,8 @@ def dispatch(meeting: Meeting, context: Context, message: TrackedMessage) -> Non
         operand = operation_match.group(_OPERAND_GROUP).strip()
         if hasattr(_DISPATCHER, "%s%s" % (_METHOD_PREFIX, operation)):
             getattr(_DISPATCHER, "%s%s" % (_METHOD_PREFIX, operation))(meeting, context, operation, operand, message)
+        elif message.payload.lower().strip().startswith(meeting.channel.lower()):
+            return
         else:
             context.send_reply("Unknown command: #%s" % operation)
     elif url_match:

@@ -127,13 +127,35 @@ class TestFunctions:
     @patch("hcoopmeetbotlogic.command.hasattr")
     @patch("hcoopmeetbotlogic.command.getattr")
     def test_dispatch_invalid_command(self, _getattr, _hasattr):  # pylint: disable=redefined-builtin:
-        meeting = MagicMock()
+        meeting = MagicMock(channel="chan")
         context = MagicMock()
         message = MagicMock(payload="#bogus")
         _hasattr.return_value = False
         dispatch(meeting, context, message)
         _getattr.assert_not_called()
         context.send_reply.assert_called_once_with("Unknown command: #bogus")
+
+    @patch("hcoopmeetbotlogic.command.hasattr")
+    @patch("hcoopmeetbotlogic.command.getattr")
+    def test_dispatch_non_commands(self, _getattr, _hasattr):  # pylint: disable=redefined-builtin:
+        def run_ignored_dispatch(payload, channel=None):
+            if channel is None:
+                channel = "#channel"
+            meeting = MagicMock(channel=channel)
+            context = MagicMock()
+            message = MagicMock(payload=payload)
+            _hasattr.return_value = False
+            dispatch(meeting, context, message)
+            _getattr.assert_not_called()
+            context.send_reply.assert_not_called()
+
+        run_ignored_dispatch("#1234")
+        run_ignored_dispatch("  #1234")
+        run_ignored_dispatch("#asdf1234")
+        run_ignored_dispatch("#a2s3d4f")
+        run_ignored_dispatch("#2s3d4f")
+        run_ignored_dispatch("#channame", "#channame")
+        run_ignored_dispatch("  #channame", "#channame")
 
     # noinspection PyTypeChecker
     @patch("hcoopmeetbotlogic.command._DISPATCHER")
