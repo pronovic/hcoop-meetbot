@@ -5,6 +5,7 @@ Version 0.6.15     unreleased
 	* Add .python-version in preferred order to support pyenv.
 	* Use conftest.py to explicitly set the time zone for all unit tests.
 	* Add Sphinx configuration path to .readthedocs.yml.
+	* Ignore commands containing numbers and channel name (by @achow101).
 
 Version 0.6.14     08 Jan 2025
 
