@@ -273,6 +273,8 @@ def list_commands() -> List[str]:
 
 def dispatch(meeting: Meeting, context: Context, message: TrackedMessage) -> None:
     """Dispatch any command contained in the message to the dispatcher method with the matching name."""
+    if message.payload.lower().strip().startswith(meeting.channel.lower()):
+        return
     operation_match = _OPERATION_REGEX.match(message.payload)
     url_match = _URL_REGEX.match(message.payload)
     if operation_match:
