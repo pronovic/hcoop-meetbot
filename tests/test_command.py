@@ -10,7 +10,7 @@ from hcoopmeetbotlogic.meeting import EventType, VotingAction
 
 
 def run_dispatch(payload, operation, operand, method):
-    meeting = MagicMock()
+    meeting = MagicMock(channel="#channel")
     context = MagicMock()
     message = MagicMock(payload=payload)
     method.reset_mock()  # so we can test same method with different scenarios
@@ -88,7 +88,7 @@ class TestFunctions:
     @patch("hcoopmeetbotlogic.command._DISPATCHER")
     def test_dispatch_invalid_link(self, dispatcher, protocol):
         url = "%s://whatever" % protocol
-        meeting = MagicMock()
+        meeting = MagicMock(channel="#channel")
         context = MagicMock()
         message = MagicMock(payload=url)
         dispatch(meeting, context, message)
@@ -127,7 +127,7 @@ class TestFunctions:
     @patch("hcoopmeetbotlogic.command.hasattr")
     @patch("hcoopmeetbotlogic.command.getattr")
     def test_dispatch_invalid_command(self, _getattr, _hasattr):  # pylint: disable=redefined-builtin:
-        meeting = MagicMock(channel="chan")
+        meeting = MagicMock(channel="#channel")
         context = MagicMock()
         message = MagicMock(payload="#bogus")
         _hasattr.return_value = False
@@ -139,9 +139,7 @@ class TestFunctions:
     @patch("hcoopmeetbotlogic.command.getattr")
     def test_dispatch_non_commands(self, _getattr, _hasattr):  # pylint: disable=redefined-builtin:
         def run_ignored_dispatch(payload, channel=None):
-            if channel is None:
-                channel = "#channel"
-            meeting = MagicMock(channel=channel)
+            meeting = MagicMock(channel=channel if channel else "#channel")
             context = MagicMock()
             message = MagicMock(payload=payload)
             _hasattr.return_value = False
