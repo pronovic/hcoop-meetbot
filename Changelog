@@ -1,6 +1,7 @@
 Version 0.6.16     unreleased
 
 	* Update the jinja2 transitive dependency to address CVE-2025-27516.
+	* Update the requests transitive dependency to address CVE-2024-47081.
 
 Version 0.6.15     27 Jan 2025
 
