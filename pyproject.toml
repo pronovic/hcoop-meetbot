@@ -156,11 +156,6 @@ module = "tests.*"
 check_untyped_defs = false
 allow_untyped_defs = true
 
-# There is no type hinting for pytest
-[[tool.mypy.overrides]]
-module = "pytest"
-ignore_missing_imports = true
-
 # There is no type hinting for genshi
 [[tool.mypy.overrides]]
 module = "genshi.*"
