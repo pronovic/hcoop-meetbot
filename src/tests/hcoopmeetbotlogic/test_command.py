@@ -197,15 +197,13 @@ class TestCommandDispatcher:
         dispatcher.do_startmeeting(meeting, context, "a", "b", message)
         meeting.track_event.assert_called_once_with(EventType.START_MEETING, message)
         context.set_topic.assert_called_once_with("The Topic")
-        context.send_reply.assert_has_calls(
-            [
-                call("Meeting started at 11111"),
-                call("Current chairs: x, y"),
-                call("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting"),
-                call("See also: https://hcoop-meetbot.readthedocs.io/en/stable/"),
-                call("Participants should now identify themselves with '#here' or with an alias like '#here FirstLast'"),
-            ]
-        )
+        context.send_reply.assert_has_calls([
+            call("Meeting started at 11111"),
+            call("Current chairs: x, y"),
+            call("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting"),
+            call("See also: https://hcoop-meetbot.readthedocs.io/en/stable/"),
+            call("Participants should now identify themselves with '#here' or with an alias like '#here FirstLast'"),
+        ])
         assert meeting.original_topic == "original"
         formatdate.assert_called_once_with(timestamp=meeting.start_time, zone="America/Chicago")
 
@@ -224,15 +222,13 @@ class TestCommandDispatcher:
         dispatcher.do_startmeeting(meeting, context, "a", "b", message)
         meeting.track_event.assert_called_once_with(EventType.START_MEETING, message)
         context.set_topic.assert_not_called()
-        context.send_reply.assert_has_calls(
-            [
-                call("Meeting started at 11111"),
-                call("Current chairs: x, y"),
-                call("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting"),
-                call("See also: https://hcoop-meetbot.readthedocs.io/en/stable/"),
-                call("Participants should now identify themselves with '#here' or with an alias like '#here FirstLast'"),
-            ]
-        )
+        context.send_reply.assert_has_calls([
+            call("Meeting started at 11111"),
+            call("Current chairs: x, y"),
+            call("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting"),
+            call("See also: https://hcoop-meetbot.readthedocs.io/en/stable/"),
+            call("Participants should now identify themselves with '#here' or with an alias like '#here FirstLast'"),
+        ])
         assert meeting.original_topic == "original"
         formatdate.assert_called_once_with(timestamp=meeting.start_time, zone="America/Chicago")
 
@@ -280,9 +276,12 @@ class TestCommandDispatcher:
         dispatcher.do_endmeeting(meeting, context, "a", "b", message)
         meeting.track_event.assert_called_once_with(EventType.END_MEETING, message)
         write_meeting.assert_called_once_with(config=config.return_value, meeting=meeting)
-        context.send_reply.assert_has_calls(
-            [call("Meeting ended at 11111"), call("Raw log: rawurl"), call("Formatted log: logurl"), call("Minutes: minutesurl")]
-        )
+        context.send_reply.assert_has_calls([
+            call("Meeting ended at 11111"),
+            call("Raw log: rawurl"),
+            call("Formatted log: logurl"),
+            call("Minutes: minutesurl"),
+        ])
         context.set_topic.assert_called_once_with("original")
         formatdate.assert_called_once_with(timestamp=now.return_value, zone="America/Chicago")
         deactivate_meeting.assert_called_once_with(meeting, retain=True)
@@ -314,9 +313,12 @@ class TestCommandDispatcher:
         dispatcher.do_save(meeting, context, "a", "b", message)
         meeting.track_event.assert_called_once_with(EventType.SAVE_MEETING, message)
         write_meeting.assert_called_once_with(config=config.return_value, meeting=meeting)
-        context.send_reply.assert_has_calls(
-            [call("Meeting saved"), call("Raw log: rawurl"), call("Formatted log: logurl"), call("Minutes: minutesurl")]
-        )
+        context.send_reply.assert_has_calls([
+            call("Meeting saved"),
+            call("Raw log: rawurl"),
+            call("Formatted log: logurl"),
+            call("Minutes: minutesurl"),
+        ])
 
     @patch("hcoopmeetbotlogic.command.write_meeting")
     def test_save_as_not_chair(self, write_meeting, dispatcher, meeting, context, message):
@@ -388,16 +390,14 @@ class TestCommandDispatcher:
         meeting.track_event.assert_called_once_with(
             EventType.ADD_CHAIR, message, operand=["one", "two", "three", "four", "five", "six"]
         )
-        meeting.add_chair.assert_has_calls(
-            [
-                call("one", primary=False),
-                call("two", primary=False),
-                call("three", primary=False),
-                call("four", primary=False),
-                call("five", primary=False),
-                call("six", primary=False),
-            ]
-        )
+        meeting.add_chair.assert_has_calls([
+            call("one", primary=False),
+            call("two", primary=False),
+            call("three", primary=False),
+            call("four", primary=False),
+            call("five", primary=False),
+            call("six", primary=False),
+        ])
         context.send_reply.assert_called_once_with("Current chairs: x, y")
 
     def test_chair_as_not_chair(self, dispatcher, meeting, context, message):
@@ -472,16 +472,14 @@ class TestCommandDispatcher:
         meeting.track_event.assert_called_once_with(
             EventType.TRACK_NICK, message, operand=["one", "two", "three", "four", "five", "six"]
         )
-        meeting.track_nick.assert_has_calls(
-            [
-                call("one", messages=0),
-                call("two", messages=0),
-                call("three", messages=0),
-                call("four", messages=0),
-                call("five", messages=0),
-                call("six", messages=0),
-            ]
-        )
+        meeting.track_nick.assert_has_calls([
+            call("one", messages=0),
+            call("two", messages=0),
+            call("three", messages=0),
+            call("four", messages=0),
+            call("five", messages=0),
+            call("six", messages=0),
+        ])
         context.send_reply.assert_called_once_with("Current nicks: x, y")
 
     def test_undo_as_chair_no_events(self, dispatcher, meeting, context, message):
@@ -608,9 +606,11 @@ class TestCommandDispatcher:
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="Motion accepted: 2 in favor to 1 opposed")
-        context.send_reply.assert_has_calls(
-            [call("Motion accepted: 2 in favor to 1 opposed"), call("In favor: one, two"), call("Opposed: three")]
-        )
+        context.send_reply.assert_has_calls([
+            call("Motion accepted: 2 in favor to 1 opposed"),
+            call("In favor: one, two"),
+            call("Opposed: three"),
+        ])
 
     def test_close_accepted_unanimous(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
@@ -628,9 +628,11 @@ class TestCommandDispatcher:
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         meeting.track_event.assert_called_once_with(EventType.ACCEPTED, message, operand="Motion accepted: 3 in favor to 0 opposed")
-        context.send_reply.assert_has_calls(
-            [call("Motion accepted: 3 in favor to 0 opposed"), call("In favor: one, two, three"), call("Opposed: ")]
-        )
+        context.send_reply.assert_has_calls([
+            call("Motion accepted: 3 in favor to 0 opposed"),
+            call("In favor: one, two, three"),
+            call("Opposed: "),
+        ])
 
     def test_close_failed(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
@@ -648,9 +650,11 @@ class TestCommandDispatcher:
         assert meeting.motion_index is None
         meeting.is_chair.assert_called_once_with("nick")  # message.sender
         meeting.track_event.assert_called_once_with(EventType.FAILED, message, operand="Motion failed: 1 in favor to 2 opposed")
-        context.send_reply.assert_has_calls(
-            [call("Motion failed: 1 in favor to 2 opposed"), call("In favor: three"), call("Opposed: one, two")]
-        )
+        context.send_reply.assert_has_calls([
+            call("Motion failed: 1 in favor to 2 opposed"),
+            call("In favor: three"),
+            call("Opposed: one, two"),
+        ])
 
     def test_close_inconclusive(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True
@@ -671,9 +675,11 @@ class TestCommandDispatcher:
         meeting.track_event.assert_called_once_with(
             EventType.INCONCLUSIVE, message, operand="Motion inconclusive: 2 in favor to 2 opposed"
         )
-        context.send_reply.assert_has_calls(
-            [call("Motion inconclusive: 2 in favor to 2 opposed"), call("In favor: three, four"), call("Opposed: one, two")]
-        )
+        context.send_reply.assert_has_calls([
+            call("Motion inconclusive: 2 in favor to 2 opposed"),
+            call("In favor: three, four"),
+            call("Opposed: one, two"),
+        ])
 
     def test_accepted_as_chair(self, dispatcher, meeting, context, message):
         meeting.is_chair.return_value = True

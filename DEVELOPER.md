@@ -27,7 +27,7 @@ suites and combines the coverage results together into a single report.
 
 This project uses [Poetry v2](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.
 
-A coding standard is enforced using [Black](https://pypi.org/project/black/), [isort](https://pypi.org/project/isort/) and [Pylint](https://pypi.org/project/pylint/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  To reduce boilerplate, classes are defined using [Attrs](https://www.attrs.org/) (see this [rationale](https://glyph.twistedmatrix.com/2016/08/attrs.html)).
+A coding standard is enforced using [Ruff](https://docs.astral.sh/ruff/) and [Pylint](https://pypi.org/project/pylint/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  To reduce boilerplate, classes are defined using [Attrs](https://www.attrs.org/) (see this [rationale](https://glyph.twistedmatrix.com/2016/08/attrs.html)).
 
 ## Pre-Commit Hooks
 
@@ -202,8 +202,8 @@ doesn't seem to work as expected, just use CTRL-C.
 ## Integration with PyCharm
 
 Currently, I use [PyCharm Community Edition](https://www.jetbrains.com/pycharm/download) as
-my day-to-day IDE.  By integrating Black and Pylint, most everything important
-that can be done from a shell environment can also be done right in PyCharm.
+my day-to-day IDE.  By integrating Ruff, most everything important that can be
+done from a shell environment can also be done right in PyCharm.
 
 PyCharm offers a good developer experience.  However, the underlying configuration
 on disk mixes together project policy (i.e. preferences about which test runner to
@@ -304,7 +304,7 @@ source ~/.bash_profile
 |Field|Value|
 |-----|-----|
 |Name|`Format Code`|
-|Description|`Run the Black and isort code formatters`|
+|Description|`Run the Ruff code formatter`|
 |Group|`Developer Tools`|
 |Program|`$ProjectFileDir$/run`|
 |Arguments|`format`|

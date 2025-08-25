@@ -117,13 +117,11 @@ class _LogMessage:
 
     @staticmethod
     def _payload(payload: str) -> Element:
-        return tag.span(
-            [
-                tag.span(element, class_="hi") if _NICK_REGEX.fullmatch(element) else tag.span(element)
-                for element in _NICK_REGEX.split(payload, 1)
-                if element
-            ]
-        )
+        return tag.span([
+            tag.span(element, class_="hi") if _NICK_REGEX.fullmatch(element) else tag.span(element)
+            for element in _NICK_REGEX.split(payload, 1)
+            if element
+        ])
 
 
 @frozen

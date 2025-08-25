@@ -7,6 +7,7 @@
 """
 HcoopMeetbot: Plugin for Limnoria to help run IRC meetings
 """
+
 from importlib import reload
 from typing import Dict
 
