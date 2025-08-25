@@ -12,7 +12,7 @@ include = [
    { path='CREDITS', format='sdist' },
    { path='README.md', format='sdist' },
    { path='docs', format='sdist' },
-   { path='tests', format='sdist' },
+   { path='src/tests', format='sdist' },
 ]
 exclude = [ "HcoopMeetbot/test.py" ] # annoyingly, bot tests must live in the source tree
 classifiers = [
@@ -109,7 +109,7 @@ source = [ "src" ]
 
 [tool.coverage.run]
 branch = true
-source = [ "src" ]
+source = [ "src/HcoopMeetbot", "src/hcoopmeetbotlogic" ]
 omit = [ "src/HcoopMeetbot/test.py" ]
 
 [tool.coverage.report]
@@ -129,7 +129,7 @@ pretty = true
 show_absolute_path = true
 show_column_numbers = true
 show_error_codes = true
-files = [ "src/HcoopMeetbot", "tests" ]
+files = [ "src/HcoopMeetbot", "src/tests/hcoopmeetbotlogic" ]  # TODO: this should scan all source
 check_untyped_defs = true
 disallow_any_generics = true
 disallow_incomplete_defs = true
