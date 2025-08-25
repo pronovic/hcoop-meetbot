@@ -45,7 +45,7 @@ task_test() {
          exit 1
       fi
 
-      poetry_run coverage run -a -m pytest --testdox --force-testdox $color tests  # note -a to append data
+      poetry_run coverage run -a -m pytest --testdox --force-testdox $color src/tests  # note -a to append data
 
       poetry_run coverage report
       poetry_run coverage lcov -o .coverage.lcov
@@ -61,6 +61,6 @@ task_test() {
          exit 1
       fi
 
-      poetry_run pytest --testdox --force-testdox $color tests
+      poetry_run pytest --testdox --force-testdox $color src/tests
    fi
 }
