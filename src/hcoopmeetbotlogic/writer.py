@@ -299,7 +299,7 @@ def _render_html(template: str, context: Dict[str, Any], out: TextIO) -> None:
     renderer.generate(**context).render(method="html", doctype="html", out=out)
 
 
-def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> None:  # pylint: disable=unused-argument:
+def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> None:
     """Write the raw meeting log to disk in JSON format."""
     os.makedirs(os.path.dirname(locations.raw_log.path), exist_ok=True)
     with open(locations.raw_log.path, "w", encoding="utf-8") as out:

@@ -128,7 +128,6 @@ class TrackedEvent:
         return "%s@%s" % (self.id, formatdate(self.timestamp))
 
 
-# pylint: disable=too-many-instance-attributes:
 @define(slots=False)
 class Meeting:
     # noinspection PyUnresolvedReferences

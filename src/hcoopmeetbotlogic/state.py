@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
-# pylint: disable=used-before-assignment:
 
 """
 Shared plugin state, maintained as singleton objects.
@@ -49,9 +48,9 @@ except NameError:
 
 
 # noinspection PyShadowingNames
-def set_logger(logger: Logger) -> None:  # pylint: disable=redefined-outer-name:
+def set_logger(logger: Logger) -> None:
     """Set the shared logger instance."""
-    global _LOGGER  # pylint: disable=global-statement:
+    global _LOGGER
     _LOGGER = logger
 
 
@@ -64,9 +63,9 @@ def logger() -> Logger:
 
 
 # noinspection PyShadowingNames
-def set_config(config: Config) -> None:  # pylint: disable=redefined-outer-name:
+def set_config(config: Config) -> None:
     """Set shared configuration."""
-    global _CONFIG  # pylint: disable=global-statement:
+    global _CONFIG
     _CONFIG = config
 
 

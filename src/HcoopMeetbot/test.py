@@ -22,7 +22,7 @@ PREFIX = "@"
 TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0)
 
 
-def _stub(context, **kwargs):  # pylint: disable=unused-argument:
+def _stub(context, **kwargs):
     """Stub handler method that returns a static reply; without this, the handler tests all time out."""
     context.send_reply("Hello")
 

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
-# pylint: disable=use-implicit-booleaness-not-comparison:
 
 from datetime import datetime
 from unittest.mock import MagicMock, patch
@@ -93,7 +92,6 @@ class TestMeeting:
         assert meeting.display_name() == "c/n@11111"
         formatdate.assert_called_once_with(meeting.start_time)
 
-    # pylint: disable=too-many-statements:
     def test_chair_behavior(self):
         meeting = Meeting("nick", "channel", "network")
         assert meeting.chair == "nick"

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
-# pylint: disable=ungrouped-imports,disable=unused-argument,broad-except,too-many-ancestors,invalid-name:
 
 """
 Implement the HcoopMeetbot plugin in terms of Limnoria functionality.

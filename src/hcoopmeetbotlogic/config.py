@@ -101,7 +101,7 @@ def load_config(logger: Optional[Logger], conf_path: str) -> Config:
                     parser.get(CONF_SECTION, OUTPUT_FORMAT_KEY, fallback=OUTPUT_FORMAT_DEFAULT.name).upper()
                 ],
             )
-        except Exception:  # pylint: disable=broad-except:
+        except Exception:
             if logger:
                 logger.exception("Failed to parse %s; using defaults", source)
             return Config(conf_file=None)
