@@ -109,7 +109,7 @@ source = [ "src" ]
 
 [tool.coverage.run]
 branch = true
-source = [ "src" ]
+source = [ "src/HcoopMeetbot", "src/hcoopmeetbotlogic" ]
 omit = [ "src/HcoopMeetbot/test.py" ]
 
 [tool.coverage.report]
