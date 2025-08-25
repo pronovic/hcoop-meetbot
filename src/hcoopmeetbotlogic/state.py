@@ -37,13 +37,13 @@ except NameError:
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _ACTIVE  # pylint: disable=used-before-assignment:
+    _ACTIVE  # type: ignore[used-before-def]
 except NameError:
     _ACTIVE: Dict[str, Meeting] = {}
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _COMPLETED  # pylint: disable=used-before-assignment:
+    _COMPLETED  # type: ignore[used-before-def]
 except NameError:
     _COMPLETED: Deque[Meeting] = deque([], _COMPLETED_SIZE)
 
