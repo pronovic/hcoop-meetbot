@@ -4,6 +4,7 @@
 """
 Object interface used by plugin to access code in the local package.
 """
+
 from datetime import datetime
 from typing import Callable, Iterable, Optional
 

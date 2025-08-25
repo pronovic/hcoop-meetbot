@@ -72,37 +72,13 @@ pytest-testdox = ">=3.1.0,<4.0.0"
 coverage = ">=7.4.4,<8.0.0"
 pylint = ">=3.0.1,<4.0.0"
 pre-commit = ">=4.0.1,<5.0.0"
-black = ">=24.2.0,<25.0.0"
 mypy = ">=1.6.0,<2.0.0"
-isort = ">=5.12.0,<6.0.0"
 colorama = ">=0.4.6,<1.0.0"
 types-pytz = ">=2023.3.1.1"
+ruff = "^0.12.10"
 
 [tool.poetry.scripts]
 meetbot = "hcoopmeetbotlogic.cli:meetbot"
-
-[tool.black]
-line-length = 132
-target-version = [ 'py310', 'py311', 'py312', 'py313' ]
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | __pycache__
-  | \.tox
-  | \.venv
-  | \.poetry
-  | build
-  | dist
-  | docs
-  | notes
-)/
-'''
-
-[tool.isort]
-profile = "black"
-line_length = 132
-skip_glob = [ "docs", "notes", ".poetry" ]
 
 [tool.coverage.paths]
 source = [ "src" ]
@@ -122,6 +98,18 @@ filterwarnings = [
     'ignore:.*Flags not at the start of the expression::genshi', # warning in Genshi code we do not control
     'ignore:.*_init__ missing 1 required positional argument::genshi', # warning in Genshi code we do not control
 ]
+
+[tool.ruff]
+src = ["src"]
+extend-exclude = [ "docs", "notes", ".poetry" ]
+line-length = 132
+preview = true
+
+[tool.ruff.format]
+quote-style = "double"
+line-ending = "lf"
+docstring-code-format = true
+docstring-code-line-length = 80
 
 [tool.mypy]
 files = [ "src" ]

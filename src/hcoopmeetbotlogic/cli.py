@@ -4,6 +4,7 @@
 """
 CLI for the meetbot tool.
 """
+
 import os
 
 import click
