@@ -22,7 +22,7 @@ def _send_reply(context: Context, reply: str) -> None:
 
 
 # noinspection PyShadowingNames
-def configure(logger: Logger, conf_path: str) -> None:  # pylint: disable=redefined-outer-name:
+def configure(logger: Logger, conf_path: str) -> None:
     """
     Configure the plugin.
 
@@ -31,12 +31,12 @@ def configure(logger: Logger, conf_path: str) -> None:  # pylint: disable=redefi
         conf_path(str): Limnoria bot config path to load configuration from, either a file or a directory
     """
     logger.debug("Configuring plugin")
-    config = load_config(logger, conf_path)  # pylint: disable=redefined-outer-name:
+    config = load_config(logger, conf_path)
     set_logger(logger)
     set_config(config)
 
 
-def irc_message(context: Context, message: Message) -> None:  # pylint: disable=unused-argument:
+def irc_message(context: Context, message: Message) -> None:
     """
     Handle an IRC message from the bot.
 
@@ -55,7 +55,7 @@ def irc_message(context: Context, message: Message) -> None:  # pylint: disable=
         dispatch(meeting, context, tracked)
 
 
-def outbound_message(context: Context, message: Message) -> None:  # pylint: disable=unused-argument:
+def outbound_message(context: Context, message: Message) -> None:
     """
     Handle an outbound message from the bot.
 
@@ -70,7 +70,7 @@ def outbound_message(context: Context, message: Message) -> None:  # pylint: dis
         meeting.track_message(message)
 
 
-def meetversion(context: Context) -> None:  # pylint: disable=unused-argument:
+def meetversion(context: Context) -> None:
     """Reply with a string describing the version of the plugin."""
     logger().debug("Handled 'meetversion'")
     _send_reply(context, "HCoop Meetbot v%s (%s)" % (VERSION, DATE))

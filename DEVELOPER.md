@@ -27,7 +27,7 @@ suites and combines the coverage results together into a single report.
 
 This project uses [Poetry v2](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.
 
-A coding standard is enforced using [Ruff](https://docs.astral.sh/ruff/) and [Pylint](https://pypi.org/project/pylint/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  To reduce boilerplate, classes are defined using [Attrs](https://www.attrs.org/) (see this [rationale](https://glyph.twistedmatrix.com/2016/08/attrs.html)).
+A coding standard is enforced using [Ruff](https://docs.astral.sh/ruff/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  To reduce boilerplate, classes are defined using [Attrs](https://www.attrs.org/) (see this [rationale](https://glyph.twistedmatrix.com/2016/08/attrs.html)).
 
 ## Pre-Commit Hooks
 
@@ -246,7 +246,7 @@ Go to the PyCharm settings and find the `hcoop-meetbot` project.  Under
 folder.  In the **Exclude Files** box, enter the following:
 
 ```
-LICENSE;NOTICE;PyPI.md;build;dist;docs/_build;out;poetry.lock;poetry.toml;run;.coverage;.coverage.lcov;.coveragerc;.gitattributes;.github;.gitignore;.htmlcov;.idea;.mypy_cache;.poetry;.pre-commit-config.yaml;.pylintrc;.pytest_cache;.python-version;.readthedocs.yml;.run;.tabignore;.venv;localbot;test-conf;test-data;tmp;web;backup;meetings;test-logs
+LICENSE;NOTICE;PyPI.md;build;dist;docs/_build;out;poetry.lock;poetry.toml;run;.coverage;.coverage.lcov;.coveragerc;.gitattributes;.github;.gitignore;.htmlcov;.idea;.mypy_cache;.poetry;.pre-commit-config.yaml;.pytest_cache;.python-version;.readthedocs.yml;.ruff_cache;.run;.tabignore;.venv;localbot;test-conf;test-data;tmp;web;backup;meetings;test-logs
 ```
 
 When you're done, click **Ok**.  Then, go to the gear icon in the project panel
@@ -279,11 +279,11 @@ run configuration before PyCharm will find the right test suite.
 ### External Tools
 
 Optionally, you might want to set up external tools for some of common
-developer tasks: code reformatting and the PyLint and MyPy checks.  One nice
+developer tasks: code reformatting and the Ruff and MyPy checks.  One nice
 advantage of doing this is that you can configure an output filter, which makes
-the Pylint and MyPy errors clickable.  To set up external tools, go to PyCharm
-settings and find **Tools > External Tools**.  Add the tools as described
-below.
+the Ruff linter and MyPy errors clickable.  To set up external tools, go to
+PyCharm settings and find **Tools > External Tools**.  Add the tools as
+described below.
 
 #### Shell Environment
 
@@ -329,23 +329,23 @@ source ~/.bash_profile
 |Open console for tool outout|_Checked_|
 |Make console active on message in stdout|_Checked_|
 |Make console active on message in stderr|_Checked_|
-|Output filters|`$FILE_PATH$:$LINE$:$COLUMN$:.*`|
+|Output filters|`$FILE_PATH$:$LINE$`|
 
-#### Run Pylint Checks
+#### Run Ruff Linter
 
 |Field|Value|
 |-----|-----|
-|Name|`Run Pylint Checks`|
-|Description|`Run the Pylint code checks`|
+|Name|`Run Ruff Linter`|
+|Description|`Run the Ruff linter code checks`|
 |Group|`Developer Tools`|
 |Program|`$ProjectFileDir$/run`|
-|Arguments|`pylint`|
+|Arguments|`lint`|
 |Working directory|`$ProjectFileDir$`|
 |Synchronize files after execution|_Unchecked_|
 |Open console for tool outout|_Checked_|
 |Make console active on message in stdout|_Checked_|
 |Make console active on message in stderr|_Checked_|
-|Output filters|`$FILE_PATH$:$LINE$:$COLUMN.*`|
+|Output filters|`$FILE_PATH$:$LINE$`|
 
 ## Release Process
 

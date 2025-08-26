@@ -26,7 +26,6 @@ def message(identifier: int, nick: str, payload: str, seconds: int) -> Message:
     return MagicMock(id="id-%d" % identifier, nick=nick, payload=payload, timestamp=time(seconds))
 
 
-# pylint: disable=too-many-statements:
 def sample_meeting() -> Meeting:
     """Generate a semi-realistic meeting that can be used for unit tests"""
 

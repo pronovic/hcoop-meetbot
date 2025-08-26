@@ -10,6 +10,7 @@ from click.testing import CliRunner, Result
 from hcoopmeetbotlogic.cli import meetbot as command
 from hcoopmeetbotlogic.config import OutputFormat
 from hcoopmeetbotlogic.location import Location, Locations
+
 from .testdata import contents
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "fixtures/test_config/valid/HcoopMeetbot.conf")

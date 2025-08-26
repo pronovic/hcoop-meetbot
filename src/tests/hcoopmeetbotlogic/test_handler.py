@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
-# pylint: disable=unused-argument,redefined-outer-name:
 
 from unittest.mock import MagicMock, call, patch
 

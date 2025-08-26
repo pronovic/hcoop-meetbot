@@ -126,7 +126,7 @@ class TestFunctions:
 
     @patch("hcoopmeetbotlogic.command.hasattr")
     @patch("hcoopmeetbotlogic.command.getattr")
-    def test_dispatch_invalid_command(self, _getattr, _hasattr):  # pylint: disable=redefined-builtin:
+    def test_dispatch_invalid_command(self, _getattr, _hasattr):
         meeting = MagicMock(channel="#channel")
         context = MagicMock()
         message = MagicMock(payload="#bogus")
@@ -137,7 +137,7 @@ class TestFunctions:
 
     @patch("hcoopmeetbotlogic.command.hasattr")
     @patch("hcoopmeetbotlogic.command.getattr")
-    def test_dispatch_non_commands(self, _getattr, _hasattr):  # pylint: disable=redefined-builtin:
+    def test_dispatch_non_commands(self, _getattr, _hasattr):
         def run_ignored_dispatch(payload, channel=None):
             meeting = MagicMock(channel=channel if channel else "#channel")
             context = MagicMock()
@@ -164,7 +164,6 @@ class TestFunctions:
         run_dispatch(" #idea     some stuff    ", "idea", "some stuff", dispatcher.do_idea)
 
 
-# pylint: disable=too-many-public-methods:
 class TestCommandDispatcher:
     @pytest.fixture
     def dispatcher(self):
