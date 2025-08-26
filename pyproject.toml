@@ -194,7 +194,7 @@ ignore = [
   "E",          # pycodestyle error
   "W",          # pycodestyle warning
   "ERA",        # eradicate
-  "F401",       # Pyflakes
+  "F",          # Pyflakes
   "FLY",        # flynt
   "FURB",       # refurb
   "N",          # pep8-naming
@@ -209,7 +209,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "src/tests/**/*" = [
-  # Exclusions that apply to unit tests only
+  # Exclusions that apply to unit tests only, standardized across all of my repos
   "ANN",        # don't require type annotations in tests
   "FBT",        # allow use of boolean positional arguments
   "PLC1901",    # allow comparison to empty string
