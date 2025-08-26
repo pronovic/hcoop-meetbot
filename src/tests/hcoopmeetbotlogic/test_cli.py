@@ -29,10 +29,12 @@ class TestCommon:
     def test_h(self):
         result = invoke(["-h"])
         assert result.exit_code == 0
+        assert result.output.startswith("Usage: meetbot [OPTIONS]")
 
     def test_help(self):
         result = invoke(["--help"])
         assert result.exit_code == 0
+        assert result.output.startswith("Usage: meetbot [OPTIONS]")
 
     @patch("importlib.metadata.version")  # this is used underneath by @click.version_option()
     def test_version_output(self, version):
@@ -47,17 +49,20 @@ class TestCommon:
 
     def test_no_args(self):
         result = invoke([])
-        assert result.exit_code == 0
+        assert result.exit_code == 2
+        assert result.output.startswith("Usage: meetbot [OPTIONS]")
 
 
 class TestRegenerate:
     def test_h(self):
         result = invoke(["regenerate", "-h"])
         assert result.exit_code == 0
+        assert result.output.startswith("Usage: meetbot regenerate [OPTIONS]")
 
     def test_help(self):
         result = invoke(["regenerate", "--help"])
         assert result.exit_code == 0
+        assert result.output.startswith("Usage: meetbot regenerate [OPTIONS]")
 
     def test_bad_config_path(self):
         with TemporaryDirectory() as temp:
