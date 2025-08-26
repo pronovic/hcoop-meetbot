@@ -147,19 +147,17 @@ ignore = [
   "Q003",       # avoidable-escaped-quote
   "W191",       # tab-indentation
 
-  # Exclusions of entire rule categories, which we don't think are worth enforcing
+  # Exclusions of entire rule categories, standardized across all of my repos
   "C90",        # mccabe cyclomatic complexity
   "CPY",        # flake8-copyright
   "D",          # pydocstyle
   "DJ",         # flake8-django
   "DOC",        # pydoclint
-  "ERA",        # eradicate
   "EXE",        # flake8-executable
   "FIX",        # flake8-fixme
-  "PTH",        # flake8-use-pathlib
   "TD",         # flake8-todo
 
-  # Exclusions of specific rules, which we don't think are worth enforcing
+  # Exclusions of specific rules, standardized across all of my repos
   "ANN401",     # allow dynamically typed expressions using `typing.Any`
   "EM101",      # allow raw string messages in exceptions; having to pull out a variable makes code harder to read
   "EM102",      # allow f-string messages in exceptions; having to pull out a variable makes code harder to read
@@ -175,77 +173,37 @@ ignore = [
   "SIM117",     # allow nested `with` clauses; ruff suggestions often make the code less legible
   "TRY003",     # allow long messages in exceptions; this is often a false-positive that has little benefit
 
-  # Exclusions of specific rules that we want to work toward being compliant with
-  "ANN001",
-  "ANN003",
-  "ANN201",
-  "ANN202",
-  "ANN204",
-  "ARG001",
-  "ARG002",
-  "ARG005",
-  "B018",
-  "BLE001",
-  "C414",
-  "C420",
-  "DTZ001",
-  "E713",
-  "E722",
-  "E731",
-  "F401",
-  "F841",
-  "FBT001",
-  "FBT002",
-  "FBT003",
-  "FLY002",
-  "FURB101",
-  "FURB103",
-  "FURB110",
-  "FURB113",
-  "FURB118",
-  "FURB136",
-  "FURB171",
-  "FURB188",
-  "N802",
-  "N816",
-  "N999",
-  "PERF401",
-  "PGH003",
-  "PIE808",
-  "PLR0904",
-  "PLR0911",
-  "PLR0912",
-  "PLR0913",
-  "PLR0917",
-  "PLR1702",
-  "PLR5501",
-  "PLR6201",
-  "PLR6301",
-  "PLW0603",
-  "PT012",
-  "RET504",
-  "RET505",
-  "RET506",
-  "RUF037",
-  "S108",
-  "S311",
-  "SIM110",
-  "SIM113",
-  "SIM401",
-  "T201",
-  "TC001",
-  "TC003",
-  "TID252",
-  "TRY004",
-  "TRY201",
-  "TRY300",
-  "UP006",
-  "UP009",
-  "UP015",
-  "UP031",
-  "UP035",
-  "UP045",
-  "W291",
+  # Exclusions of rule categories and specific rules, customized for this repository
+  "ANN",        # flake8-annotations
+  "ARG",        # flake8-unused-arguments
+  "B",          # flake8-bugbear
+  "BLE",        # flake8-blind-except
+  "C4",         # flake8-comprehensions
+  "DTZ",        # flake8-datetimez
+  "FBT",        # flake8-boolean-trap
+  "PIE",        # flake8-pie
+  "PT",         # flake8-pytest-style
+  "PTH",        # flake8-use-pathlib
+  "RET",        # flake8-return
+  "S",          # flake8-bandit
+  "SIM",        # flake8-simplify
+  "T20",        # flake8-print
+  "TC",         # flake8-type-checking
+  "TID",        # flake8-tidy-imports
+  "E",          # pycodestyle error
+  "W",          # pycodestyle warning
+  "ERA",        # eradicate
+  "F401",       # Pyflakes
+  "FLY",        # flynt
+  "FURB",       # refurb
+  "N",          # pep8-naming
+  "PERF",       # Perflint
+  "PGH",        # pygrep-hooks
+  "PLR",        # Pylint refactor
+  "PLW",        # Pylint warning
+  "RUF",        # Ruff-specific rules
+  "TRY",        # tryceratops
+  "UP",         # pyupgrade
 ]
 
 [tool.ruff.lint.per-file-ignores]
