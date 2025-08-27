@@ -5,8 +5,6 @@
 Writes meeting log and minutes to disk.
 """
 
-from __future__ import annotations
-
 import os
 import re
 from enum import Enum
@@ -72,7 +70,7 @@ class _LogMessage:
     content: Element
 
     @staticmethod
-    def for_message(config: Config, message: TrackedMessage) -> _LogMessage:
+    def for_message(config: Config, message: TrackedMessage) -> "_LogMessage":
         return _LogMessage(
             id=_LogMessage._id(message),
             timestamp=_LogMessage._timestamp(config, message),
@@ -208,7 +206,7 @@ class _MeetingMinutes:
     topics: List[_MeetingTopic]
 
     @staticmethod
-    def for_meeting(config: Config, meeting: Meeting) -> _MeetingMinutes:
+    def for_meeting(config: Config, meeting: Meeting) -> "_MeetingMinutes":
         return _MeetingMinutes(
             start_time=formatdate(timestamp=meeting.start_time, zone=config.timezone, fmt=_DATE_FORMAT),
             end_time=formatdate(timestamp=meeting.end_time, zone=config.timezone, fmt=_DATE_FORMAT),

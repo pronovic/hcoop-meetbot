@@ -5,8 +5,6 @@
 Meeting state.
 """
 
-from __future__ import annotations  # see: https://stackoverflow.com/a/33533514/2907667
-
 import json
 import uuid
 from datetime import datetime
@@ -214,7 +212,7 @@ class Meeting:
         return json.dumps(_CONVERTER.unstructure(self), indent="  ")
 
     @staticmethod
-    def from_json(data: str) -> Meeting:
+    def from_json(data: str) -> "Meeting":
         """Deserialize a meeting from JSON."""
         return _CONVERTER.structure(json.loads(data), Meeting)
 
