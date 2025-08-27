@@ -1,5 +1,6 @@
 Version 0.6.16     unreleased
 
+	* Remove `__all__ = []` from __init__.py.
 	* Adjust GHA build process to allow builds for stacked PRs.
 	* Add a new `run clean` target to clean up generated data.
 	* Move unit tests from `tests` into `src/tests/hcoopmeetbotlogic`.
