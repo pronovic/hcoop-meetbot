@@ -34,6 +34,7 @@ _URL_GROUP = 2
 _METHOD_PREFIX = "do_"
 
 
+# noinspection PyMethodMayBeStatic
 @define
 class CommandDispatcher:
     """

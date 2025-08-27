@@ -54,7 +54,7 @@ def set_logger(logger: Logger) -> None:
     _LOGGER = logger
 
 
-# noinspection PyTypeChecker
+# noinspection PyTypeChecker,PyUnreachableCode
 def logger() -> Logger:
     """Give the rest of the plugin access to a shared logger instance."""
     if _LOGGER is None:
@@ -69,7 +69,7 @@ def set_config(config: Config) -> None:
     _CONFIG = config
 
 
-# noinspection PyTypeChecker
+# noinspection PyTypeChecker,PyUnreachableCode
 def config() -> Config:
     """Give the rest of the plugin access to shared configuration."""
     if _CONFIG is None:

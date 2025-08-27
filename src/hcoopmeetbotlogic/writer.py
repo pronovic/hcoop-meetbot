@@ -152,10 +152,12 @@ class _AliasMatcher:
     nick_pattern: re.Pattern[str] = field()
     alias_pattern: Optional[re.Pattern[str]] = field()
 
+    # noinspection PyUnresolvedReferences
     @nick_pattern.default
     def _nick_pattern_default(self) -> re.Pattern[str]:
         return _AliasMatcher._regex(self.nick)
 
+    # noinspection PyUnresolvedReferences
     @alias_pattern.default
     def _alias_pattern_default(self) -> Optional[re.Pattern[str]]:
         return _AliasMatcher._regex(self.alias) if self.alias else None
@@ -306,6 +308,7 @@ def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> Non
         out.write(meeting.to_json())
 
 
+# noinspection PyUnreachableCode
 def write_formatted_log(config: Config, locations: Locations, meeting: Meeting) -> None:
     """Write the formatted meeting log to disk."""
     context = {
@@ -320,6 +323,7 @@ def write_formatted_log(config: Config, locations: Locations, meeting: Meeting) 
             raise ValueError("Unsupported output format: %s" % config.output_format)
 
 
+# noinspection PyUnreachableCode
 def write_formatted_minutes(config: Config, locations: Locations, meeting: Meeting) -> None:
     """Write the formatted meeting minutes to disk."""
     context = {

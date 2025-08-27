@@ -19,7 +19,7 @@ business logic, and easier to apply code checks like MyPy.
 
 There are two different test suites.  The first, in [`src/HcoopMeetbot/test.py`](src/HcoopMeetbot/test.py), is 
 the Limnoria test suite.  This must be executed via `supybot-test` &mdash; you
-can't run it any other way.  The second, in the [`tests`](tests) package, is a
+can't run it any other way.  The second, in the [`src/tests`](src/tests) package, is a
 standard Pytest suite.  The `run test` task (discussed below) executes both
 suites and combines the coverage results together into a single report.
 

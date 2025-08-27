@@ -78,6 +78,7 @@ def derive_prefix(raw_log_path: str) -> str:
     return _removesuffix(os.path.basename(raw_log_path), RAW_LOG_EXTENSION)
 
 
+# noinspection PyUnreachableCode
 def derive_locations(config: Config, meeting: Meeting, prefix: Optional[str] = None, output_dir: Optional[str] = None) -> Locations:
     """
     Derive the locations where meeting files will be written.
