@@ -199,7 +199,6 @@ ignore = [
   "PERF",       # Perflint
   "PGH",        # pygrep-hooks
   "PLR",        # Pylint refactor
-  "PLW",        # Pylint warning
   "RUF",        # Ruff-specific rules
   "UP",         # pyupgrade
 ]

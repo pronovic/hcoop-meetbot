@@ -50,7 +50,7 @@ except NameError:
 # noinspection PyShadowingNames
 def set_logger(logger: Logger) -> None:
     """Set the shared logger instance."""
-    global _LOGGER
+    global _LOGGER  # noqa: PLW0603
     _LOGGER = logger
 
 
@@ -65,7 +65,7 @@ def logger() -> Logger:
 # noinspection PyShadowingNames
 def set_config(config: Config) -> None:
     """Set shared configuration."""
-    global _CONFIG
+    global _CONFIG  # noqa: PLW0603
     _CONFIG = config
 
 
