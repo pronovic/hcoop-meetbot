@@ -178,8 +178,8 @@ ignore = [
   "ARG002",     # allow unused arguments, since we're often implementing an interface
   "FURB101",    # allow old-style open() and read() operations
   "FURB103",    # allow old-style open() and write() operations
+  "PTH",        # allow old-style os operations rather than pathlib.Path
   "DTZ",        # flake8-datetimez
-  "PTH",        # flake8-use-pathlib
   "S",          # flake8-bandit
   "UP",         # pyupgrade
 ]
