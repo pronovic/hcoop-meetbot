@@ -4,8 +4,9 @@
 Object interface used by plugin to access code in the local package.
 """
 
+from collections.abc import Callable, Iterable
 from datetime import datetime
-from typing import Callable, Iterable, Optional
+from typing import Optional
 
 from attrs import frozen
 
