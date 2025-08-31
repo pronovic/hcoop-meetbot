@@ -181,7 +181,6 @@ ignore = [
   "DTZ",        # flake8-datetimez
   "FBT",        # flake8-boolean-trap
   "PIE",        # flake8-pie
-  "PT",         # flake8-pytest-style
   "PTH",        # flake8-use-pathlib
   "S",          # flake8-bandit
   "FURB",       # refurb
