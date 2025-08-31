@@ -196,7 +196,6 @@ ignore = [
   "FLY",        # flynt
   "FURB",       # refurb
   "N",          # pep8-naming
-  "PERF",       # Perflint
   "RUF",        # Ruff-specific rules
   "UP",         # pyupgrade
 ]
