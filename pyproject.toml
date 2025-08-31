@@ -174,7 +174,6 @@ ignore = [
 
   # Exclusions of rule categories and specific rules, customized for this repository
   # Note: I am gradually working toward compliance with some of these rule categories
-  "ANN",        # flake8-annotations
   "ARG",        # flake8-unused-arguments
   "B",          # flake8-bugbear
   "BLE",        # flake8-blind-except
@@ -207,6 +206,11 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"src/HcoopMeetbot/**/*" = [
+  # The very thin Limnoria plugin interface is hard to make compliant with the usual standard
+  "ANN",        # don't require type annotations
+]
+
 "src/tests/**/*" = [
   # Exclusions that apply to unit tests only, standardized across all of my repos
   "ANN",        # don't require type annotations in tests
