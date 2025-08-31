@@ -190,15 +190,17 @@ ignore = [
   "W",          # pycodestyle warning
   "F",          # Pyflakes
   "FURB",       # refurb
-  "N",          # pep8-naming
   "RUF",        # Ruff-specific rules
   "UP",         # pyupgrade
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "src/HcoopMeetbot/**/*" = [
-  # The very thin Limnoria plugin interface is hard to make compliant with the usual standard
+  # The Limnoria plugin interface has requirements that conflict with the coding standard
   "ANN",        # don't require type annotations
+  "N999",       # allow non-standard module names
+  "N816",       # allow non-standard variable names
+  "N802",       # allow non-standard function names
 ]
 
 "src/tests/**/*" = [
