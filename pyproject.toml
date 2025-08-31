@@ -185,7 +185,6 @@ ignore = [
   "PTH",        # flake8-use-pathlib
   "RET",        # flake8-return
   "S",          # flake8-bandit
-  "TC",         # flake8-type-checking
   "FURB",       # refurb
   "RUF",        # Ruff-specific rules
   "UP",         # pyupgrade
