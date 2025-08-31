@@ -186,7 +186,6 @@ ignore = [
   "RET",        # flake8-return
   "S",          # flake8-bandit
   "TC",         # flake8-type-checking
-  "W",          # pycodestyle warning
   "F",          # Pyflakes
   "FURB",       # refurb
   "RUF",        # Ruff-specific rules
