@@ -183,7 +183,6 @@ ignore = [
   "PIE",        # flake8-pie
   "PT",         # flake8-pytest-style
   "PTH",        # flake8-use-pathlib
-  "RET",        # flake8-return
   "S",          # flake8-bandit
   "FURB",       # refurb
   "RUF",        # Ruff-specific rules

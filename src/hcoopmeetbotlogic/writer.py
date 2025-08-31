@@ -97,21 +97,16 @@ class _LogMessage:
     def _content(message: TrackedMessage) -> Element:
         if message.action:
             return tag.span(_LogMessage._payload(message.payload), class_="ac")
-        else:
-            operation_match = _OPERATION_REGEX.match(message.payload)
-            if operation_match:
-                operation = operation_match.group(_OPERATION_GROUP).lower().strip()
-                operand = operation_match.group(_OPERAND_GROUP).strip()
-                if operation == "#topic":
-                    return tag.span(
-                        tag.span("%s " % operation, class_="topic"), tag.span(_LogMessage._payload(operand), class_="topicline")
-                    )
-                else:
-                    return tag.span(
-                        tag.span("%s " % operation, class_="cmd"), tag.span(_LogMessage._payload(operand), class_="cmdline")
-                    )
-            else:
-                return _LogMessage._payload(message.payload)
+        operation_match = _OPERATION_REGEX.match(message.payload)
+        if operation_match:
+            operation = operation_match.group(_OPERATION_GROUP).lower().strip()
+            operand = operation_match.group(_OPERAND_GROUP).strip()
+            if operation == "#topic":
+                return tag.span(
+                    tag.span("%s " % operation, class_="topic"), tag.span(_LogMessage._payload(operand), class_="topicline")
+                )
+            return tag.span(tag.span("%s " % operation, class_="cmd"), tag.span(_LogMessage._payload(operand), class_="cmdline"))
+        return _LogMessage._payload(message.payload)
 
     @staticmethod
     def _payload(payload: str) -> Element:

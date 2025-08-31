@@ -235,8 +235,7 @@ class CommandDispatcher:
         """Tokenize a value, splitting via a regular expression and returning all non-empty values up to a limit."""
         if not value or not pattern:
             return []
-        else:
-            return [token.strip() for token in re.split(pattern, value) if token.strip()][:limit]
+        return [token.strip() for token in re.split(pattern, value) if token.strip()][:limit]
 
     def _set_channel_topic(self, meeting: Meeting, context: Context) -> None:
         """Set the channel topic based on the current state of the meeting."""

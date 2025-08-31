@@ -43,8 +43,7 @@ def _file_prefix(config: Config, meeting: Meeting) -> str:
     fmt = re.sub(r"^/", "", config.pattern).format(**vars(meeting))  # Substitute in meeting fields
     prefix = formatdate(meeting.start_time, zone=config.timezone, fmt=fmt)  # Substitute in date fields
     normalized = re.sub(r"[#]+", "", prefix)  # We track channel name as "#channel" but we don't want it in path
-    normalized = re.sub(r"[^./a-zA-Z0-9_-]+", "_", normalized)  # Normalize to a sane path without confusing characters
-    return normalized
+    return re.sub(r"[^./a-zA-Z0-9_-]+", "_", normalized)  # Normalize to a sane path without confusing characters
 
 
 def _abs_path(config: Config, file_prefix: str, suffix: str, output_dir: Optional[str]) -> str:
@@ -93,5 +92,4 @@ def derive_locations(config: Config, meeting: Meeting, prefix: Optional[str] = N
             formatted_log=_location(config, file_prefix, HTML_LOG_EXTENSION, output_dir),
             formatted_minutes=_location(config, file_prefix, HTML_MINUTES_EXTENSION, output_dir),
         )
-    else:
-        raise ValueError("Unsupported output format: %s" % config.output_format)
+    raise ValueError("Unsupported output format: %s" % config.output_format)
