@@ -8,7 +8,7 @@ Writes meeting log and minutes to disk.
 import os
 import re
 from enum import Enum
-from typing import Any, Dict, List, Optional, TextIO
+from typing import Any, Optional, TextIO
 
 from attrs import field, frozen
 from genshi.builder import Element, tag
@@ -133,7 +133,7 @@ class _MeetingAttendee:
     alias: Optional[str]
     count: int
     percentage: str  # stored as a string so we control rounding and format
-    actions: List[_MeetingAction]
+    actions: list[_MeetingAction]
 
 
 @frozen
@@ -186,7 +186,7 @@ class _MeetingTopic:
     name: str
     timestamp: str
     nick: str
-    events: List[_MeetingEvent] = field(factory=list)
+    events: list[_MeetingEvent] = field(factory=list)
 
 
 @frozen
@@ -196,9 +196,9 @@ class _MeetingMinutes:
     start_time: str
     end_time: str
     founder: str
-    actions: List[_MeetingAction]
-    attendees: List[_MeetingAttendee]
-    topics: List[_MeetingTopic]
+    actions: list[_MeetingAction]
+    attendees: list[_MeetingAttendee]
+    topics: list[_MeetingTopic]
 
     @staticmethod
     def for_meeting(config: Config, meeting: Meeting) -> "_MeetingMinutes":
@@ -212,7 +212,7 @@ class _MeetingMinutes:
         )
 
     @staticmethod
-    def _actions(meeting: Meeting) -> List[_MeetingAction]:
+    def _actions(meeting: Meeting) -> list[_MeetingAction]:
         actions = []
         for event in meeting.events:
             if event.event_type == EventType.ACTION and event.operand:
@@ -221,7 +221,7 @@ class _MeetingMinutes:
         return actions
 
     @staticmethod
-    def _attendees(meeting: Meeting) -> List[_MeetingAttendee]:
+    def _attendees(meeting: Meeting) -> list[_MeetingAttendee]:
         attendees = []
         total = sum(meeting.nicks.values())
         for nick in sorted(meeting.nicks.keys()):
@@ -234,7 +234,7 @@ class _MeetingMinutes:
         return attendees
 
     @staticmethod
-    def _attendee_actions(meeting: Meeting, nick: str, alias: Optional[str]) -> List[_MeetingAction]:
+    def _attendee_actions(meeting: Meeting, nick: str, alias: Optional[str]) -> list[_MeetingAction]:
         actions = []
         matcher = _AliasMatcher(nick, alias)
         for event in meeting.events:
@@ -245,7 +245,7 @@ class _MeetingMinutes:
         return actions
 
     @staticmethod
-    def _topics(config: Config, meeting: Meeting) -> List[_MeetingTopic]:
+    def _topics(config: Config, meeting: Meeting) -> list[_MeetingTopic]:
         current = _MeetingTopic(
             id=meeting.messages[0].id,
             name="Prologue",
@@ -288,7 +288,7 @@ class _MeetingMinutes:
         return topics
 
 
-def _render_html(template: str, context: Dict[str, Any], out: TextIO) -> None:
+def _render_html(template: str, context: dict[str, Any], out: TextIO) -> None:
     """Render the named template to HTML, writing into the provided file."""
     renderer = _LOADER.load(filename=template, cls=MarkupTemplate)  # type: MarkupTemplate
     renderer.generate(**context).render(method="html", doctype="html", out=out)

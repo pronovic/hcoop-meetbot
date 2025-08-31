@@ -8,7 +8,7 @@ Implementation of meeting commands.
 
 import re
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from attrs import define
 
@@ -45,7 +45,7 @@ class CommandDispatcher:
     a class makes certain operations easier - for example, the list_commands() method.
     """
 
-    def list_commands(self) -> List[str]:
+    def list_commands(self) -> list[str]:
         # I've decided to return this in alphabetical order.  There's some case to be made
         # for grouping them together into related commands, but that wouldn't be as straightforward.
         return sorted(["#" + o[len(_METHOD_PREFIX) :] for o in dir(self) if o[: len(_METHOD_PREFIX)] == _METHOD_PREFIX])
@@ -231,7 +231,7 @@ class CommandDispatcher:
         """Format a date in the user's configured time zone."""
         return formatdate(timestamp=timestamp, zone=config().timezone)
 
-    def _tokenize(self, value: str, pattern: str = r"[\s,]+", limit: Optional[int] = None) -> List[str]:
+    def _tokenize(self, value: str, pattern: str = r"[\s,]+", limit: Optional[int] = None) -> list[str]:
         """Tokenize a value, splitting via a regular expression and returning all non-empty values up to a limit."""
         if not value or not pattern:
             return []
@@ -266,7 +266,7 @@ class CommandDispatcher:
 _DISPATCHER = CommandDispatcher()
 
 
-def list_commands() -> List[str]:
+def list_commands() -> list[str]:
     """List available commands."""
     return _DISPATCHER.list_commands()
 

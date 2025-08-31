@@ -179,9 +179,15 @@ ignore = [
   "FURB101",    # allow old-style open() and read() operations
   "FURB103",    # allow old-style open() and write() operations
   "PTH",        # allow old-style os operations rather than pathlib.Path
+  "UP031",      # allow old-style format specifiers instead of f-strings
   "DTZ",        # flake8-datetimez
   "S",          # flake8-bandit
-  "UP",         # pyupgrade
+#   "UP",         # pyupgrade
+#   "UP006", 
+  "UP009", 
+  "UP015",
+  "UP035", 
+  "UP045", 
 ]
 
 [tool.ruff.lint.per-file-ignores]

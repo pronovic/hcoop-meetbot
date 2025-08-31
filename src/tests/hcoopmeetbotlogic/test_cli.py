@@ -2,7 +2,6 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 import os
 from tempfile import TemporaryDirectory
-from typing import List
 from unittest.mock import ANY, MagicMock, patch
 
 from click.testing import CliRunner, Result
@@ -20,7 +19,7 @@ EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer
 
 
 # noinspection PyTypeChecker
-def invoke(args: List[str]) -> Result:
+def invoke(args: list[str]) -> Result:
     return CliRunner().invoke(command, args)
 
 

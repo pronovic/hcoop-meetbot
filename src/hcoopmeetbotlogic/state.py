@@ -8,7 +8,7 @@ Shared plugin state, maintained as singleton objects.
 import operator
 from collections import deque
 from logging import Logger
-from typing import Deque, Dict, List, Optional
+from typing import Optional
 
 from hcoopmeetbotlogic.config import Config
 from hcoopmeetbotlogic.meeting import Meeting
@@ -38,13 +38,13 @@ try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
     _ACTIVE  # type: ignore[used-before-def] # noqa: B018
 except NameError:
-    _ACTIVE: Dict[str, Meeting] = {}
+    _ACTIVE: dict[str, Meeting] = {}
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
     _COMPLETED  # type: ignore[used-before-def] # noqa: B018
 except NameError:
-    _COMPLETED: Deque[Meeting] = deque(maxlen=_COMPLETED_SIZE)
+    _COMPLETED: deque[Meeting] = deque(maxlen=_COMPLETED_SIZE)
 
 
 # noinspection PyShadowingNames
@@ -103,9 +103,9 @@ def get_meeting(channel: str, network: str) -> Optional[Meeting]:
         return None
 
 
-def get_meetings(*, active: bool = True, completed: bool = True) -> List[Meeting]:
+def get_meetings(*, active: bool = True, completed: bool = True) -> list[Meeting]:
     """Return a list of tracked meetings, optionally filtering out active or completed meetings."""
-    meetings: List[Meeting] = []
+    meetings: list[Meeting] = []
     if active:
         meetings += _ACTIVE.values()
     if completed:

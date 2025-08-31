@@ -9,7 +9,7 @@ import json
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import cattrs
 from attrs import define, field, frozen
@@ -169,16 +169,16 @@ class Meeting:
     id: str = field(factory=lambda: uuid.uuid4().hex)
     name: str = field()
     chair: str = field()
-    chairs: List[str] = field()
-    nicks: Dict[str, int] = field()
+    chairs: list[str] = field()
+    nicks: dict[str, int] = field()
     start_time: datetime = field(factory=now)
     end_time: Optional[datetime] = None
     active: bool = False
     original_topic: Optional[str] = None
     current_topic: Optional[str] = None
-    messages: List[TrackedMessage] = field(factory=list)
-    events: List[TrackedEvent] = field(factory=list)
-    aliases: Dict[str, Optional[str]] = field(factory=dict)
+    messages: list[TrackedMessage] = field(factory=list)
+    events: list[TrackedEvent] = field(factory=list)
+    aliases: dict[str, Optional[str]] = field(factory=dict)
     vote_in_progress: bool = False
     motion_index: Optional[int] = None
 
@@ -189,12 +189,12 @@ class Meeting:
 
     # noinspection PyUnresolvedReferences
     @chairs.default
-    def _default_chairs(self) -> List[str]:
+    def _default_chairs(self) -> list[str]:
         return [self.chair]
 
     # noinspection PyUnresolvedReferences
     @nicks.default
-    def _default_nicks(self) -> Dict[str, int]:
+    def _default_nicks(self) -> dict[str, int]:
         return dict.fromkeys(self.chairs, 0)
 
     # noinspection PyUnresolvedReferences
