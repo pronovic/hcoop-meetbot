@@ -189,7 +189,6 @@ ignore = [
   "E",          # pycodestyle error
   "W",          # pycodestyle warning
   "F",          # Pyflakes
-  "FLY",        # flynt
   "FURB",       # refurb
   "N",          # pep8-naming
   "RUF",        # Ruff-specific rules
