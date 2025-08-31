@@ -10,8 +10,8 @@ from collections import deque
 from logging import Logger
 from typing import Deque, Dict, List, Optional
 
-from .config import Config
-from .meeting import Meeting
+from hcoopmeetbotlogic.config import Config
+from hcoopmeetbotlogic.meeting import Meeting
 
 _COMPLETED_SIZE = 16  # size of the _COMPLETED deque
 

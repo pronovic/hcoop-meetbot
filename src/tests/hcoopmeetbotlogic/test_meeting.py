@@ -8,8 +8,7 @@ from pytz import utc
 
 from hcoopmeetbotlogic.interface import Message
 from hcoopmeetbotlogic.meeting import EventType, Meeting, TrackedEvent, TrackedMessage
-
-from .testdata import sample_meeting
+from tests.hcoopmeetbotlogic.testdata import sample_meeting
 
 
 class TestTrackedMessage:

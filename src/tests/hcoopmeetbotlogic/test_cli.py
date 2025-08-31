@@ -10,8 +10,7 @@ from click.testing import CliRunner, Result
 from hcoopmeetbotlogic.cli import meetbot as command
 from hcoopmeetbotlogic.config import OutputFormat
 from hcoopmeetbotlogic.location import Location, Locations
-
-from .testdata import contents
+from tests.hcoopmeetbotlogic.testdata import contents
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "fixtures/test_config/valid/HcoopMeetbot.conf")
 RAW_LOG_PREFIX = "2022-06-04"

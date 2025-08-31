@@ -12,9 +12,9 @@ from typing import Optional
 
 from attrs import frozen
 
-from .config import Config, OutputFormat
-from .dateutil import formatdate
-from .meeting import Meeting
+from hcoopmeetbotlogic.config import Config, OutputFormat
+from hcoopmeetbotlogic.dateutil import formatdate
+from hcoopmeetbotlogic.meeting import Meeting
 
 RAW_LOG_EXTENSION = ".log.json"
 HTML_LOG_EXTENSION = ".log.html"

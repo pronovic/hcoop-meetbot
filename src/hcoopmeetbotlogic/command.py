@@ -12,12 +12,12 @@ from typing import List, Optional
 
 from attrs import define
 
-from .dateutil import formatdate, now
-from .interface import Context, Message
-from .meeting import EventType, Meeting, TrackedMessage, VotingAction
-from .release import DOCS
-from .state import config, deactivate_meeting
-from .writer import write_meeting
+from hcoopmeetbotlogic.dateutil import formatdate, now
+from hcoopmeetbotlogic.interface import Context, Message
+from hcoopmeetbotlogic.meeting import EventType, Meeting, TrackedMessage, VotingAction
+from hcoopmeetbotlogic.release import DOCS
+from hcoopmeetbotlogic.state import config, deactivate_meeting
+from hcoopmeetbotlogic.writer import write_meeting
 
 # Regular expression to identify the startmeeting command
 _STARTMEETING_REGEX = re.compile(r"(^\s*)(#)(startmeeting)(\s*)(.*$)", re.IGNORECASE)

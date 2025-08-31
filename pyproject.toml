@@ -188,7 +188,6 @@ ignore = [
   "SIM",        # flake8-simplify
   "T20",        # flake8-print
   "TC",         # flake8-type-checking
-  "TID",        # flake8-tidy-imports
   "E",          # pycodestyle error
   "W",          # pycodestyle warning
   "F",          # Pyflakes

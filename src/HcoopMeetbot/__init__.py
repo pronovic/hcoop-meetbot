@@ -12,9 +12,8 @@ from typing import Dict
 
 from supybot import Author, world
 
+from HcoopMeetbot import config, plugin
 from hcoopmeetbotlogic import release
-
-from . import config, plugin
 
 # noinspection PyTypeChecker
 reload(config)
@@ -27,7 +26,7 @@ __contributors__ = {}  # type: Dict[str, str]
 __url__ = release.URL
 
 if world.testing:
-    from . import test
+    from HcoopMeetbot import test
 
 Class = plugin.Class
 configure = config.configure

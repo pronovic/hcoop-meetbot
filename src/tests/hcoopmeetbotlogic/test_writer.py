@@ -12,8 +12,7 @@ from hcoopmeetbotlogic.config import OutputFormat
 from hcoopmeetbotlogic.location import Location, Locations
 from hcoopmeetbotlogic.meeting import Meeting
 from hcoopmeetbotlogic.writer import _AliasMatcher, _LogMessage, write_meeting
-
-from .testdata import contents, sample_meeting
+from tests.hcoopmeetbotlogic.testdata import contents, sample_meeting
 
 EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log.html")
 EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/minutes.html")

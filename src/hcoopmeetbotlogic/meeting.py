@@ -14,8 +14,8 @@ from typing import Any, Dict, List, Optional
 import cattrs
 from attrs import define, field, frozen
 
-from .dateutil import formatdate, now
-from .interface import Message
+from hcoopmeetbotlogic.dateutil import formatdate, now
+from hcoopmeetbotlogic.interface import Message
 
 
 class _CattrConverter(cattrs.GenConverter):

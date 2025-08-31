@@ -14,11 +14,11 @@ from attrs import field, frozen
 from genshi.builder import Element, tag
 from genshi.template import MarkupTemplate, TemplateLoader
 
-from .config import Config, OutputFormat
-from .dateutil import formatdate
-from .location import Locations, derive_locations
-from .meeting import EventType, Meeting, TrackedMessage
-from .release import DATE, URL, VERSION
+from hcoopmeetbotlogic.config import Config, OutputFormat
+from hcoopmeetbotlogic.dateutil import formatdate
+from hcoopmeetbotlogic.location import Locations, derive_locations
+from hcoopmeetbotlogic.meeting import EventType, Meeting, TrackedMessage
+from hcoopmeetbotlogic.release import DATE, URL, VERSION
 
 # Location of Genshi templates
 _TEMPLATES = os.path.join(os.path.dirname(__file__), "templates")
