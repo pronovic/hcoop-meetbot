@@ -226,7 +226,7 @@ class Meeting:
     def add_chair(self, nick: str, primary: bool = True) -> None:
         """Add a chair to a meeting, potentially making it the primary chair."""
         self.track_nick(nick, messages=0)
-        if not nick in self.chairs:
+        if nick not in self.chairs:
             self.chairs.append(nick)
             self.chairs.sort()
         if primary:
@@ -250,7 +250,7 @@ class Meeting:
 
     def track_nick(self, nick: str, messages: int = 1) -> None:
         """Track an IRC nick, incrementing its count of messages as indicated"""
-        if not nick in self.nicks:
+        if nick not in self.nicks:
             self.nicks[nick] = 0
         self.nicks[nick] += messages
 
