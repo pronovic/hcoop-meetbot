@@ -37,7 +37,7 @@ def _context(plugin, irc, msg) -> interface.Context:
     return interface.Context(
         get_topic=lambda: get_topic(irc, channel),
         set_topic=lambda topic: irc.sendMsg(ircmsgs.topic(channel, topic)),
-        send_reply=irc.reply if hasattr(irc, "reply") and callable(irc.reply) else lambda x: None,
+        send_reply=irc.reply if hasattr(irc, "reply") and callable(irc.reply) else lambda _: None,
         send_message=lambda message: irc.sendMsg(ircmsgs.privmsg(channel, message)),
     )
 
