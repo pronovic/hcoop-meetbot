@@ -11,7 +11,7 @@ START_TIME = datetime(2021, 4, 13, 2, 6, 12)
 
 def contents(path: str) -> str:
     """Get contents of a file for comparison."""
-    with open(path, "r", encoding="utf-8") as out:
+    with open(path, encoding="utf-8") as out:
         return out.read()
 
 
