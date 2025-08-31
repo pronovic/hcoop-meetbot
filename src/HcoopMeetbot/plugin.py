@@ -71,7 +71,7 @@ class HcoopMeetbot(callbacks.Plugin):
     def outFilter(self, irc, msg):
         """Log outgoing messages from supybot."""
         try:
-            if msg.command in ("PRIVMSG",):
+            if msg.command in {"PRIVMSG"}:
                 context = _context(self, irc, msg)
                 message = interface.Message(
                     id=uuid4().hex,

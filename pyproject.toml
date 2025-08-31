@@ -198,7 +198,6 @@ ignore = [
   "N",          # pep8-naming
   "PERF",       # Perflint
   "PGH",        # pygrep-hooks
-  "PLR",        # Pylint refactor
   "RUF",        # Ruff-specific rules
   "UP",         # pyupgrade
 ]
