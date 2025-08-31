@@ -139,7 +139,7 @@ class TestFunctions:
     @patch("hcoopmeetbotlogic.command.getattr")
     def test_dispatch_non_commands(self, _getattr, _hasattr):
         def run_ignored_dispatch(payload, channel=None):
-            meeting = MagicMock(channel=channel if channel else "#channel")
+            meeting = MagicMock(channel=channel or "#channel")
             context = MagicMock()
             message = MagicMock(payload=payload)
             _hasattr.return_value = False

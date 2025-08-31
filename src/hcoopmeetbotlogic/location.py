@@ -69,7 +69,7 @@ def _location(config: Config, file_prefix: str, suffix: str, output_dir: Optiona
 
 def _removesuffix(content: str, suffix: str) -> str:
     # equivalent to string.removesuffix, which is only available in Python 3.9
-    return content[: -len(suffix)] if content.endswith(suffix) else content
+    return content.removesuffix(suffix)
 
 
 def derive_prefix(raw_log_path: str) -> str:
@@ -85,7 +85,7 @@ def derive_locations(config: Config, meeting: Meeting, prefix: Optional[str] = N
     Use prefix and output_dir to override the file prefix and output log directory
     that would normally be generated based on configuration.
     """
-    file_prefix = prefix if prefix else _file_prefix(config, meeting)
+    file_prefix = prefix or _file_prefix(config, meeting)
     if config.output_format == OutputFormat.HTML:
         return Locations(
             raw_log=_location(config, file_prefix, RAW_LOG_EXTENSION, output_dir),

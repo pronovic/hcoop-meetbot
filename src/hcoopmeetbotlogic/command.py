@@ -116,7 +116,7 @@ class CommandDispatcher:
 
     def do_here(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Document attendance and optionally associate a nick with an alias, for use with actions."""
-        alias = operand if operand else message.sender
+        alias = operand or message.sender
         meeting.track_event(EventType.ATTENDEE, message, operand=alias)
         meeting.track_attendee(nick=message.sender, alias=alias)
 
@@ -259,7 +259,7 @@ class CommandDispatcher:
                 else:
                     context.set_topic("Meeting Active")
             else:
-                context.set_topic(meeting.original_topic if meeting.original_topic else "")
+                context.set_topic(meeting.original_topic or "")
 
 
 # Singleton command dispatcher

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
+# ruff: noqa: FURB113
 
 import os
 from datetime import datetime
