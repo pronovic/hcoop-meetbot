@@ -195,7 +195,7 @@ class Meeting:
     # noinspection PyUnresolvedReferences
     @nicks.default
     def _default_nicks(self) -> Dict[str, int]:
-        return {nick: 0 for nick in self.chairs}
+        return dict.fromkeys(self.chairs, 0)
 
     # noinspection PyUnresolvedReferences
     @name.default
