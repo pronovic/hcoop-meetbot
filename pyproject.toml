@@ -201,7 +201,6 @@ ignore = [
   "PLR",        # Pylint refactor
   "PLW",        # Pylint warning
   "RUF",        # Ruff-specific rules
-  "TRY",        # tryceratops
   "UP",         # pyupgrade
 ]
 
