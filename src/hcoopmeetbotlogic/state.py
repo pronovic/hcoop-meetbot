@@ -44,7 +44,7 @@ try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
     _COMPLETED  # type: ignore[used-before-def] # noqa: B018
 except NameError:
-    _COMPLETED: Deque[Meeting] = deque([], _COMPLETED_SIZE)
+    _COMPLETED: Deque[Meeting] = deque(maxlen=_COMPLETED_SIZE)
 
 
 # noinspection PyShadowingNames
