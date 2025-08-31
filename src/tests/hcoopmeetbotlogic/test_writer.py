@@ -163,9 +163,6 @@ class TestRendering:
             config = MagicMock(timezone="America/Chicago", output_format=OutputFormat.HTML)
             meeting = sample_meeting()
             assert write_meeting(config, meeting) is locations
-            # print("\n" + contents(raw_log.path))
-            # print("\n" + contents(formatted_log.path))
-            # print("\n" + contents(formatted_minutes.path))
             derive_locations.assert_called_once_with(config, meeting)
             assert meeting == Meeting.from_json(contents(raw_log.path))  # raw log should exactly represent the meeting input
             assert contents(formatted_log.path) == contents(EXPECTED_LOG)

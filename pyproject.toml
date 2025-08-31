@@ -191,7 +191,6 @@ ignore = [
   "TID",        # flake8-tidy-imports
   "E",          # pycodestyle error
   "W",          # pycodestyle warning
-  "ERA",        # eradicate
   "F",          # Pyflakes
   "FLY",        # flynt
   "FURB",       # refurb
