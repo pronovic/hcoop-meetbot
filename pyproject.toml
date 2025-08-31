@@ -197,7 +197,6 @@ ignore = [
   "FURB",       # refurb
   "N",          # pep8-naming
   "PERF",       # Perflint
-  "PGH",        # pygrep-hooks
   "RUF",        # Ruff-specific rules
   "UP",         # pyupgrade
 ]

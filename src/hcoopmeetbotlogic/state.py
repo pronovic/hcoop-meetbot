@@ -24,13 +24,13 @@ _COMPLETED_SIZE = 16  # size of the _COMPLETED deque
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _LOGGER  # type: ignore
+    _LOGGER  # type: ignore[has-type,used-before-def]
 except NameError:
     _LOGGER = None
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _CONFIG  # type: ignore
+    _CONFIG  # type: ignore[has-type,used-before-def]
 except NameError:
     _CONFIG = None
 

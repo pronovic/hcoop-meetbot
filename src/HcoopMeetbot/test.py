@@ -47,7 +47,7 @@ def _outbound():
     return Message(id=ID, timestamp=TIMESTAMP, nick=NICK, channel=CHANNEL, network=NETWORK, payload="%s: Hello" % NICK)
 
 
-class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
+class HcoopMeetbotTestCase(ChannelPluginTestCase):
     plugins = ("HcoopMeetbot",)
 
     @patch("HcoopMeetbot.plugin.ircmsgs.topic")

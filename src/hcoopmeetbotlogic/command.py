@@ -163,7 +163,7 @@ class CommandDispatcher:
     def do_close(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Close a motion."""
         if meeting.is_chair(message.sender) and meeting.vote_in_progress:
-            votes = meeting.events[meeting.motion_index + 1 :]  # type: ignore
+            votes = meeting.events[meeting.motion_index + 1 :]  # type: ignore[operator]  # index is safe if vote is in progress
             in_favor = [event.message.sender for event in votes if event.operand == VotingAction.IN_FAVOR]
             opposed = [event.message.sender for event in votes if event.operand == VotingAction.OPPOSED]
             if not in_favor and not opposed:
