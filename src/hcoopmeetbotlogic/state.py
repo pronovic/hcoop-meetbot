@@ -24,25 +24,25 @@ _COMPLETED_SIZE = 16  # size of the _COMPLETED deque
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _LOGGER  # type: ignore[has-type,used-before-def]
+    _LOGGER  # type: ignore[has-type,used-before-def] # noqa: B018
 except NameError:
     _LOGGER = None
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _CONFIG  # type: ignore[has-type,used-before-def]
+    _CONFIG  # type: ignore[has-type,used-before-def] # noqa: B018
 except NameError:
     _CONFIG = None
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _ACTIVE  # type: ignore[used-before-def]
+    _ACTIVE  # type: ignore[used-before-def] # noqa: B018
 except NameError:
     _ACTIVE: Dict[str, Meeting] = {}
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _COMPLETED  # type: ignore[used-before-def]
+    _COMPLETED  # type: ignore[used-before-def] # noqa: B018
 except NameError:
     _COMPLETED: Deque[Meeting] = deque([], _COMPLETED_SIZE)
 

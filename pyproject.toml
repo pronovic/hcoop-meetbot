@@ -175,7 +175,6 @@ ignore = [
   # Exclusions of rule categories and specific rules, customized for this repository
   # Note: I am gradually working toward compliance with some of these rule categories
   "ARG",        # flake8-unused-arguments
-  "B",          # flake8-bugbear
   "DTZ",        # flake8-datetimez
   "PTH",        # flake8-use-pathlib
   "S",          # flake8-bandit
