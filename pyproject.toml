@@ -184,7 +184,7 @@ ignore = [
   "S",          # flake8-bandit
 #   "UP",         # pyupgrade
 #   "UP006", 
-  "UP009", 
+#   "UP009", 
   "UP015",
   "UP035", 
   "UP045", 
