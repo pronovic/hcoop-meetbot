@@ -179,7 +179,6 @@ ignore = [
   "BLE",        # flake8-blind-except
   "C4",         # flake8-comprehensions
   "DTZ",        # flake8-datetimez
-  "FBT",        # flake8-boolean-trap
   "PTH",        # flake8-use-pathlib
   "S",          # flake8-bandit
   "FURB",       # refurb
@@ -191,6 +190,7 @@ ignore = [
 "src/HcoopMeetbot/**/*" = [
   # The Limnoria plugin interface has requirements that conflict with the coding standard
   "ANN",        # don't require type annotations
+  "FBT003",     # allow positional boolean flags
   "N999",       # allow non-standard module names
   "N816",       # allow non-standard variable names
   "N802",       # allow non-standard function names

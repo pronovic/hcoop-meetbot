@@ -223,7 +223,7 @@ class Meeting:
         """Get the meeting display name."""
         return "%s/%s@%s" % (self.channel, self.network, formatdate(self.start_time))
 
-    def add_chair(self, nick: str, primary: bool = True) -> None:
+    def add_chair(self, nick: str, *, primary: bool = True) -> None:
         """Add a chair to a meeting, potentially making it the primary chair."""
         self.track_nick(nick, messages=0)
         if nick not in self.chairs:

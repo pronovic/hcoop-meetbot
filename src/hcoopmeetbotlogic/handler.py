@@ -135,7 +135,7 @@ def addchair(context: Context, channel: str, network: str, nick: str) -> None:
     _send_reply(context, reply)
 
 
-def deletemeeting(context: Context, channel: str, network: str, save: bool) -> None:
+def deletemeeting(context: Context, channel: str, network: str, *, save: bool) -> None:
     """
     Delete a meeting, moving it out of active state without actually completing it.
 

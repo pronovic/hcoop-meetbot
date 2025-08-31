@@ -84,7 +84,7 @@ def add_meeting(nick: str, channel: str, network: str) -> Meeting:
     return meeting
 
 
-def deactivate_meeting(meeting: Meeting, retain: bool = True) -> None:
+def deactivate_meeting(meeting: Meeting, *, retain: bool = True) -> None:
     """Move a meeting out of the active list, optionally retaining it in the completed list."""
     key = meeting.key()
     assert key in _ACTIVE  # if the key is not tracked, something is screwed up
@@ -103,7 +103,7 @@ def get_meeting(channel: str, network: str) -> Optional[Meeting]:
         return None
 
 
-def get_meetings(active: bool = True, completed: bool = True) -> List[Meeting]:
+def get_meetings(*, active: bool = True, completed: bool = True) -> List[Meeting]:
     """Return a list of tracked meetings, optionally filtering out active or completed meetings."""
     meetings: List[Meeting] = []
     if active:

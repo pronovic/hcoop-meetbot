@@ -208,7 +208,7 @@ class TestCommands:
     @patch("hcoopmeetbotlogic.handler.get_meeting")
     def test_deletemeeting_not_found(self, get_meeting, deactivate_meeting, write_meeting, send_reply, logger, context):
         get_meeting.return_value = None
-        deletemeeting(context, "channel", "network", True)
+        deletemeeting(context, "channel", "network", save=True)
         get_meeting.assert_called_once_with("channel", "network")
         deactivate_meeting.assert_not_called()
         write_meeting.assert_not_called()
@@ -222,7 +222,7 @@ class TestCommands:
         meeting = MagicMock()
         meeting.display_name = MagicMock(return_value="xxx")
         get_meeting.return_value = meeting
-        deletemeeting(context, "channel", "network", False)
+        deletemeeting(context, "channel", "network", save=False)
         get_meeting.assert_called_once_with("channel", "network")
         deactivate_meeting.assert_called_once_with(meeting, retain=False)
         write_meeting.assert_not_called()
@@ -238,7 +238,7 @@ class TestCommands:
         meeting.display_name = MagicMock(return_value="xxx")
         config.return_value = "yyy"
         get_meeting.return_value = meeting
-        deletemeeting(context, "channel", "network", True)
+        deletemeeting(context, "channel", "network", save=True)
         get_meeting.assert_called_once_with("channel", "network")
         write_meeting.assert_called_once_with(config="yyy", meeting=meeting)
         deactivate_meeting.assert_called_once_with(meeting, retain=False)
