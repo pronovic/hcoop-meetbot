@@ -69,7 +69,7 @@ class TestFunctions:
         meetings = []
 
         # Until we hit the limit, every meeting that we deactivate should stay in _COMPLETED
-        for _ in range(0, _COMPLETED_SIZE):
+        for _ in range(_COMPLETED_SIZE):
             meeting = add_meeting("nick", "channel", "network")
             deactivate_meeting(meeting, retain=True)
             meetings.append(meeting)

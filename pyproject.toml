@@ -180,7 +180,6 @@ ignore = [
   "C4",         # flake8-comprehensions
   "DTZ",        # flake8-datetimez
   "FBT",        # flake8-boolean-trap
-  "PIE",        # flake8-pie
   "PTH",        # flake8-use-pathlib
   "S",          # flake8-bandit
   "FURB",       # refurb
