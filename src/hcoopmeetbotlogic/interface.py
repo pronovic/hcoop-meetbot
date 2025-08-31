@@ -6,7 +6,6 @@ Object interface used by plugin to access code in the local package.
 
 from collections.abc import Callable, Iterable
 from datetime import datetime
-from typing import Optional
 
 from attrs import frozen
 
@@ -53,5 +52,5 @@ class Message:
     channel: str
     network: str
     payload: str
-    topic: Optional[str] = None
-    channel_nicks: Optional[Iterable[str]] = None
+    topic: str | None = None
+    channel_nicks: Iterable[str] | None = None

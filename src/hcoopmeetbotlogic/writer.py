@@ -7,7 +7,7 @@ Writes meeting log and minutes to disk.
 import os
 import re
 from enum import Enum
-from typing import Any, Optional, TextIO
+from typing import Any, TextIO
 
 from attrs import field, frozen
 from genshi.builder import Element, tag
@@ -129,7 +129,7 @@ class _MeetingAttendee:
     """A meeting attendee, including count of chat lines and all associated actions."""
 
     nick: str
-    alias: Optional[str]
+    alias: str | None
     count: int
     percentage: str  # stored as a string so we control rounding and format
     actions: list[_MeetingAction]
@@ -140,9 +140,9 @@ class _AliasMatcher:
     """Utility class to identify whether an attendee nick or alias is found in a message."""
 
     nick: str
-    alias: Optional[str]
+    alias: str | None
     nick_pattern: re.Pattern[str] = field()
-    alias_pattern: Optional[re.Pattern[str]] = field()
+    alias_pattern: re.Pattern[str] | None = field()
 
     # noinspection PyUnresolvedReferences
     @nick_pattern.default
@@ -151,7 +151,7 @@ class _AliasMatcher:
 
     # noinspection PyUnresolvedReferences
     @alias_pattern.default
-    def _alias_pattern_default(self) -> Optional[re.Pattern[str]]:
+    def _alias_pattern_default(self) -> re.Pattern[str] | None:
         return _AliasMatcher._regex(self.alias) if self.alias else None
 
     @staticmethod
@@ -174,7 +174,7 @@ class _MeetingEvent:
     timestamp: str
     nick: str
     payload: str
-    link: Optional[str] = None
+    link: str | None = None
 
 
 @frozen
@@ -233,7 +233,7 @@ class _MeetingMinutes:
         return attendees
 
     @staticmethod
-    def _attendee_actions(meeting: Meeting, nick: str, alias: Optional[str]) -> list[_MeetingAction]:
+    def _attendee_actions(meeting: Meeting, nick: str, alias: str | None) -> list[_MeetingAction]:
         actions = []
         matcher = _AliasMatcher(nick, alias)
         for event in meeting.events:

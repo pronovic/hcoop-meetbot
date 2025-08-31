@@ -7,7 +7,6 @@ Location logic.
 import os
 import re
 from pathlib import Path
-from typing import Optional
 
 from attrs import frozen
 
@@ -45,7 +44,7 @@ def _file_prefix(config: Config, meeting: Meeting) -> str:
     return re.sub(r"[^./a-zA-Z0-9_-]+", "_", normalized)  # Normalize to a sane path without confusing characters
 
 
-def _abs_path(config: Config, file_prefix: str, suffix: str, output_dir: Optional[str]) -> str:
+def _abs_path(config: Config, file_prefix: str, suffix: str, output_dir: str | None) -> str:
     """Build an absolute path for a file in the log directory, preventing path traversal."""
     log_dir = Path(output_dir) if output_dir else Path(config.log_dir)
     target = "%s%s" % (file_prefix, suffix)  # might include slashes and other traversal like ".."
@@ -59,7 +58,7 @@ def _url(config: Config, file_prefix: str, suffix: str) -> str:
     return "%s/%s%s" % (config.url_prefix, file_prefix, suffix)
 
 
-def _location(config: Config, file_prefix: str, suffix: str, output_dir: Optional[str]) -> Location:
+def _location(config: Config, file_prefix: str, suffix: str, output_dir: str | None) -> Location:
     """Build a location for a file in the log directory"""
     path = _abs_path(config, file_prefix, suffix, output_dir)
     url = _url(config, file_prefix, suffix)
@@ -77,7 +76,7 @@ def derive_prefix(raw_log_path: str) -> str:
 
 
 # noinspection PyUnreachableCode
-def derive_locations(config: Config, meeting: Meeting, prefix: Optional[str] = None, output_dir: Optional[str] = None) -> Locations:
+def derive_locations(config: Config, meeting: Meeting, prefix: str | None = None, output_dir: str | None = None) -> Locations:
     """
     Derive the locations where meeting files will be written.
 

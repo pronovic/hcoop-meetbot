@@ -7,7 +7,6 @@ Shared plugin state, maintained as singleton objects.
 import operator
 from collections import deque
 from logging import Logger
-from typing import Optional
 
 from hcoopmeetbotlogic.config import Config
 from hcoopmeetbotlogic.meeting import Meeting
@@ -93,7 +92,7 @@ def deactivate_meeting(meeting: Meeting, *, retain: bool = True) -> None:
         _COMPLETED.append(popped)  # will potentially roll off an older meeting
 
 
-def get_meeting(channel: str, network: str) -> Optional[Meeting]:
+def get_meeting(channel: str, network: str) -> Meeting | None:
     """Get a meeting for the channel and network."""
     try:
         key = Meeting.meeting_key(channel, network)

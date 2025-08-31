@@ -9,7 +9,6 @@ import os
 from enum import Enum
 from logging import Logger
 from pathlib import Path
-from typing import Optional
 
 from attrs import frozen
 
@@ -55,7 +54,7 @@ class Config:
         output_format(OutputFormat): The output format to use
     """
 
-    conf_file: Optional[str]
+    conf_file: str | None
     log_dir: str = LOG_DIR_DEFAULT
     url_prefix: str = URL_PREFIX_DEFAULT
     pattern: str = PATTERN_DEFAULT
@@ -64,7 +63,7 @@ class Config:
     output_format: OutputFormat = OUTPUT_FORMAT_DEFAULT
 
 
-def load_config(logger: Optional[Logger], conf_path: str) -> Config:
+def load_config(logger: Logger | None, conf_path: str) -> Config:
     """
     Load configuration from disk.
 

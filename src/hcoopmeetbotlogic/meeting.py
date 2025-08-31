@@ -8,7 +8,7 @@ import json
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 import cattrs
 from attrs import define, field, frozen
@@ -106,7 +106,7 @@ class TrackedEvent:
 
     event_type: EventType
     message: TrackedMessage
-    operand: Optional[Any]
+    operand: Any | None
     id: str = field()
     timestamp: datetime = field()
 
@@ -171,15 +171,15 @@ class Meeting:
     chairs: list[str] = field()
     nicks: dict[str, int] = field()
     start_time: datetime = field(factory=now)
-    end_time: Optional[datetime] = None
+    end_time: datetime | None = None
     active: bool = False
-    original_topic: Optional[str] = None
-    current_topic: Optional[str] = None
+    original_topic: str | None = None
+    current_topic: str | None = None
     messages: list[TrackedMessage] = field(factory=list)
     events: list[TrackedEvent] = field(factory=list)
-    aliases: dict[str, Optional[str]] = field(factory=dict)
+    aliases: dict[str, str | None] = field(factory=dict)
     vote_in_progress: bool = False
-    motion_index: Optional[int] = None
+    motion_index: int | None = None
 
     # noinspection PyUnresolvedReferences
     @chair.default
@@ -242,7 +242,7 @@ class Meeting:
         """Whether a nickname is a chair for the meeting"""
         return nick in self.chairs
 
-    def track_attendee(self, nick: str, alias: Optional[str] = None) -> None:
+    def track_attendee(self, nick: str, alias: str | None = None) -> None:
         """Track an IRC nick as a meeting attendee, optionally assigning an alias."""
         self.aliases[nick] = alias if alias and alias != nick else None
         self.track_nick(nick=nick, messages=0)
@@ -266,13 +266,13 @@ class Meeting:
         self.track_nick(message.nick)
         return tracked
 
-    def track_event(self, event_type: EventType, message: TrackedMessage, operand: Optional[Any] = None) -> TrackedEvent:
+    def track_event(self, event_type: EventType, message: TrackedMessage, operand: Any | None = None) -> TrackedEvent:
         """Track an event associated with a meeting."""
         event = TrackedEvent(event_type=event_type, message=message, operand=operand)
         self.events.append(event)
         return event
 
-    def pop_event(self) -> Optional[TrackedEvent]:
+    def pop_event(self) -> TrackedEvent | None:
         """Pop the last tracked event off the list of events, if possible, returning the event."""
         # We do not allow the caller to pop the very first event (#startmeeting), because that would leave
         # things in a strange, indeterminate state.  If they don't want the meeting, they should end it.

@@ -7,7 +7,6 @@ Implementation of meeting commands.
 
 import re
 from datetime import datetime
-from typing import Optional
 
 from attrs import define
 
@@ -226,11 +225,11 @@ class CommandDispatcher:
         """Add a link to the minutes."""
         meeting.track_event(EventType.LINK, message, operand=operand)
 
-    def _formatdate(self, timestamp: Optional[datetime]) -> str:
+    def _formatdate(self, timestamp: datetime | None) -> str:
         """Format a date in the user's configured time zone."""
         return formatdate(timestamp=timestamp, zone=config().timezone)
 
-    def _tokenize(self, value: str, pattern: str = r"[\s,]+", limit: Optional[int] = None) -> list[str]:
+    def _tokenize(self, value: str, pattern: str = r"[\s,]+", limit: int | None = None) -> list[str]:
         """Tokenize a value, splitting via a regular expression and returning all non-empty values up to a limit."""
         if not value or not pattern:
             return []
