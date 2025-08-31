@@ -232,7 +232,7 @@ class _MeetingMinutes:
         for nick in sorted(meeting.nicks.keys()):
             count = meeting.nicks[nick]
             percentage = "%d" % (round(count / total * 100.0) if total > 0.0 else 0.0)
-            alias = meeting.aliases[nick] if nick in meeting.aliases else None
+            alias = meeting.aliases.get(nick, None)
             actions = _MeetingMinutes._attendee_actions(meeting, nick, alias)
             attendee = _MeetingAttendee(nick=nick, alias=alias, count=count, percentage=percentage, actions=actions)
             attendees.append(attendee)

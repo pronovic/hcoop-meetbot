@@ -185,7 +185,6 @@ ignore = [
   "PTH",        # flake8-use-pathlib
   "RET",        # flake8-return
   "S",          # flake8-bandit
-  "SIM",        # flake8-simplify
   "T20",        # flake8-print
   "TC",         # flake8-type-checking
   "E",          # pycodestyle error
