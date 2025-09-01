@@ -321,7 +321,7 @@ def write_formatted_minutes(config: Config, locations: Locations, meeting: Meeti
     context = {
         "title": f"{meeting.name} Minutes",
         "software": {"version": VERSION, "url": URL, "date": DATE},
-        "logpath": os.path.basename(locations.formatted_log.path),
+        "logpath": Path(locations.formatted_log.path).name,
         "minutes": _MeetingMinutes.for_meeting(config, meeting),
     }
     Path(os.path.dirname(locations.formatted_minutes.path)).mkdir(exist_ok=True, parents=True)

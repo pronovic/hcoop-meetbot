@@ -4,7 +4,6 @@
 Location logic.
 """
 
-import os
 import re
 from pathlib import Path
 
@@ -72,7 +71,7 @@ def _removesuffix(content: str, suffix: str) -> str:
 
 def derive_prefix(raw_log_path: str) -> str:
     """Derive the prefix associated with a raw log path, for use when regenerating output."""
-    return _removesuffix(os.path.basename(raw_log_path), RAW_LOG_EXTENSION)
+    return _removesuffix(Path(raw_log_path).name, RAW_LOG_EXTENSION)
 
 
 # noinspection PyUnreachableCode
