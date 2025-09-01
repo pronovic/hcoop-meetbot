@@ -257,19 +257,19 @@ class _MeetingMinutes:
             if event.event_type == EventType.TOPIC:
                 current = _MeetingTopic(
                     id=event.id,
-                    name=f"{event.operand}",
+                    name=str(event.operand),
                     timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
                     nick=event.message.sender,
                 )
                 topics.append(current)
             elif event.event_type == EventType.LINK:
-                url_match = _URL_REGEX.match(f"{event.operand}")
+                url_match = _URL_REGEX.match(str(event.operand))
                 item = _MeetingEvent(
                     id=event.id,
                     event_type=event.event_type.value,
                     timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
                     nick=event.message.sender,
-                    payload=f"{event.operand}",
+                    payload=str(event.operand),
                     link=url_match.group(_URL_GROUP) if url_match else None,
                 )
                 current.events.append(item)
@@ -279,7 +279,7 @@ class _MeetingMinutes:
                     event_type=event.event_type.value,
                     timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
                     nick=event.message.sender,
-                    payload=event.operand.value if isinstance(event.operand, Enum) else f"{event.operand}",
+                    payload=event.operand.value if isinstance(event.operand, Enum) else str(event.operand),
                 )
                 current.events.append(item)
         if not topics[0].events:

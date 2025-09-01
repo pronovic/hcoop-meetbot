@@ -32,19 +32,19 @@ class TestLogMessage:
         message.action = False
         message.payload = "payload"
         result = _LogMessage.for_message(config, message)
-        assert f"{result.id}" == '<a name="id"/>'
-        assert f"{result.timestamp}" == '<span class="tm">13:14:00</span>'
-        assert f"{result.nick}" == '<span class="nk">&lt;nick&gt;</span>'
-        assert f"{result.content}" == "<span><span>payload</span></span>"
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.content) == "<span><span>payload</span></span>"
 
     def test_action_payload(self, config, message):
         message.action = True
         message.payload = "payload"
         result = _LogMessage.for_message(config, message)
-        assert f"{result.id}" == '<a name="id"/>'
-        assert f"{result.timestamp}" == '<span class="tm">13:14:00</span>'
-        assert f"{result.nick}" == '<span class="nka">&lt;nick&gt;</span>'
-        assert f"{result.content}" == '<span class="ac"><span><span>payload</span></span></span>'
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nka">&lt;nick&gt;</span>'
+        assert str(result.content) == '<span class="ac"><span><span>payload</span></span></span>'
 
     @pytest.mark.parametrize(
         "payload,operation,operand",
@@ -59,15 +59,12 @@ class TestLogMessage:
         message.action = False
         message.payload = payload
         result = _LogMessage.for_message(config, message)
-        assert f"{result.id}" == '<a name="id"/>'
-        assert f"{result.timestamp}" == '<span class="tm">13:14:00</span>'
-        assert f"{result.nick}" == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
         assert (
-            f"{result.content}" == '<span><span class="topic">'
-            f"{operation}"
-            ' </span><span class="topicline"><span><span>'
-            f"{operand}"
-            "</span></span></span></span>"
+            str(result.content)
+            == f'<span><span class="topic">{operation} </span><span class="topicline"><span><span>{operand}</span></span></span></span>'
         )
 
     @pytest.mark.parametrize(
@@ -83,34 +80,31 @@ class TestLogMessage:
         message.action = False
         message.payload = payload
         result = _LogMessage.for_message(config, message)
-        assert f"{result.id}" == '<a name="id"/>'
-        assert f"{result.timestamp}" == '<span class="tm">13:14:00</span>'
-        assert f"{result.nick}" == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
         assert (
-            f"{result.content}" == '<span><span class="cmd">'
-            f"{operation}"
-            ' </span><span class="cmdline"><span><span>'
-            f"{operand}"
-            "</span></span></span></span>"
+            str(result.content)
+            == f'<span><span class="cmd">{operation} </span><span class="cmdline"><span><span>{operand}</span></span></span></span>'
         )
 
     def test_highlights(self, config, message):
         message.action = False
         message.payload = "nick: this is some stuff: yeah that stuff"
         result = _LogMessage.for_message(config, message)
-        assert f"{result.id}" == '<a name="id"/>'
-        assert f"{result.timestamp}" == '<span class="tm">13:14:00</span>'
-        assert f"{result.nick}" == '<span class="nk">&lt;nick&gt;</span>'
-        assert f"{result.content}" == '<span><span class="hi">nick:</span><span> this is some stuff: yeah that stuff</span></span>'
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.content) == '<span><span class="hi">nick:</span><span> this is some stuff: yeah that stuff</span></span>'
 
     def test_url(self, config, message):
         message.action = False
         message.payload = "http://whatever this should not be highlighted"
         result = _LogMessage.for_message(config, message)
-        assert f"{result.id}" == '<a name="id"/>'
-        assert f"{result.timestamp}" == '<span class="tm">13:14:00</span>'
-        assert f"{result.nick}" == '<span class="nk">&lt;nick&gt;</span>'
-        assert f"{result.content}" == "<span><span>http://whatever this should not be highlighted</span></span>"
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.content) == "<span><span>http://whatever this should not be highlighted</span></span>"
 
     # we can generally expect Genshi to handle this stuff, so this is a spot-check
     # examples from: https://owasp.org/www-community/attacks/xss/
@@ -135,10 +129,10 @@ class TestLogMessage:
         message.action = False
         message.payload = payload
         result = _LogMessage.for_message(config, message)
-        assert f"{result.id}" == '<a name="id"/>'
-        assert f"{result.timestamp}" == '<span class="tm">13:14:00</span>'
-        assert f"{result.nick}" == '<span class="nk">&lt;nick&gt;</span>'
-        assert f"{result.content}" == "<span><span>" + f"{expected}" + "</span></span>"
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.content) == "<span><span>" + f"{expected}" + "</span></span>"
 
 
 class TestRendering:
