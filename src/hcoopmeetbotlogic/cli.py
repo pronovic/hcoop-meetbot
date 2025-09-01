@@ -5,6 +5,7 @@ CLI for the meetbot tool.
 """
 
 import os
+from pathlib import Path
 
 import click
 
@@ -67,8 +68,8 @@ def regenerate(config_path: str, raw_log: str, output_dir: str) -> None:
         raise click.UsageError(f"Could not find output dir: {output_dir}")
     config = load_config(None, config_path)
     prefix = derive_prefix(raw_log)
-    with open(raw_log, encoding="utf-8") as fp:
-        meeting = Meeting.from_json(fp.read())
+    json_text = Path(raw_log).read_text(encoding="utf-8")
+    meeting = Meeting.from_json(json_text)
     locations = derive_locations(config, meeting, prefix, output_dir)
     write_formatted_log(config, locations, meeting)
     write_formatted_minutes(config, locations, meeting)
