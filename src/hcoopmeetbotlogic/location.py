@@ -47,7 +47,7 @@ def _file_prefix(config: Config, meeting: Meeting) -> str:
 def _abs_path(config: Config, file_prefix: str, suffix: str, output_dir: str | None) -> str:
     """Build an absolute path for a file in the log directory, preventing path traversal."""
     log_dir = Path(output_dir) if output_dir else Path(config.log_dir)
-    target = "%s%s" % (file_prefix, suffix)  # might include slashes and other traversal like ".."
+    target = f"{file_prefix}{suffix}"  # might include slashes and other traversal like ".."
     safe = log_dir.joinpath(target).resolve().relative_to(log_dir.resolve())  # blows up if outside of log dir
     return log_dir.joinpath(safe).absolute().as_posix()
 
@@ -55,7 +55,7 @@ def _abs_path(config: Config, file_prefix: str, suffix: str, output_dir: str | N
 def _url(config: Config, file_prefix: str, suffix: str) -> str:
     """Build a URL for a file in the log directory."""
     # We don't worry about path traversal here, because it's up to the webserver to decide what is allowed
-    return "%s/%s%s" % (config.url_prefix, file_prefix, suffix)
+    return f"{config.url_prefix}/{file_prefix}{suffix}"
 
 
 def _location(config: Config, file_prefix: str, suffix: str, output_dir: str | None) -> Location:
@@ -90,4 +90,4 @@ def derive_locations(config: Config, meeting: Meeting, prefix: str | None = None
             formatted_log=_location(config, file_prefix, HTML_LOG_EXTENSION, output_dir),
             formatted_minutes=_location(config, file_prefix, HTML_MINUTES_EXTENSION, output_dir),
         )
-    raise ValueError("Unsupported output format: %s" % config.output_format)
+    raise ValueError(f"Unsupported output format: {config.output_format}")

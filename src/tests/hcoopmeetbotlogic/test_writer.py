@@ -32,19 +32,19 @@ class TestLogMessage:
         message.action = False
         message.payload = "payload"
         result = _LogMessage.for_message(config, message)
-        assert "%s" % result.id == '<a name="id"/>'
-        assert "%s" % result.timestamp == '<span class="tm">13:14:00</span>'
-        assert "%s" % result.nick == '<span class="nk">&lt;nick&gt;</span>'
-        assert "%s" % result.content == "<span><span>payload</span></span>"
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.content) == "<span><span>payload</span></span>"
 
     def test_action_payload(self, config, message):
         message.action = True
         message.payload = "payload"
         result = _LogMessage.for_message(config, message)
-        assert "%s" % result.id == '<a name="id"/>'
-        assert "%s" % result.timestamp == '<span class="tm">13:14:00</span>'
-        assert "%s" % result.nick == '<span class="nka">&lt;nick&gt;</span>'
-        assert "%s" % result.content == '<span class="ac"><span><span>payload</span></span></span>'
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nka">&lt;nick&gt;</span>'
+        assert str(result.content) == '<span class="ac"><span><span>payload</span></span></span>'
 
     @pytest.mark.parametrize(
         "payload,operation,operand",
@@ -59,16 +59,12 @@ class TestLogMessage:
         message.action = False
         message.payload = payload
         result = _LogMessage.for_message(config, message)
-        assert "%s" % result.id == '<a name="id"/>'
-        assert "%s" % result.timestamp == '<span class="tm">13:14:00</span>'
-        assert "%s" % result.nick == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
         assert (
-            "%s" % result.content
-            == '<span><span class="topic">'
-            + "%s" % operation
-            + ' </span><span class="topicline"><span><span>'
-            + "%s" % operand
-            + "</span></span></span></span>"
+            str(result.content)
+            == f'<span><span class="topic">{operation} </span><span class="topicline"><span><span>{operand}</span></span></span></span>'
         )
 
     @pytest.mark.parametrize(
@@ -84,37 +80,31 @@ class TestLogMessage:
         message.action = False
         message.payload = payload
         result = _LogMessage.for_message(config, message)
-        assert "%s" % result.id == '<a name="id"/>'
-        assert "%s" % result.timestamp == '<span class="tm">13:14:00</span>'
-        assert "%s" % result.nick == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
         assert (
-            "%s" % result.content
-            == '<span><span class="cmd">'
-            + "%s" % operation
-            + ' </span><span class="cmdline"><span><span>'
-            + "%s" % operand
-            + "</span></span></span></span>"
+            str(result.content)
+            == f'<span><span class="cmd">{operation} </span><span class="cmdline"><span><span>{operand}</span></span></span></span>'
         )
 
     def test_highlights(self, config, message):
         message.action = False
         message.payload = "nick: this is some stuff: yeah that stuff"
         result = _LogMessage.for_message(config, message)
-        assert "%s" % result.id == '<a name="id"/>'
-        assert "%s" % result.timestamp == '<span class="tm">13:14:00</span>'
-        assert "%s" % result.nick == '<span class="nk">&lt;nick&gt;</span>'
-        assert (
-            "%s" % result.content == '<span><span class="hi">nick:</span><span> this is some stuff: yeah that stuff</span></span>'
-        )
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.content) == '<span><span class="hi">nick:</span><span> this is some stuff: yeah that stuff</span></span>'
 
     def test_url(self, config, message):
         message.action = False
         message.payload = "http://whatever this should not be highlighted"
         result = _LogMessage.for_message(config, message)
-        assert "%s" % result.id == '<a name="id"/>'
-        assert "%s" % result.timestamp == '<span class="tm">13:14:00</span>'
-        assert "%s" % result.nick == '<span class="nk">&lt;nick&gt;</span>'
-        assert "%s" % result.content == "<span><span>http://whatever this should not be highlighted</span></span>"
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.content) == "<span><span>http://whatever this should not be highlighted</span></span>"
 
     # we can generally expect Genshi to handle this stuff, so this is a spot-check
     # examples from: https://owasp.org/www-community/attacks/xss/
@@ -139,10 +129,10 @@ class TestLogMessage:
         message.action = False
         message.payload = payload
         result = _LogMessage.for_message(config, message)
-        assert "%s" % result.id == '<a name="id"/>'
-        assert "%s" % result.timestamp == '<span class="tm">13:14:00</span>'
-        assert "%s" % result.nick == '<span class="nk">&lt;nick&gt;</span>'
-        assert "%s" % result.content == "<span><span>" + "%s" % expected + "</span></span>"
+        assert str(result.id) == '<a name="id"/>'
+        assert str(result.timestamp) == '<span class="tm">13:14:00</span>'
+        assert str(result.nick) == '<span class="nk">&lt;nick&gt;</span>'
+        assert str(result.content) == "<span><span>" + f"{expected}" + "</span></span>"
 
 
 class TestRendering:
@@ -194,40 +184,40 @@ class TestAliasMatcher:
         no_match = []
 
         # These should be considered a match because the identifier is found unambiguously
-        match.append("%s" % identifier)
-        match.append("%s got assigned a task" % identifier)
-        match.append("assign that to %s please" % identifier)
-        match.append("that task goes to %s" % identifier)
-        match.append("hey %s: please take care of that" % identifier)
-        match.append("an action item (%s)" % identifier)
-        match.append("(%s) an action item" % identifier)
+        match.append(f"{identifier}")
+        match.append(f"{identifier} got assigned a task")
+        match.append(f"assign that to {identifier} please")
+        match.append(f"that task goes to {identifier}")
+        match.append(f"hey {identifier}: please take care of that")
+        match.append(f"an action item ({identifier})")
+        match.append(f"({identifier}) an action item")
 
         # These should NOT be considered a match because the identifier has a prefix
-        no_match.append("prefix%s" % identifier)
-        no_match.append("prefix%s got assigned a task" % identifier)
-        no_match.append("assign that to prefix%s please" % identifier)
-        no_match.append("that task goes to prefix%s" % identifier)
-        no_match.append("hey prefix%s: please take care of that" % identifier)
-        no_match.append("an action item (prefix%s)" % identifier)
-        no_match.append("(prefix%s) an action item" % identifier)
+        no_match.append(f"prefix{identifier}")
+        no_match.append(f"prefix{identifier} got assigned a task")
+        no_match.append(f"assign that to prefix{identifier} please")
+        no_match.append(f"that task goes to prefix{identifier}")
+        no_match.append(f"hey prefix{identifier}: please take care of that")
+        no_match.append(f"an action item (prefix{identifier})")
+        no_match.append(f"(prefix{identifier}) an action item")
 
         # These should NOT be considered a match because the identifier has a suffix
-        no_match.append("%ssuffix" % identifier)
-        no_match.append("%ssuffix got assigned a task" % identifier)
-        no_match.append("assign that to %ssuffix please" % identifier)
-        no_match.append("that task goes to %ssuffix" % identifier)
-        no_match.append("hey %ssuffix: please take care of that" % identifier)
-        no_match.append("an action item (%ssuffix)" % identifier)
-        no_match.append("(%ssuffix) an action item" % identifier)
+        no_match.append(f"{identifier}suffix")
+        no_match.append(f"{identifier}suffix got assigned a task")
+        no_match.append(f"assign that to {identifier}suffix please")
+        no_match.append(f"that task goes to {identifier}suffix")
+        no_match.append(f"hey {identifier}suffix: please take care of that")
+        no_match.append(f"an action item ({identifier}suffix)")
+        no_match.append(f"({identifier}suffix) an action item")
 
         # These should NOT be considered a match because the identifier is embedded in another string
-        no_match.append("prefix%ssuffix" % identifier)
-        no_match.append("prefix%ssuffix got assigned a task" % identifier)
-        no_match.append("assign that to prefix%ssuffix please" % identifier)
-        no_match.append("that task goes to prefix%ssuffix" % identifier)
-        no_match.append("hey prefix%ssuffix: please take care of that" % identifier)
-        no_match.append("an action item (prefix%ssuffix)" % identifier)
-        no_match.append("(prefix%ssuffix) an action item" % identifier)
+        no_match.append(f"prefix{identifier}suffix")
+        no_match.append(f"prefix{identifier}suffix got assigned a task")
+        no_match.append(f"assign that to prefix{identifier}suffix please")
+        no_match.append(f"that task goes to prefix{identifier}suffix")
+        no_match.append(f"hey prefix{identifier}suffix: please take care of that")
+        no_match.append(f"an action item (prefix{identifier}suffix)")
+        no_match.append(f"(prefix{identifier}suffix) an action item")
 
         nick_matcher = _AliasMatcher(identifier, None)  # checks matching for nick
         alias_matcher = _AliasMatcher("bogus", identifier)  # checks matching for alias, since nick will never match
@@ -235,13 +225,13 @@ class TestAliasMatcher:
         for message in match:
             for testcase in [message, message.upper(), message.lower(), message.title()]:  # nicks/aliases are not case-sensitive
                 if not nick_matcher.matches(testcase):
-                    pytest.fail("nick '%s' not found in message '%s'" % (identifier, testcase))
+                    pytest.fail(f"nick '{identifier}' not found in message '{testcase}'")
                 if not alias_matcher.matches(testcase):
-                    pytest.fail("alias '%s' not found in message '%s'" % (identifier, testcase))
+                    pytest.fail(f"alias '{identifier}' not found in message '{testcase}'")
 
         for message in no_match:
             for testcase in [message, message.upper(), message.lower(), message.title()]:  # nicks/aliases are not case-sensitive
                 if nick_matcher.matches(testcase):
-                    pytest.fail("nick '%s' incorrectly found in message '%s'" % (identifier, testcase))
+                    pytest.fail(f"nick '{identifier}' incorrectly found in message '{testcase}'")
                 if alias_matcher.matches(testcase):
-                    pytest.fail("alias '%s' incorrectly found in message '%s'" % (identifier, testcase))
+                    pytest.fail(f"alias '{identifier}' incorrectly found in message '{testcase}'")

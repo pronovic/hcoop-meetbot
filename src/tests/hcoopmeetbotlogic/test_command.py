@@ -74,7 +74,7 @@ class TestFunctions:
     )
     @patch("hcoopmeetbotlogic.command._DISPATCHER")
     def test_dispatch_valid_link(self, dispatcher, protocol):
-        url = "%s://whatever" % protocol
+        url = f"{protocol}://whatever"
         run_dispatch(url, "link", url, dispatcher.do_link)
 
     @pytest.mark.parametrize(
@@ -86,7 +86,7 @@ class TestFunctions:
     )
     @patch("hcoopmeetbotlogic.command._DISPATCHER")
     def test_dispatch_invalid_link(self, dispatcher, protocol):
-        url = "%s://whatever" % protocol
+        url = f"{protocol}://whatever"
         meeting = MagicMock(channel="#channel")
         context = MagicMock()
         message = MagicMock(payload=url)

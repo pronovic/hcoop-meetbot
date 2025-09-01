@@ -87,7 +87,7 @@ class TrackedMessage:
 
     def display_name(self) -> str:
         """Get the message display name."""
-        return "%s@%s" % (self.id, formatdate(self.timestamp))
+        return f"{self.id}@{formatdate(self.timestamp)}"
 
 
 @frozen
@@ -122,7 +122,7 @@ class TrackedEvent:
 
     def display_name(self) -> str:
         """Get the event display name."""
-        return "%s@%s" % (self.id, formatdate(self.timestamp))
+        return f"{self.id}@{formatdate(self.timestamp)}"
 
 
 @define(slots=False)
@@ -204,7 +204,7 @@ class Meeting:
     @staticmethod
     def meeting_key(channel: str, network: str) -> str:
         """Build the dict key for a network and channel."""
-        return "%s/%s" % (channel, network)
+        return f"{channel}/{network}"
 
     def to_json(self) -> str:
         """Serialize a meeting to JSON."""
@@ -220,7 +220,7 @@ class Meeting:
 
     def display_name(self) -> str:
         """Get the meeting display name."""
-        return "%s/%s@%s" % (self.channel, self.network, formatdate(self.start_time))
+        return f"{self.channel}/{self.network}@{formatdate(self.start_time)}"
 
     def add_chair(self, nick: str, *, primary: bool = True) -> None:
         """Add a chair to a meeting, potentially making it the primary chair."""

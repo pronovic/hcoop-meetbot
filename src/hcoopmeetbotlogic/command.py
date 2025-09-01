@@ -55,10 +55,10 @@ class CommandDispatcher:
             meeting.track_event(EventType.START_MEETING, message)
             meeting.original_topic = context.get_topic()
             self._set_channel_topic(meeting, context)
-            context.send_reply("Meeting started at %s" % self._formatdate(meeting.start_time))
-            context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
+            context.send_reply(f"Meeting started at {self._formatdate(meeting.start_time)}")
+            context.send_reply(f"Current chairs: {', '.join(meeting.chairs)}")
             context.send_reply("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting")
-            context.send_reply("See also: %s" % DOCS)
+            context.send_reply(f"See also: {DOCS}")
             context.send_reply("Participants should now identify themselves with '#here' or with an alias like '#here FirstLast'")
 
     def do_endmeeting(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
@@ -69,10 +69,10 @@ class CommandDispatcher:
             meeting.active = False
             self._set_channel_topic(meeting, context)
             locations = write_meeting(config=config(), meeting=meeting)
-            context.send_reply("Meeting ended at %s" % self._formatdate(meeting.end_time))
-            context.send_reply("Raw log: %s" % locations.raw_log.url)
-            context.send_reply("Formatted log: %s" % locations.formatted_log.url)
-            context.send_reply("Minutes: %s" % locations.formatted_minutes.url)
+            context.send_reply(f"Meeting ended at {self._formatdate(meeting.end_time)}")
+            context.send_reply(f"Raw log: {locations.raw_log.url}")
+            context.send_reply(f"Formatted log: {locations.formatted_log.url}")
+            context.send_reply(f"Minutes: {locations.formatted_minutes.url}")
             deactivate_meeting(meeting, retain=True)
 
     def do_save(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
@@ -81,9 +81,9 @@ class CommandDispatcher:
             meeting.track_event(EventType.SAVE_MEETING, message)
             locations = write_meeting(config=config(), meeting=meeting)
             context.send_reply("Meeting saved")
-            context.send_reply("Raw log: %s" % locations.raw_log.url)
-            context.send_reply("Formatted log: %s" % locations.formatted_log.url)
-            context.send_reply("Minutes: %s" % locations.formatted_minutes.url)
+            context.send_reply(f"Raw log: {locations.raw_log.url}")
+            context.send_reply(f"Formatted log: {locations.formatted_log.url}")
+            context.send_reply(f"Minutes: {locations.formatted_minutes.url}")
 
     def do_topic(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Set a new topic in the channel."""
@@ -100,7 +100,7 @@ class CommandDispatcher:
                 meeting.track_event(EventType.ADD_CHAIR, message, operand=chairs)
                 for nick in chairs:
                     meeting.add_chair(nick, primary=False)
-                context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
+                context.send_reply(f"Current chairs: {', '.join(meeting.chairs)}")
 
     def do_unchair(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Remove a chair from the meeting."""
@@ -110,7 +110,7 @@ class CommandDispatcher:
                 meeting.track_event(EventType.REMOVE_CHAIR, message, operand=chairs)
                 for nick in chairs:
                     meeting.remove_chair(nick)
-                context.send_reply("Current chairs: %s" % ", ".join(meeting.chairs))
+                context.send_reply(f"Current chairs: {', '.join(meeting.chairs)}")
 
     def do_here(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Document attendance and optionally associate a nick with an alias, for use with actions."""
@@ -125,7 +125,7 @@ class CommandDispatcher:
             meeting.track_event(EventType.TRACK_NICK, message, operand=nicks)
             for nick in nicks:
                 meeting.track_nick(nick, messages=0)
-            context.send_reply("Current nicks: %s" % ", ".join(meeting.nicks.keys()))
+            context.send_reply(f"Current nicks: {', '.join(meeting.nicks.keys())}")
 
     def do_undo(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Remove the most recent item from the minutes."""
@@ -133,14 +133,14 @@ class CommandDispatcher:
             removed = meeting.pop_event()
             if removed:
                 meeting.track_event(EventType.UNDO, message, operand=removed.id)
-                context.send_reply("Removed event: %s" % removed.display_name())
+                context.send_reply(f"Removed event: {removed.display_name()}")
 
     def do_meetingname(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Set the meeting name, which defaults to the channel name."""
         if meeting.is_chair(message.sender):
             meeting.track_event(EventType.MEETING_NAME, message, operand=operand)
             meeting.name = operand
-            context.send_reply("Meeting name set to: %s" % operand)
+            context.send_reply(f"Meeting name set to: {operand}")
 
     def do_motion(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Open a motion."""
@@ -170,19 +170,19 @@ class CommandDispatcher:
                 meeting.vote_in_progress = False
                 meeting.motion_index = None
                 if len(in_favor) > len(opposed):
-                    result = "Motion accepted: %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = f"Motion accepted: {len(in_favor)} in favor to {len(opposed)} opposed"
                     meeting.track_event(EventType.ACCEPTED, message, operand=result)
                     context.send_reply(result)
                 elif len(in_favor) < len(opposed):
-                    result = "Motion failed: %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = f"Motion failed: {len(in_favor)} in favor to {len(opposed)} opposed"
                     meeting.track_event(EventType.FAILED, message, operand=result)
                     context.send_reply(result)
                 elif len(in_favor) == len(opposed):
-                    result = "Motion inconclusive: %d in favor to %d opposed" % (len(in_favor), len(opposed))
+                    result = f"Motion inconclusive: {len(in_favor)} in favor to {len(opposed)} opposed"
                     meeting.track_event(EventType.INCONCLUSIVE, message, operand=result)
                     context.send_reply(result)
-                context.send_reply("In favor: %s" % ", ".join(in_favor))
-                context.send_reply("Opposed: %s" % ", ".join(opposed))
+                context.send_reply(f"In favor: {', '.join(in_favor)}")
+                context.send_reply(f"Opposed: {', '.join(opposed)}")
 
     def do_accepted(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Indicate that a motion has been accepted."""
@@ -253,7 +253,7 @@ class CommandDispatcher:
         if config().use_channel_topic:
             if meeting.active:
                 if meeting.current_topic:
-                    context.set_topic("%s" % meeting.current_topic)
+                    context.set_topic(f"{meeting.current_topic}")
                 else:
                     context.set_topic("Meeting Active")
             else:
@@ -278,10 +278,10 @@ def dispatch(meeting: Meeting, context: Context, message: TrackedMessage) -> Non
     if operation_match:
         operation = operation_match.group(_OPERATION_GROUP).lower().strip()
         operand = operation_match.group(_OPERAND_GROUP).strip()
-        if hasattr(_DISPATCHER, "%s%s" % (_METHOD_PREFIX, operation)):
-            getattr(_DISPATCHER, "%s%s" % (_METHOD_PREFIX, operation))(meeting, context, operation, operand, message)
+        if hasattr(_DISPATCHER, f"{_METHOD_PREFIX}{operation}"):
+            getattr(_DISPATCHER, f"{_METHOD_PREFIX}{operation}")(meeting, context, operation, operand, message)
         else:
-            context.send_reply("Unknown command: #%s" % operation)
+            context.send_reply(f"Unknown command: #{operation}")
     elif url_match:
         # as a special case, turns messages that start with a URL into a link operation
         operation = "link"

@@ -12,7 +12,7 @@ from tests.hcoopmeetbotlogic.testdata import contents
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "fixtures/test_config/valid/HcoopMeetbot.conf")
 RAW_LOG_PREFIX = "2022-06-04"
-RAW_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_cli/%s.log.json" % RAW_LOG_PREFIX)
+RAW_LOG = os.path.join(os.path.dirname(__file__), f"fixtures/test_cli/{RAW_LOG_PREFIX}.log.json")
 EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log.html")
 EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/minutes.html")
 

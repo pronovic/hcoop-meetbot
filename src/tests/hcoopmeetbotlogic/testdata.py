@@ -22,7 +22,7 @@ def time(seconds: int) -> datetime:
 
 def message(identifier: int, nick: str, payload: str, seconds: int) -> Message:
     """Generate a mocked message with some values"""
-    return MagicMock(id="id-%d" % identifier, nick=nick, payload=payload, timestamp=time(seconds))
+    return MagicMock(id=f"id-{identifier}", nick=nick, payload=payload, timestamp=time(seconds))
 
 
 def sample_meeting() -> Meeting:
