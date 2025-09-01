@@ -180,7 +180,6 @@ ignore = [
   "FURB103",    # allow old-style open() and write() operations
   "PTH",        # allow old-style os operations rather than pathlib.Path
   "UP031",      # allow old-style format specifiers instead of f-strings
-  "DTZ",        # flake8-datetimez
 ]
 
 [tool.ruff.lint.per-file-ignores]

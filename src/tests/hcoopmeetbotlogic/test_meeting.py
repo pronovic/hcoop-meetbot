@@ -1,6 +1,6 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 from pytz import utc
@@ -86,7 +86,7 @@ class TestMeeting:
     def test_display_name(self, formatdate):
         formatdate.return_value = "11111"
         meeting = Meeting("n", "c", "n")
-        meeting.start_time = datetime(2021, 3, 7, 13, 14, 0)  # in UTC by default
+        meeting.start_time = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
         assert meeting.display_name() == "c/n@11111"
         formatdate.assert_called_once_with(meeting.start_time)
 

@@ -1,12 +1,12 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock
 
 from hcoopmeetbotlogic.interface import Message
 from hcoopmeetbotlogic.meeting import EventType, Meeting, VotingAction
 
-START_TIME = datetime(2021, 4, 13, 2, 6, 12)
+START_TIME = datetime(2021, 4, 13, 2, 6, 12, tzinfo=timezone.utc)
 
 
 def contents(path: str) -> str:

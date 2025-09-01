@@ -5,7 +5,7 @@
 #
 # Unfortunately, tests must live alongside the source code for supybot-test to execute them.
 # So, this lives here rather than in the tests modules with all of the other unit tests.
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import ANY, MagicMock, call, patch
 
 from supybot.test import ChannelPluginTestCase
@@ -19,7 +19,7 @@ NICK = "test"
 CHANNEL = "#test"
 NETWORK = "test"
 PREFIX = "@"
-TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0)
+TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
 
 
 def _stub(context, **kwargs):

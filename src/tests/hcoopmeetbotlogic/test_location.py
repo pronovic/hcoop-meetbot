@@ -1,7 +1,7 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 # ruff: noqa: S108
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 
@@ -41,7 +41,14 @@ class TestFunctions:
             timezone="UTC",
             pattern="constant",
         )
-        meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        meeting = Meeting(
+            id="i",
+            name="n",
+            founder="f",
+            channel="c",
+            network="n",
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+        )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/constant.log.json"
         assert locations.raw_log.url == "https://whatever/constant.log.json"
@@ -58,7 +65,14 @@ class TestFunctions:
             timezone="UTC",
             pattern="constant",
         )
-        meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        meeting = Meeting(
+            id="i",
+            name="n",
+            founder="f",
+            channel="c",
+            network="n",
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+        )
         locations = derive_locations(config, meeting, prefix="prefix")
         assert locations.raw_log.path == "/data/meetings/hcoop/prefix.log.json"
         assert locations.raw_log.url == "https://whatever/prefix.log.json"
@@ -75,7 +89,14 @@ class TestFunctions:
             timezone="UTC",
             pattern="constant",
         )
-        meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        meeting = Meeting(
+            id="i",
+            name="n",
+            founder="f",
+            channel="c",
+            network="n",
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+        )
         locations = derive_locations(config, meeting, output_dir="/tmp")
         assert locations.raw_log.path == "/tmp/constant.log.json"
         assert locations.raw_log.url == "https://whatever/constant.log.json"
@@ -92,7 +113,14 @@ class TestFunctions:
             timezone="UTC",
             pattern="{id}-{name}-{founder}-{channel}-{network}",
         )
-        meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        meeting = Meeting(
+            id="i",
+            name="n",
+            founder="f",
+            channel="c",
+            network="n",
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+        )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/i-n-f-c-n.log.json"
         assert locations.raw_log.url == "https://whatever/i-n-f-c-n.log.json"
@@ -109,7 +137,14 @@ class TestFunctions:
             timezone="UTC",
             pattern="%Y%m%d.%H%M",
         )
-        meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        meeting = Meeting(
+            id="i",
+            name="n",
+            founder="f",
+            channel="c",
+            network="n",
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+        )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/20210307.1314.log.json"
         assert locations.raw_log.url == "https://whatever/20210307.1314.log.json"
@@ -132,7 +167,7 @@ class TestFunctions:
             founder="f",
             channel="c",
             network="n",
-            start_time=datetime(2021, 3, 7, 13, 14, 0),
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
         )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/_network_.log.json"
@@ -150,7 +185,14 @@ class TestFunctions:
             timezone="UTC",
             pattern="%Y/{name}.%Y%m%d.%H%M",
         )
-        meeting = Meeting(id="i", name="#n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        meeting = Meeting(
+            id="i",
+            name="#n",
+            founder="f",
+            channel="c",
+            network="n",
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+        )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/2021/n.20210307.1314.log.json"
         assert locations.raw_log.url == "https://whatever/2021/n.20210307.1314.log.json"
@@ -163,7 +205,14 @@ class TestFunctions:
         config = Config(
             conf_file=None, log_dir="/data/meetings/hcoop", url_prefix="https://whatever", timezone="UTC", pattern="/%Y%m%d.%H%M"
         )
-        meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        meeting = Meeting(
+            id="i",
+            name="n",
+            founder="f",
+            channel="c",
+            network="n",
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+        )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/20210307.1314.log.json"
         assert locations.raw_log.url == "https://whatever/20210307.1314.log.json"
@@ -180,6 +229,13 @@ class TestFunctions:
             timezone="UTC",
             pattern="%Y/../../%m%d.%H%M",
         )
-        meeting = Meeting(id="i", name="n", founder="f", channel="c", network="n", start_time=datetime(2021, 3, 7, 13, 14, 0))
+        meeting = Meeting(
+            id="i",
+            name="n",
+            founder="f",
+            channel="c",
+            network="n",
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+        )
         with pytest.raises(ValueError):
             derive_locations(config, meeting)
