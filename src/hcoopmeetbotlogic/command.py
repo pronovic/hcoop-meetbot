@@ -56,7 +56,7 @@ class CommandDispatcher:
             meeting.original_topic = context.get_topic()
             self._set_channel_topic(meeting, context)
             context.send_reply(f"Meeting started at {self._formatdate(meeting.start_time)}")
-            context.send_reply("Current chairs: {}".format(", ".join(meeting.chairs)))
+            context.send_reply(f"Current chairs: {', '.join(meeting.chairs)}")
             context.send_reply("Useful commands: #action #info #idea #link #topic #motion #vote #close #endmeeting")
             context.send_reply(f"See also: {DOCS}")
             context.send_reply("Participants should now identify themselves with '#here' or with an alias like '#here FirstLast'")
@@ -100,7 +100,7 @@ class CommandDispatcher:
                 meeting.track_event(EventType.ADD_CHAIR, message, operand=chairs)
                 for nick in chairs:
                     meeting.add_chair(nick, primary=False)
-                context.send_reply("Current chairs: {}".format(", ".join(meeting.chairs)))
+                context.send_reply(f"Current chairs: {', '.join(meeting.chairs)}")
 
     def do_unchair(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Remove a chair from the meeting."""
@@ -110,7 +110,7 @@ class CommandDispatcher:
                 meeting.track_event(EventType.REMOVE_CHAIR, message, operand=chairs)
                 for nick in chairs:
                     meeting.remove_chair(nick)
-                context.send_reply("Current chairs: {}".format(", ".join(meeting.chairs)))
+                context.send_reply(f"Current chairs: {', '.join(meeting.chairs)}")
 
     def do_here(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Document attendance and optionally associate a nick with an alias, for use with actions."""
@@ -125,7 +125,7 @@ class CommandDispatcher:
             meeting.track_event(EventType.TRACK_NICK, message, operand=nicks)
             for nick in nicks:
                 meeting.track_nick(nick, messages=0)
-            context.send_reply("Current nicks: {}".format(", ".join(meeting.nicks.keys())))
+            context.send_reply(f"Current nicks: {', '.join(meeting.nicks.keys())}")
 
     def do_undo(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Remove the most recent item from the minutes."""
@@ -181,8 +181,8 @@ class CommandDispatcher:
                     result = f"Motion inconclusive: {len(in_favor)} in favor to {len(opposed)} opposed"
                     meeting.track_event(EventType.INCONCLUSIVE, message, operand=result)
                     context.send_reply(result)
-                context.send_reply("In favor: {}".format(", ".join(in_favor)))
-                context.send_reply("Opposed: {}".format(", ".join(opposed)))
+                context.send_reply(f"In favor: {', '.join(in_favor)}")
+                context.send_reply(f"Opposed: {', '.join(opposed)}")
 
     def do_accepted(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Indicate that a motion has been accepted."""

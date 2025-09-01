@@ -155,7 +155,7 @@ def deletemeeting(context: Context, channel: str, network: str, *, save: bool) -
         if save:
             write_meeting(config=config(), meeting=meeting)
         deactivate_meeting(meeting, retain=False)
-        reply = "Meeting {} has been deleted{}".format(meeting.display_name(), " (saved first)" if save else "")
+        reply = f"Meeting {meeting.display_name()} has been deleted{' (saved first)' if save else ''}"
     _send_reply(context, reply)
 
 
@@ -180,5 +180,5 @@ def commands(context: Context) -> None:
         context(Context): Context for a message or command
     """
     logger().debug("Handled 'commands'")
-    _send_reply(context, "Available commands: {}".format(", ".join(list_commands())))
+    _send_reply(context, f"Available commands: {', '.join(list_commands())}")
     _send_reply(context, f"See also: {DOCS}")

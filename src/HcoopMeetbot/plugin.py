@@ -63,7 +63,7 @@ class HcoopMeetbot(callbacks.Plugin):
             network=irc.msg.tags["receivedOn"],
             payload=msg.args[1],
             topic=topic,
-            channel_nicks=[f"{n}" for n in users],
+            channel_nicks=[str(n) for n in users],
         )
         handler.irc_message(context=context, message=message)
 
