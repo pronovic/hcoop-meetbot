@@ -293,7 +293,7 @@ def _render_html(template: str, context: dict[str, Any], out: TextIO) -> None:
     renderer.generate(**context).render(method="html", doctype="html", out=out)
 
 
-def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> None:
+def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> None:  # noqa: ARG001
     """Write the raw meeting log to disk in JSON format."""
     Path(locations.raw_log.path).parent.mkdir(exist_ok=True, parents=True)
     Path(locations.raw_log.path).write_text(meeting.to_json(), encoding="utf-8")

@@ -22,7 +22,7 @@ PREFIX = "@"
 TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
 
 
-def _stub(context, **kwargs):
+def _stub(context, **kwargs):  # noqa: ARG001
     """Stub handler method that returns a static reply; without this, the handler tests all time out."""
     context.send_reply("Hello")
 

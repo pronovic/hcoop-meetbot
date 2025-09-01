@@ -1,5 +1,5 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
-# ruff: noqa: PLR6301,PLR0904
+# ruff: noqa: ARG002,PLR6301,PLR0904
 
 """
 Implementation of meeting commands.
