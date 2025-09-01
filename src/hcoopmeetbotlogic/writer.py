@@ -7,6 +7,7 @@ Writes meeting log and minutes to disk.
 import os
 import re
 from enum import Enum
+from pathlib import Path
 from typing import Any, TextIO
 
 from attrs import field, frozen
@@ -296,8 +297,7 @@ def _render_html(template: str, context: dict[str, Any], out: TextIO) -> None:
 def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> None:
     """Write the raw meeting log to disk in JSON format."""
     os.makedirs(os.path.dirname(locations.raw_log.path), exist_ok=True)
-    with open(locations.raw_log.path, "w", encoding="utf-8") as out:
-        out.write(meeting.to_json())
+    Path(locations.raw_log.path).write_text(meeting.to_json(), encoding="utf-8")
 
 
 # noinspection PyUnreachableCode
