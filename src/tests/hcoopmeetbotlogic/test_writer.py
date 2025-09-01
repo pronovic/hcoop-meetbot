@@ -3,6 +3,7 @@
 
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import MagicMock, patch
 
@@ -14,8 +15,8 @@ from hcoopmeetbotlogic.meeting import Meeting
 from hcoopmeetbotlogic.writer import _AliasMatcher, _LogMessage, write_meeting
 from tests.hcoopmeetbotlogic.testdata import contents, sample_meeting
 
-EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log.html")
-EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/minutes.html")
+EXPECTED_LOG = os.path.join(Path(__file__).parent, "fixtures/test_writer/log.html")
+EXPECTED_MINUTES = os.path.join(Path(__file__).parent, "fixtures/test_writer/minutes.html")
 TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
 
 

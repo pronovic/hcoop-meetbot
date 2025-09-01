@@ -1,5 +1,6 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 import os
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import ANY, MagicMock, patch
 
@@ -10,11 +11,11 @@ from hcoopmeetbotlogic.config import OutputFormat
 from hcoopmeetbotlogic.location import Location, Locations
 from tests.hcoopmeetbotlogic.testdata import contents
 
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), "fixtures/test_config/valid/HcoopMeetbot.conf")
+CONFIG_PATH = os.path.join(Path(__file__).parent, "fixtures/test_config/valid/HcoopMeetbot.conf")
 RAW_LOG_PREFIX = "2022-06-04"
-RAW_LOG = os.path.join(os.path.dirname(__file__), f"fixtures/test_cli/{RAW_LOG_PREFIX}.log.json")
-EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log.html")
-EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/minutes.html")
+RAW_LOG = os.path.join(Path(__file__).parent, f"fixtures/test_cli/{RAW_LOG_PREFIX}.log.json")
+EXPECTED_LOG = os.path.join(Path(__file__).parent, "fixtures/test_writer/log.html")
+EXPECTED_MINUTES = os.path.join(Path(__file__).parent, "fixtures/test_writer/minutes.html")
 
 
 # noinspection PyTypeChecker

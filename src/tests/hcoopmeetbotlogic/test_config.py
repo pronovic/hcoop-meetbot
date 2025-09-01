@@ -10,14 +10,14 @@ import pytest
 from hcoopmeetbotlogic.config import Config, OutputFormat, load_config
 
 MISSING_DIR = "bogus"
-VALID_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/valid")  # valid config with no optional values
-OPTIONAL_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/optional")  # valid config with optional values
-NO_CHANNEL_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/nochannel")
-NO_FILE_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/nofile")
-EMPTY_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/empty")
-INVALID_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/invalid")
-BAD_BOOLEAN_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/bad_boolean")
-BAD_FORMAT_DIR = os.path.join(os.path.dirname(__file__), "fixtures/test_config/bad_format")
+VALID_DIR = os.path.join(Path(__file__).parent, "fixtures/test_config/valid")  # valid config with no optional values
+OPTIONAL_DIR = os.path.join(Path(__file__).parent, "fixtures/test_config/optional")  # valid config with optional values
+NO_CHANNEL_DIR = os.path.join(Path(__file__).parent, "fixtures/test_config/nochannel")
+NO_FILE_DIR = os.path.join(Path(__file__).parent, "fixtures/test_config/nofile")
+EMPTY_DIR = os.path.join(Path(__file__).parent, "fixtures/test_config/empty")
+INVALID_DIR = os.path.join(Path(__file__).parent, "fixtures/test_config/invalid")
+BAD_BOOLEAN_DIR = os.path.join(Path(__file__).parent, "fixtures/test_config/bad_boolean")
+BAD_FORMAT_DIR = os.path.join(Path(__file__).parent, "fixtures/test_config/bad_format")
 
 
 @pytest.fixture
