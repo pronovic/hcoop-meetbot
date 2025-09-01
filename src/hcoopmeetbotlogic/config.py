@@ -81,7 +81,7 @@ def load_config(logger: Logger | None, conf_path: str) -> Config:
     """
 
     def parse_config(source: str) -> Config:
-        if not os.path.isfile(source):
+        if not Path(source).is_file():
             if logger:
                 logger.debug("Could not find %s; using defaults", source)
             return Config(conf_file=None)
