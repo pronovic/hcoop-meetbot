@@ -176,7 +176,14 @@ ignore = [
   # Note: I am gradually working toward compliance with some of these rule categories
   "ARG001",     # allow unused arguments, since we're often implementing an interface
   "ARG002",     # allow unused arguments, since we're often implementing an interface
-  "PTH",        # allow old-style os operations rather than pathlib.Path
+#   "PTH103",
+  "PTH110",
+  "PTH112",
+  "PTH113",
+  "PTH118",
+  "PTH119",
+  "PTH120",
+  "PTH123",
 ]
 
 [tool.ruff.lint.per-file-ignores]

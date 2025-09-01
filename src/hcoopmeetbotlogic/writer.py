@@ -296,7 +296,7 @@ def _render_html(template: str, context: dict[str, Any], out: TextIO) -> None:
 
 def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> None:
     """Write the raw meeting log to disk in JSON format."""
-    os.makedirs(os.path.dirname(locations.raw_log.path), exist_ok=True)
+    Path(os.path.dirname(locations.raw_log.path)).mkdir(exist_ok=True, parents=True)
     Path(locations.raw_log.path).write_text(meeting.to_json(), encoding="utf-8")
 
 
@@ -307,7 +307,7 @@ def write_formatted_log(config: Config, locations: Locations, meeting: Meeting) 
         "title": f"{meeting.name} Log",
         "messages": [_LogMessage.for_message(config, message) for message in meeting.messages],
     }
-    os.makedirs(os.path.dirname(locations.formatted_log.path), exist_ok=True)
+    Path(os.path.dirname(locations.formatted_log.path)).mkdir(exist_ok=True, parents=True)
     with open(locations.formatted_log.path, "w", encoding="utf-8") as out:
         if config.output_format == OutputFormat.HTML:
             _render_html(template="log.html", context=context, out=out)
@@ -324,7 +324,7 @@ def write_formatted_minutes(config: Config, locations: Locations, meeting: Meeti
         "logpath": os.path.basename(locations.formatted_log.path),
         "minutes": _MeetingMinutes.for_meeting(config, meeting),
     }
-    os.makedirs(os.path.dirname(locations.formatted_minutes.path), exist_ok=True)
+    Path(os.path.dirname(locations.formatted_minutes.path)).mkdir(exist_ok=True, parents=True)
     with open(locations.formatted_minutes.path, "w", encoding="utf-8") as out:
         if config.output_format == OutputFormat.HTML:
             _render_html(template="minutes.html", context=context, out=out)
