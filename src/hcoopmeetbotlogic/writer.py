@@ -89,7 +89,7 @@ class _LogMessage:
     @staticmethod
     def _nick(message: TrackedMessage) -> Element:
         spanclass = "nka" if message.action else "nk"
-        content = "<%s>" % message.sender
+        content = f"<{message.sender}>"
         return tag.span(content, class_=spanclass)
 
     @staticmethod
@@ -102,9 +102,9 @@ class _LogMessage:
             operand = operation_match.group(_OPERAND_GROUP).strip()
             if operation == "#topic":
                 return tag.span(
-                    tag.span("%s " % operation, class_="topic"), tag.span(_LogMessage._payload(operand), class_="topicline")
+                    tag.span(f"{operation} ", class_="topic"), tag.span(_LogMessage._payload(operand), class_="topicline")
                 )
-            return tag.span(tag.span("%s " % operation, class_="cmd"), tag.span(_LogMessage._payload(operand), class_="cmdline"))
+            return tag.span(tag.span(f"{operation} ", class_="cmd"), tag.span(_LogMessage._payload(operand), class_="cmdline"))
         return _LogMessage._payload(message.payload)
 
     @staticmethod
@@ -157,7 +157,7 @@ class _AliasMatcher:
     @staticmethod
     def _regex(identifier: str) -> re.Pattern[str]:
         escaped = re.escape(identifier)
-        regex = r"(^|\s)(%s|%s:|\(%s\))($|\s)" % (escaped, escaped, escaped)
+        regex = rf"(^|\s)({escaped}|{escaped}:|\({escaped}\))($|\s)"
         return re.compile(regex, re.IGNORECASE)
 
     def matches(self, message: str) -> bool:
@@ -215,7 +215,7 @@ class _MeetingMinutes:
         actions = []
         for event in meeting.events:
             if event.event_type == EventType.ACTION and event.operand:
-                action = _MeetingAction(id="action-%s" % event.id, text=event.operand)
+                action = _MeetingAction(id=f"action-{event.id}", text=event.operand)
                 actions.append(action)
         return actions
 
@@ -225,7 +225,7 @@ class _MeetingMinutes:
         total = sum(meeting.nicks.values())
         for nick in sorted(meeting.nicks.keys()):
             count = meeting.nicks[nick]
-            percentage = "%d" % (round(count / total * 100.0) if total > 0.0 else 0.0)
+            percentage = str(round(count / total * 100.0) if total > 0.0 else 0.0)
             alias = meeting.aliases.get(nick, None)
             actions = _MeetingMinutes._attendee_actions(meeting, nick, alias)
             attendee = _MeetingAttendee(nick=nick, alias=alias, count=count, percentage=percentage, actions=actions)
@@ -239,7 +239,7 @@ class _MeetingMinutes:
         for event in meeting.events:
             if event.event_type == EventType.ACTION and event.operand:
                 if matcher.matches(event.operand):
-                    action = _MeetingAction(id="action-%s" % event.id, text=event.operand)
+                    action = _MeetingAction(id=f"action-{event.id}", text=event.operand)
                     actions.append(action)
         return actions
 
@@ -257,19 +257,19 @@ class _MeetingMinutes:
             if event.event_type == EventType.TOPIC:
                 current = _MeetingTopic(
                     id=event.id,
-                    name="%s" % event.operand,
+                    name=f"{event.operand}",
                     timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
                     nick=event.message.sender,
                 )
                 topics.append(current)
             elif event.event_type == EventType.LINK:
-                url_match = _URL_REGEX.match("%s" % event.operand)
+                url_match = _URL_REGEX.match(f"{event.operand}")
                 item = _MeetingEvent(
                     id=event.id,
                     event_type=event.event_type.value,
                     timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
                     nick=event.message.sender,
-                    payload="%s" % event.operand,
+                    payload=f"{event.operand}",
                     link=url_match.group(_URL_GROUP) if url_match else None,
                 )
                 current.events.append(item)
@@ -279,7 +279,7 @@ class _MeetingMinutes:
                     event_type=event.event_type.value,
                     timestamp=formatdate(timestamp=event.timestamp, zone=config.timezone, fmt=_TIME_FORMAT),
                     nick=event.message.sender,
-                    payload=event.operand.value if isinstance(event.operand, Enum) else "%s" % event.operand,
+                    payload=event.operand.value if isinstance(event.operand, Enum) else f"{event.operand}",
                 )
                 current.events.append(item)
         if not topics[0].events:
@@ -304,7 +304,7 @@ def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> Non
 def write_formatted_log(config: Config, locations: Locations, meeting: Meeting) -> None:
     """Write the formatted meeting log to disk."""
     context = {
-        "title": "%s Log" % meeting.name,
+        "title": f"{meeting.name} Log",
         "messages": [_LogMessage.for_message(config, message) for message in meeting.messages],
     }
     os.makedirs(os.path.dirname(locations.formatted_log.path), exist_ok=True)
@@ -312,14 +312,14 @@ def write_formatted_log(config: Config, locations: Locations, meeting: Meeting) 
         if config.output_format == OutputFormat.HTML:
             _render_html(template="log.html", context=context, out=out)
         else:
-            raise ValueError("Unsupported output format: %s" % config.output_format)
+            raise ValueError(f"Unsupported output format: {config.output_format}")
 
 
 # noinspection PyUnreachableCode
 def write_formatted_minutes(config: Config, locations: Locations, meeting: Meeting) -> None:
     """Write the formatted meeting minutes to disk."""
     context = {
-        "title": "%s Minutes" % meeting.name,
+        "title": f"{meeting.name} Minutes",
         "software": {"version": VERSION, "url": URL, "date": DATE},
         "logpath": os.path.basename(locations.formatted_log.path),
         "minutes": _MeetingMinutes.for_meeting(config, meeting),
@@ -329,7 +329,7 @@ def write_formatted_minutes(config: Config, locations: Locations, meeting: Meeti
         if config.output_format == OutputFormat.HTML:
             _render_html(template="minutes.html", context=context, out=out)
         else:
-            raise ValueError("Unsupported output format: %s" % config.output_format)
+            raise ValueError(f"Unsupported output format: {config.output_format}")
 
 
 def write_meeting(config: Config, meeting: Meeting) -> Locations:

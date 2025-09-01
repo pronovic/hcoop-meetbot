@@ -35,7 +35,7 @@ def _inbound(payload: str):
         nick=NICK,
         channel=CHANNEL,
         network=NETWORK,
-        payload="%s%s" % (PREFIX, payload),
+        payload=f"{PREFIX}{payload}",
         topic="",
         channel_nicks=[NICK],
     )
@@ -43,7 +43,7 @@ def _inbound(payload: str):
 
 def _outbound():
     """Generate an expected outbound message returned to the caller based on the _stub() call"""
-    return Message(id=ID, timestamp=TIMESTAMP, nick=NICK, channel=CHANNEL, network=NETWORK, payload="%s: Hello" % NICK)
+    return Message(id=ID, timestamp=TIMESTAMP, nick=NICK, channel=CHANNEL, network=NETWORK, payload=f"{NICK}: Hello")
 
 
 class HcoopMeetbotTestCase(ChannelPluginTestCase):

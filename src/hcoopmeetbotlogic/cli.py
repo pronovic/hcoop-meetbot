@@ -60,11 +60,11 @@ def regenerate(config_path: str, raw_log: str, output_dir: str) -> None:
     will be generated using the exact same prefix as the raw log file itself.
     """
     if not os.path.isfile(config_path):
-        raise click.UsageError("Could not find config: %s" % config_path)
+        raise click.UsageError(f"Could not find config: {config_path}")
     if not os.path.isfile(raw_log):
-        raise click.UsageError("Could not find raw log: %s" % raw_log)
+        raise click.UsageError(f"Could not find raw log: {raw_log}")
     if not os.path.isdir(output_dir):
-        raise click.UsageError("Could not find output dir: %s" % output_dir)
+        raise click.UsageError(f"Could not find output dir: {output_dir}")
     config = load_config(None, config_path)
     prefix = derive_prefix(raw_log)
     with open(raw_log, encoding="utf-8") as fp:

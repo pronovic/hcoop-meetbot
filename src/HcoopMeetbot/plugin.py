@@ -47,7 +47,7 @@ class HcoopMeetbot(callbacks.Plugin):
     def __init__(self, irc):
         """Initialize the plugin with our custom configuration."""
         super().__init__(irc)
-        handler.configure(self.log, "%s" % conf.supybot.directories.conf)
+        handler.configure(self.log, f"{conf.supybot.directories.conf}")
 
     def doPrivmsg(self, irc, msg):
         """Capture all messages from supybot."""
@@ -63,7 +63,7 @@ class HcoopMeetbot(callbacks.Plugin):
             network=irc.msg.tags["receivedOn"],
             payload=msg.args[1],
             topic=topic,
-            channel_nicks=["%s" % n for n in users],
+            channel_nicks=[f"{n}" for n in users],
         )
         handler.irc_message(context=context, message=message)
 

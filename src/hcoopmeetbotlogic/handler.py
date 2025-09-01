@@ -81,7 +81,7 @@ def outbound_message(context: Context, message: Message) -> None:
 def meetversion(context: Context) -> None:
     """Reply with a string describing the version of the plugin."""
     logger().debug("Handled 'meetversion'")
-    _send_reply(context, "HCoop Meetbot v%s (%s)" % (VERSION, DATE))
+    _send_reply(context, f"HCoop Meetbot v{VERSION} ({DATE})")
 
 
 def listmeetings(context: Context) -> None:
@@ -110,7 +110,7 @@ def savemeetings(context: Context) -> None:
     else:
         for meeting in meetings:
             write_meeting(config=config(), meeting=meeting)
-        reply = "Saved %d meeting%s" % (len(meetings), "s" if len(meetings) > 1 else "")
+        reply = f"Saved {len(meetings)} meeting{'s' if len(meetings) > 1 else ''}"
     _send_reply(context, reply)
 
 
@@ -127,10 +127,10 @@ def addchair(context: Context, channel: str, network: str, nick: str) -> None:
     logger().debug("Handled 'addchair' for %s/%s nick=%s", channel, network, nick)
     meeting = get_meeting(channel, network)
     if not meeting:
-        reply = "Meeting not found for %s/%s" % (channel, network)
+        reply = f"Meeting not found for {channel}/{network}"
     else:
         meeting.add_chair(nick, primary=True)
-        reply = "%s is now the primary chair for %s" % (meeting.chair, meeting.display_name())
+        reply = f"{meeting.chair} is now the primary chair for {meeting.display_name()}"
     _send_reply(context, reply)
 
 
@@ -150,12 +150,12 @@ def deletemeeting(context: Context, channel: str, network: str, *, save: bool) -
     logger().debug("Handled 'deletemeeting' for %s/%s save=%s", channel, network, save)
     meeting = get_meeting(channel, network)
     if not meeting:
-        reply = "Meeting not found for %s/%s" % (channel, network)
+        reply = f"Meeting not found for {channel}/{network}"
     else:
         if save:
             write_meeting(config=config(), meeting=meeting)
         deactivate_meeting(meeting, retain=False)
-        reply = "Meeting %s has been deleted%s" % (meeting.display_name(), " (saved first)" if save else "")
+        reply = "Meeting {} has been deleted{}".format(meeting.display_name(), " (saved first)" if save else "")
     _send_reply(context, reply)
 
 
@@ -180,5 +180,5 @@ def commands(context: Context) -> None:
         context(Context): Context for a message or command
     """
     logger().debug("Handled 'commands'")
-    _send_reply(context, "Available commands: %s" % ", ".join(list_commands()))
-    _send_reply(context, "See also: %s" % DOCS)
+    _send_reply(context, "Available commands: {}".format(", ".join(list_commands())))
+    _send_reply(context, f"See also: {DOCS}")
