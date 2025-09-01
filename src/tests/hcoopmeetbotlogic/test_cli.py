@@ -1,5 +1,5 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
-import os
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import ANY, MagicMock, patch
 
@@ -10,11 +10,11 @@ from hcoopmeetbotlogic.config import OutputFormat
 from hcoopmeetbotlogic.location import Location, Locations
 from tests.hcoopmeetbotlogic.testdata import contents
 
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), "fixtures/test_config/valid/HcoopMeetbot.conf")
+CONFIG_PATH = str(Path(__file__).parent / "fixtures/test_config/valid/HcoopMeetbot.conf")
 RAW_LOG_PREFIX = "2022-06-04"
-RAW_LOG = os.path.join(os.path.dirname(__file__), f"fixtures/test_cli/{RAW_LOG_PREFIX}.log.json")
-EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log.html")
-EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/minutes.html")
+RAW_LOG = str(Path(__file__).parent / f"fixtures/test_cli/{RAW_LOG_PREFIX}.log.json")
+EXPECTED_LOG = str(Path(__file__).parent / "fixtures/test_writer/log.html")
+EXPECTED_MINUTES = str(Path(__file__).parent / "fixtures/test_writer/minutes.html")
 
 
 # noinspection PyTypeChecker
@@ -87,8 +87,8 @@ class TestRegenerate:
         with TemporaryDirectory() as temp:
             config = MagicMock(timezone="America/Chicago", output_format=OutputFormat.HTML)
             load_config.return_value = config
-            formatted_log = Location(path=os.path.join(temp, "log.html"), url="http://log")
-            formatted_minutes = Location(path=os.path.join(temp, "minutes.html"), url="http://minutes")
+            formatted_log = Location(path=str(Path(temp) / "log.html"), url="http://log")
+            formatted_minutes = Location(path=str(Path(temp) / "minutes.html"), url="http://minutes")
             locations = Locations(raw_log=RAW_LOG, formatted_log=formatted_log, formatted_minutes=formatted_minutes)
             derive_locations.return_value = locations
             result = invoke(["regenerate", "-c", CONFIG_PATH, "-r", RAW_LOG, "-d", temp])

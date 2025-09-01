@@ -4,9 +4,9 @@
 Writes meeting log and minutes to disk.
 """
 
-import os
 import re
 from enum import Enum
+from pathlib import Path
 from typing import Any, TextIO
 
 from attrs import field, frozen
@@ -20,7 +20,7 @@ from hcoopmeetbotlogic.meeting import EventType, Meeting, TrackedMessage
 from hcoopmeetbotlogic.release import DATE, URL, VERSION
 
 # Location of Genshi templates
-_TEMPLATES = os.path.join(os.path.dirname(__file__), "templates")
+_TEMPLATES = str(Path(__file__).parent / "templates")
 _LOADER = TemplateLoader(search_path=_TEMPLATES, auto_reload=False)
 
 # Standard date and time formats
@@ -295,9 +295,8 @@ def _render_html(template: str, context: dict[str, Any], out: TextIO) -> None:
 
 def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> None:
     """Write the raw meeting log to disk in JSON format."""
-    os.makedirs(os.path.dirname(locations.raw_log.path), exist_ok=True)
-    with open(locations.raw_log.path, "w", encoding="utf-8") as out:
-        out.write(meeting.to_json())
+    Path(locations.raw_log.path).parent.mkdir(exist_ok=True, parents=True)
+    Path(locations.raw_log.path).write_text(meeting.to_json(), encoding="utf-8")
 
 
 # noinspection PyUnreachableCode
@@ -307,8 +306,8 @@ def write_formatted_log(config: Config, locations: Locations, meeting: Meeting) 
         "title": f"{meeting.name} Log",
         "messages": [_LogMessage.for_message(config, message) for message in meeting.messages],
     }
-    os.makedirs(os.path.dirname(locations.formatted_log.path), exist_ok=True)
-    with open(locations.formatted_log.path, "w", encoding="utf-8") as out:
+    Path(locations.formatted_log.path).parent.mkdir(exist_ok=True, parents=True)
+    with Path(locations.formatted_log.path).open("w", encoding="utf-8") as out:
         if config.output_format == OutputFormat.HTML:
             _render_html(template="log.html", context=context, out=out)
         else:
@@ -321,11 +320,11 @@ def write_formatted_minutes(config: Config, locations: Locations, meeting: Meeti
     context = {
         "title": f"{meeting.name} Minutes",
         "software": {"version": VERSION, "url": URL, "date": DATE},
-        "logpath": os.path.basename(locations.formatted_log.path),
+        "logpath": Path(locations.formatted_log.path).name,
         "minutes": _MeetingMinutes.for_meeting(config, meeting),
     }
-    os.makedirs(os.path.dirname(locations.formatted_minutes.path), exist_ok=True)
-    with open(locations.formatted_minutes.path, "w", encoding="utf-8") as out:
+    Path(locations.formatted_minutes.path).parent.mkdir(exist_ok=True, parents=True)
+    with Path(locations.formatted_minutes.path).open("w", encoding="utf-8") as out:
         if config.output_format == OutputFormat.HTML:
             _render_html(template="minutes.html", context=context, out=out)
         else:

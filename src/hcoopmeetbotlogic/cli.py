@@ -4,7 +4,7 @@
 CLI for the meetbot tool.
 """
 
-import os
+from pathlib import Path
 
 import click
 
@@ -59,16 +59,16 @@ def regenerate(config_path: str, raw_log: str, output_dir: str) -> None:
     zone, etc.  Configuration for the file prefix is ignored and the new files
     will be generated using the exact same prefix as the raw log file itself.
     """
-    if not os.path.isfile(config_path):
+    if not Path(config_path).is_file():
         raise click.UsageError(f"Could not find config: {config_path}")
-    if not os.path.isfile(raw_log):
+    if not Path(raw_log).is_file():
         raise click.UsageError(f"Could not find raw log: {raw_log}")
-    if not os.path.isdir(output_dir):
+    if not Path(output_dir).is_dir():
         raise click.UsageError(f"Could not find output dir: {output_dir}")
     config = load_config(None, config_path)
     prefix = derive_prefix(raw_log)
-    with open(raw_log, encoding="utf-8") as fp:
-        meeting = Meeting.from_json(fp.read())
+    json_text = Path(raw_log).read_text(encoding="utf-8")
+    meeting = Meeting.from_json(json_text)
     locations = derive_locations(config, meeting, prefix, output_dir)
     write_formatted_log(config, locations, meeting)
     write_formatted_minutes(config, locations, meeting)

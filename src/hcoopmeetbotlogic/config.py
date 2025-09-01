@@ -5,7 +5,6 @@ Plugin configuration and parsing.
 """
 
 import configparser
-import os
 from enum import Enum
 from logging import Logger
 from pathlib import Path
@@ -22,7 +21,7 @@ TIMEZONE_KEY = "timezone"
 USE_CHANNEL_TOPIC_KEY = "useChannelTopic"
 OUTPUT_FORMAT_KEY = "outputFormat"
 
-LOG_DIR_DEFAULT = os.path.join(Path.home(), "hcoop-meetbot")
+LOG_DIR_DEFAULT = str(Path.home() / "hcoop-meetbot")
 URL_PREFIX_DEFAULT = "/"
 PATTERN_DEFAULT = "%Y/{name}.%Y%m%d.%H%M"
 TIMEZONE_DEFAULT = "UTC"
@@ -81,7 +80,7 @@ def load_config(logger: Logger | None, conf_path: str) -> Config:
     """
 
     def parse_config(source: str) -> Config:
-        if not os.path.isfile(source):
+        if not Path(source).is_file():
             if logger:
                 logger.debug("Could not find %s; using defaults", source)
             return Config(conf_file=None)
@@ -104,8 +103,8 @@ def load_config(logger: Logger | None, conf_path: str) -> Config:
                 logger.exception("Failed to parse %s; using defaults", source)
             return Config(conf_file=None)
 
-    conf_file = os.path.join(conf_path, CONF_FILE) if os.path.isdir(conf_path) else conf_path
-    config = parse_config(conf_file)
+    conf_file = Path(conf_path) / CONF_FILE if Path(conf_path).is_dir() else Path(conf_path)
+    config = parse_config(str(conf_file))
     if logger:
         logger.info("HcoopMeetbot config: %s", config)
     return config
