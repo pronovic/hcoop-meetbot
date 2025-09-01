@@ -1,6 +1,7 @@
 Version 0.6.16     unreleased
 
 	* Remove `__all__ = []` from __init__.py.
+	* Add a new 'suite -f' command to run faster subset of the suite.
 	* Upgrade to poetry-dynamic-versioning v1.9.1 for minor fixes.
 	* Version profiles_settings.xml to control PyCharm inspection profile.
 	* Adjust GHA build process to allow builds for stacked PRs.
