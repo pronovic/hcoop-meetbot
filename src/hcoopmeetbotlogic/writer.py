@@ -308,7 +308,7 @@ def write_formatted_log(config: Config, locations: Locations, meeting: Meeting) 
         "messages": [_LogMessage.for_message(config, message) for message in meeting.messages],
     }
     Path(os.path.dirname(locations.formatted_log.path)).mkdir(exist_ok=True, parents=True)
-    with open(locations.formatted_log.path, "w", encoding="utf-8") as out:
+    with Path(locations.formatted_log.path).open("w", encoding="utf-8") as out:
         if config.output_format == OutputFormat.HTML:
             _render_html(template="log.html", context=context, out=out)
         else:
@@ -325,7 +325,7 @@ def write_formatted_minutes(config: Config, locations: Locations, meeting: Meeti
         "minutes": _MeetingMinutes.for_meeting(config, meeting),
     }
     Path(os.path.dirname(locations.formatted_minutes.path)).mkdir(exist_ok=True, parents=True)
-    with open(locations.formatted_minutes.path, "w", encoding="utf-8") as out:
+    with Path(locations.formatted_minutes.path).open("w", encoding="utf-8") as out:
         if config.output_format == OutputFormat.HTML:
             _render_html(template="minutes.html", context=context, out=out)
         else:
