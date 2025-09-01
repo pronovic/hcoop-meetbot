@@ -1,4 +1,6 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
+# ruff: noqa: S108
+
 import os
 from pathlib import Path
 from unittest.mock import MagicMock

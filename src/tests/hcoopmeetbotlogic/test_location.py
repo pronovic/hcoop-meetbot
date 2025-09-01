@@ -1,4 +1,6 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
+# ruff: noqa: S108
+
 from datetime import datetime
 
 import pytest

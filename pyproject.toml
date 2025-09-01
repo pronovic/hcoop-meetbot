@@ -181,7 +181,6 @@ ignore = [
   "PTH",        # allow old-style os operations rather than pathlib.Path
   "UP031",      # allow old-style format specifiers instead of f-strings
   "DTZ",        # flake8-datetimez
-  "S",          # flake8-bandit
 ]
 
 [tool.ruff.lint.per-file-ignores]
