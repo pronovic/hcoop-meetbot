@@ -44,7 +44,7 @@ class TestParsing:
         logger = MagicMock()
         conf_dir = VALID_DIR
         conf_file = os.path.join(conf_dir, "HcoopMeetbot.conf")  # if the caller provides a directory, we always load this file
-        assert os.path.isdir(conf_dir) and os.path.isfile(conf_file)
+        assert Path(conf_dir).is_dir() and os.path.isfile(conf_file)
         config = load_config(logger, conf_dir)
         assert config.conf_file == conf_file
         assert config.log_dir == "/tmp/meetings"
@@ -58,7 +58,7 @@ class TestParsing:
         logger = MagicMock()
         conf_dir = VALID_DIR
         conf_file = os.path.join(conf_dir, "CustomName.conf")  # for anything other than a directory, we open it like a file
-        assert os.path.isdir(conf_dir) and os.path.isfile(conf_file)
+        assert Path(conf_dir).is_dir() and os.path.isfile(conf_file)
         config = load_config(logger, conf_file)
         assert config.conf_file == conf_file
         assert config.log_dir == "/tmp/custom"
@@ -72,7 +72,7 @@ class TestParsing:
         logger = MagicMock()
         conf_dir = OPTIONAL_DIR
         conf_file = os.path.join(conf_dir, "HcoopMeetbot.conf")
-        assert os.path.isdir(conf_dir) and os.path.isfile(conf_file)
+        assert Path(conf_dir).is_dir() and os.path.isfile(conf_file)
         config = load_config(logger, conf_dir)
         assert config.conf_file == conf_file
         assert config.log_dir == "/tmp/meetings"
@@ -86,7 +86,7 @@ class TestParsing:
         logger = MagicMock()
         conf_dir = NO_CHANNEL_DIR
         conf_file = os.path.join(conf_dir, "HcoopMeetbot.conf")
-        assert os.path.isdir(conf_dir) and os.path.isfile(conf_file)
+        assert Path(conf_dir).is_dir() and os.path.isfile(conf_file)
         config = load_config(logger, conf_dir)
         assert config.conf_file == conf_file
         assert config.log_dir == "/tmp/meetings"
@@ -99,7 +99,7 @@ class TestParsing:
         logger = MagicMock()
         conf_dir = EMPTY_DIR
         conf_file = os.path.join(conf_dir, "HcoopMeetbot.conf")
-        assert os.path.isdir(conf_dir) and os.path.isfile(conf_file)
+        assert Path(conf_dir).is_dir() and os.path.isfile(conf_file)
         config = load_config(logger, conf_dir)  # any key that can't be loaded gets defaults
         assert config.conf_file == conf_file
         assert config.log_dir == os.path.join(Path.home(), "hcoop-meetbot")
@@ -112,7 +112,7 @@ class TestParsing:
         logger = MagicMock()
         conf_dir = BAD_BOOLEAN_DIR
         conf_file = os.path.join(conf_dir, "HcoopMeetbot.conf")
-        assert os.path.isdir(conf_dir) and os.path.isfile(conf_file)
+        assert Path(conf_dir).is_dir() and os.path.isfile(conf_file)
         config = load_config(logger, conf_dir)  # since the boolean value is invalid, it's like the file doesn't exist
         assert config.conf_file is None
         assert config.log_dir == os.path.join(Path.home(), "hcoop-meetbot")
@@ -125,7 +125,7 @@ class TestParsing:
         logger = MagicMock()
         conf_dir = BAD_FORMAT_DIR
         conf_file = os.path.join(conf_dir, "HcoopMeetbot.conf")
-        assert os.path.isdir(conf_dir) and os.path.isfile(conf_file)
+        assert Path(conf_dir).is_dir() and os.path.isfile(conf_file)
         config = load_config(logger, conf_dir)  # since the output format is invalid, it's like the file doesn't exist
         assert config.conf_file is None
         assert config.log_dir == os.path.join(Path.home(), "hcoop-meetbot")
@@ -138,7 +138,7 @@ class TestParsing:
         logger = MagicMock()
         conf_dir = INVALID_DIR
         conf_file = os.path.join(conf_dir, "HcoopMeetbot.conf")
-        assert os.path.isdir(conf_dir) and os.path.isfile(conf_file)
+        assert Path(conf_dir).is_dir() and os.path.isfile(conf_file)
         config = load_config(logger, conf_dir)  # since the file is invalid, it's like the keys don't exist
         assert config.conf_file == conf_file
         assert config.log_dir == os.path.join(Path.home(), "hcoop-meetbot")

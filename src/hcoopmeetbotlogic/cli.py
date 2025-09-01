@@ -64,7 +64,7 @@ def regenerate(config_path: str, raw_log: str, output_dir: str) -> None:
         raise click.UsageError(f"Could not find config: {config_path}")
     if not os.path.isfile(raw_log):
         raise click.UsageError(f"Could not find raw log: {raw_log}")
-    if not os.path.isdir(output_dir):
+    if not Path(output_dir).is_dir():
         raise click.UsageError(f"Could not find output dir: {output_dir}")
     config = load_config(None, config_path)
     prefix = derive_prefix(raw_log)

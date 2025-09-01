@@ -178,7 +178,7 @@ ignore = [
   "ARG002",     # allow unused arguments, since we're often implementing an interface
 #   "PTH103",
 #   "PTH110",
-  "PTH112",
+#   "PTH112",
   "PTH113",
   "PTH118",
   "PTH119",

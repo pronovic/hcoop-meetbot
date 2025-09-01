@@ -104,7 +104,7 @@ def load_config(logger: Logger | None, conf_path: str) -> Config:
                 logger.exception("Failed to parse %s; using defaults", source)
             return Config(conf_file=None)
 
-    conf_file = os.path.join(conf_path, CONF_FILE) if os.path.isdir(conf_path) else conf_path
+    conf_file = os.path.join(conf_path, CONF_FILE) if Path(conf_path).is_dir() else conf_path
     config = parse_config(conf_file)
     if logger:
         logger.info("HcoopMeetbot config: %s", config)
