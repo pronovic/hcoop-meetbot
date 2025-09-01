@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
+# ruff: noqa: PLR6301
 
 # Note: this must be executed by supybot-test.  Use 'run test' from the command line.
 #
 # Unfortunately, tests must live alongside the source code for supybot-test to execute them.
 # So, this lives here rather than in the tests modules with all of the other unit tests.
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import ANY, MagicMock, call, patch
 
 from supybot.test import ChannelPluginTestCase
@@ -19,7 +19,7 @@ NICK = "test"
 CHANNEL = "#test"
 NETWORK = "test"
 PREFIX = "@"
-TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0)
+TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
 
 
 def _stub(context, **kwargs):
@@ -46,7 +46,7 @@ def _outbound():
     return Message(id=ID, timestamp=TIMESTAMP, nick=NICK, channel=CHANNEL, network=NETWORK, payload="%s: Hello" % NICK)
 
 
-class HcoopMeetbotTestCase(ChannelPluginTestCase):  # type: ignore
+class HcoopMeetbotTestCase(ChannelPluginTestCase):
     plugins = ("HcoopMeetbot",)
 
     @patch("HcoopMeetbot.plugin.ircmsgs.topic")

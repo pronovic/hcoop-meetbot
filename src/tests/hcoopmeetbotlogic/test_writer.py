@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
+# ruff: noqa: FURB113
 
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from tempfile import TemporaryDirectory
 from unittest.mock import MagicMock, patch
 
@@ -12,12 +12,11 @@ from hcoopmeetbotlogic.config import OutputFormat
 from hcoopmeetbotlogic.location import Location, Locations
 from hcoopmeetbotlogic.meeting import Meeting
 from hcoopmeetbotlogic.writer import _AliasMatcher, _LogMessage, write_meeting
-
-from .testdata import contents, sample_meeting
+from tests.hcoopmeetbotlogic.testdata import contents, sample_meeting
 
 EXPECTED_LOG = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/log.html")
 EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer/minutes.html")
-TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0)
+TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
 
 
 class TestLogMessage:
@@ -163,9 +162,6 @@ class TestRendering:
             config = MagicMock(timezone="America/Chicago", output_format=OutputFormat.HTML)
             meeting = sample_meeting()
             assert write_meeting(config, meeting) is locations
-            # print("\n" + contents(raw_log.path))
-            # print("\n" + contents(formatted_log.path))
-            # print("\n" + contents(formatted_minutes.path))
             derive_locations.assert_called_once_with(config, meeting)
             assert meeting == Meeting.from_json(contents(raw_log.path))  # raw log should exactly represent the meeting input
             assert contents(formatted_log.path) == contents(EXPECTED_LOG)

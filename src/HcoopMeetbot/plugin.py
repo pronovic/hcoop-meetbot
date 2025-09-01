@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
 
 """
@@ -37,7 +36,7 @@ def _context(plugin, irc, msg) -> interface.Context:
     return interface.Context(
         get_topic=lambda: get_topic(irc, channel),
         set_topic=lambda topic: irc.sendMsg(ircmsgs.topic(channel, topic)),
-        send_reply=irc.reply if hasattr(irc, "reply") and callable(irc.reply) else lambda x: None,
+        send_reply=irc.reply if hasattr(irc, "reply") and callable(irc.reply) else lambda _: None,
         send_message=lambda message: irc.sendMsg(ircmsgs.privmsg(channel, message)),
     )
 
@@ -71,7 +70,7 @@ class HcoopMeetbot(callbacks.Plugin):
     def outFilter(self, irc, msg):
         """Log outgoing messages from supybot."""
         try:
-            if msg.command in ("PRIVMSG",):
+            if msg.command == "PRIVMSG":
                 context = _context(self, irc, msg)
                 message = interface.Message(
                     id=uuid4().hex,

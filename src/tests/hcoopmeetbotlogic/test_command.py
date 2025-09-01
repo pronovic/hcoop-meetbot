@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import MagicMock, call, patch
 
 import pytest
@@ -139,7 +138,7 @@ class TestFunctions:
     @patch("hcoopmeetbotlogic.command.getattr")
     def test_dispatch_non_commands(self, _getattr, _hasattr):
         def run_ignored_dispatch(payload, channel=None):
-            meeting = MagicMock(channel=channel if channel else "#channel")
+            meeting = MagicMock(channel=channel or "#channel")
             context = MagicMock()
             message = MagicMock(payload=payload)
             _hasattr.return_value = False
@@ -189,7 +188,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         meeting.chairs = ["x", "y"]
         meeting.current_topic = "The Topic"
-        meeting.start_time = datetime(2021, 3, 7, 13, 14, 0)
+        meeting.start_time = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
         config.return_value = MagicMock(timezone="America/Chicago", use_channel_topic=True)
         formatdate.return_value = "11111"
         context.get_topic = MagicMock(return_value="original")
@@ -214,7 +213,7 @@ class TestCommandDispatcher:
         meeting.is_chair.return_value = True
         meeting.chairs = ["x", "y"]
         meeting.current_topic = "The Topic"
-        meeting.start_time = datetime(2021, 3, 7, 13, 14, 0)
+        meeting.start_time = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
         config.return_value = MagicMock(timezone="America/Chicago", use_channel_topic=False)
         formatdate.return_value = "11111"
         context.get_topic = MagicMock(return_value="original")
@@ -266,7 +265,7 @@ class TestCommandDispatcher:
         meeting.original_topic = "original"
         config.return_value = MagicMock(timezone="America/Chicago")
         formatdate.return_value = "11111"
-        now.return_value = datetime(2021, 3, 7, 13, 14, 0)
+        now.return_value = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
         meeting.is_chair.return_value = True
         write_meeting.return_value = MagicMock()
         write_meeting.return_value.raw_log = MagicMock(url="rawurl")

@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
+# ruff: noqa: PLR6301,PLR0904
 
 """
 Implementation of meeting commands.
@@ -7,16 +7,15 @@ Implementation of meeting commands.
 
 import re
 from datetime import datetime
-from typing import List, Optional
 
 from attrs import define
 
-from .dateutil import formatdate, now
-from .interface import Context, Message
-from .meeting import EventType, Meeting, TrackedMessage, VotingAction
-from .release import DOCS
-from .state import config, deactivate_meeting
-from .writer import write_meeting
+from hcoopmeetbotlogic.dateutil import formatdate, now
+from hcoopmeetbotlogic.interface import Context, Message
+from hcoopmeetbotlogic.meeting import EventType, Meeting, TrackedMessage, VotingAction
+from hcoopmeetbotlogic.release import DOCS
+from hcoopmeetbotlogic.state import config, deactivate_meeting
+from hcoopmeetbotlogic.writer import write_meeting
 
 # Regular expression to identify the startmeeting command
 _STARTMEETING_REGEX = re.compile(r"(^\s*)(#)(startmeeting)(\s*)(.*$)", re.IGNORECASE)
@@ -44,7 +43,7 @@ class CommandDispatcher:
     a class makes certain operations easier - for example, the list_commands() method.
     """
 
-    def list_commands(self) -> List[str]:
+    def list_commands(self) -> list[str]:
         # I've decided to return this in alphabetical order.  There's some case to be made
         # for grouping them together into related commands, but that wouldn't be as straightforward.
         return sorted(["#" + o[len(_METHOD_PREFIX) :] for o in dir(self) if o[: len(_METHOD_PREFIX)] == _METHOD_PREFIX])
@@ -115,7 +114,7 @@ class CommandDispatcher:
 
     def do_here(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Document attendance and optionally associate a nick with an alias, for use with actions."""
-        alias = operand if operand else message.sender
+        alias = operand or message.sender
         meeting.track_event(EventType.ATTENDEE, message, operand=alias)
         meeting.track_attendee(nick=message.sender, alias=alias)
 
@@ -162,7 +161,7 @@ class CommandDispatcher:
     def do_close(self, meeting: Meeting, context: Context, operation: str, operand: str, message: TrackedMessage) -> None:
         """Close a motion."""
         if meeting.is_chair(message.sender) and meeting.vote_in_progress:
-            votes = meeting.events[meeting.motion_index + 1 :]  # type: ignore
+            votes = meeting.events[meeting.motion_index + 1 :]  # type: ignore[operator]  # index is safe if vote is in progress
             in_favor = [event.message.sender for event in votes if event.operand == VotingAction.IN_FAVOR]
             opposed = [event.message.sender for event in votes if event.operand == VotingAction.OPPOSED]
             if not in_favor and not opposed:
@@ -226,16 +225,15 @@ class CommandDispatcher:
         """Add a link to the minutes."""
         meeting.track_event(EventType.LINK, message, operand=operand)
 
-    def _formatdate(self, timestamp: Optional[datetime]) -> str:
+    def _formatdate(self, timestamp: datetime | None) -> str:
         """Format a date in the user's configured time zone."""
         return formatdate(timestamp=timestamp, zone=config().timezone)
 
-    def _tokenize(self, value: str, pattern: str = r"[\s,]+", limit: Optional[int] = None) -> List[str]:
+    def _tokenize(self, value: str, pattern: str = r"[\s,]+", limit: int | None = None) -> list[str]:
         """Tokenize a value, splitting via a regular expression and returning all non-empty values up to a limit."""
         if not value or not pattern:
             return []
-        else:
-            return [token.strip() for token in re.split(pattern, value) if token.strip()][:limit]
+        return [token.strip() for token in re.split(pattern, value) if token.strip()][:limit]
 
     def _set_channel_topic(self, meeting: Meeting, context: Context) -> None:
         """Set the channel topic based on the current state of the meeting."""
@@ -259,14 +257,14 @@ class CommandDispatcher:
                 else:
                     context.set_topic("Meeting Active")
             else:
-                context.set_topic(meeting.original_topic if meeting.original_topic else "")
+                context.set_topic(meeting.original_topic or "")
 
 
 # Singleton command dispatcher
 _DISPATCHER = CommandDispatcher()
 
 
-def list_commands() -> List[str]:
+def list_commands() -> list[str]:
     """List available commands."""
     return _DISPATCHER.list_commands()
 

@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
 import os
 from tempfile import TemporaryDirectory
-from typing import List
 from unittest.mock import ANY, MagicMock, patch
 
 from click.testing import CliRunner, Result
@@ -10,8 +8,7 @@ from click.testing import CliRunner, Result
 from hcoopmeetbotlogic.cli import meetbot as command
 from hcoopmeetbotlogic.config import OutputFormat
 from hcoopmeetbotlogic.location import Location, Locations
-
-from .testdata import contents
+from tests.hcoopmeetbotlogic.testdata import contents
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "fixtures/test_config/valid/HcoopMeetbot.conf")
 RAW_LOG_PREFIX = "2022-06-04"
@@ -21,7 +18,7 @@ EXPECTED_MINUTES = os.path.join(os.path.dirname(__file__), "fixtures/test_writer
 
 
 # noinspection PyTypeChecker
-def invoke(args: List[str]) -> Result:
+def invoke(args: list[str]) -> Result:
     return CliRunner().invoke(command, args)
 
 

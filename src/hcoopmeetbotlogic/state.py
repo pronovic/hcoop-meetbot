@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
 
 """
@@ -8,10 +7,9 @@ Shared plugin state, maintained as singleton objects.
 import operator
 from collections import deque
 from logging import Logger
-from typing import Deque, Dict, List, Optional
 
-from .config import Config
-from .meeting import Meeting
+from hcoopmeetbotlogic.config import Config
+from hcoopmeetbotlogic.meeting import Meeting
 
 _COMPLETED_SIZE = 16  # size of the _COMPLETED deque
 
@@ -24,33 +22,33 @@ _COMPLETED_SIZE = 16  # size of the _COMPLETED deque
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _LOGGER  # type: ignore
+    _LOGGER  # type: ignore[has-type,used-before-def] # noqa: B018
 except NameError:
     _LOGGER = None
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _CONFIG  # type: ignore
+    _CONFIG  # type: ignore[has-type,used-before-def] # noqa: B018
 except NameError:
     _CONFIG = None
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _ACTIVE  # type: ignore[used-before-def]
+    _ACTIVE  # type: ignore[used-before-def] # noqa: B018
 except NameError:
-    _ACTIVE: Dict[str, Meeting] = {}
+    _ACTIVE: dict[str, Meeting] = {}
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _COMPLETED  # type: ignore[used-before-def]
+    _COMPLETED  # type: ignore[used-before-def] # noqa: B018
 except NameError:
-    _COMPLETED: Deque[Meeting] = deque([], _COMPLETED_SIZE)
+    _COMPLETED: deque[Meeting] = deque(maxlen=_COMPLETED_SIZE)
 
 
 # noinspection PyShadowingNames
 def set_logger(logger: Logger) -> None:
     """Set the shared logger instance."""
-    global _LOGGER
+    global _LOGGER  # noqa: PLW0603
     _LOGGER = logger
 
 
@@ -65,7 +63,7 @@ def logger() -> Logger:
 # noinspection PyShadowingNames
 def set_config(config: Config) -> None:
     """Set shared configuration."""
-    global _CONFIG
+    global _CONFIG  # noqa: PLW0603
     _CONFIG = config
 
 
@@ -84,7 +82,7 @@ def add_meeting(nick: str, channel: str, network: str) -> Meeting:
     return meeting
 
 
-def deactivate_meeting(meeting: Meeting, retain: bool = True) -> None:
+def deactivate_meeting(meeting: Meeting, *, retain: bool = True) -> None:
     """Move a meeting out of the active list, optionally retaining it in the completed list."""
     key = meeting.key()
     assert key in _ACTIVE  # if the key is not tracked, something is screwed up
@@ -94,7 +92,7 @@ def deactivate_meeting(meeting: Meeting, retain: bool = True) -> None:
         _COMPLETED.append(popped)  # will potentially roll off an older meeting
 
 
-def get_meeting(channel: str, network: str) -> Optional[Meeting]:
+def get_meeting(channel: str, network: str) -> Meeting | None:
     """Get a meeting for the channel and network."""
     try:
         key = Meeting.meeting_key(channel, network)
@@ -103,9 +101,9 @@ def get_meeting(channel: str, network: str) -> Optional[Meeting]:
         return None
 
 
-def get_meetings(active: bool = True, completed: bool = True) -> List[Meeting]:
+def get_meetings(*, active: bool = True, completed: bool = True) -> list[Meeting]:
     """Return a list of tracked meetings, optionally filtering out active or completed meetings."""
-    meetings: List[Meeting] = []
+    meetings: list[Meeting] = []
     if active:
         meetings += _ACTIVE.values()
     if completed:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
 
 """
@@ -68,7 +67,7 @@ def regenerate(config_path: str, raw_log: str, output_dir: str) -> None:
         raise click.UsageError("Could not find output dir: %s" % output_dir)
     config = load_config(None, config_path)
     prefix = derive_prefix(raw_log)
-    with open(raw_log, "r", encoding="utf-8") as fp:
+    with open(raw_log, encoding="utf-8") as fp:
         meeting = Meeting.from_json(fp.read())
     locations = derive_locations(config, meeting, prefix, output_dir)
     write_formatted_log(config, locations, meeting)

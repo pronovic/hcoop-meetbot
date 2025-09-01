@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
 
 """
@@ -9,13 +8,13 @@ import json
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import cattrs
 from attrs import define, field, frozen
 
-from .dateutil import formatdate, now
-from .interface import Message
+from hcoopmeetbotlogic.dateutil import formatdate, now
+from hcoopmeetbotlogic.interface import Message
 
 
 class _CattrConverter(cattrs.GenConverter):
@@ -107,7 +106,7 @@ class TrackedEvent:
 
     event_type: EventType
     message: TrackedMessage
-    operand: Optional[Any]
+    operand: Any | None
     id: str = field()
     timestamp: datetime = field()
 
@@ -169,18 +168,18 @@ class Meeting:
     id: str = field(factory=lambda: uuid.uuid4().hex)
     name: str = field()
     chair: str = field()
-    chairs: List[str] = field()
-    nicks: Dict[str, int] = field()
+    chairs: list[str] = field()
+    nicks: dict[str, int] = field()
     start_time: datetime = field(factory=now)
-    end_time: Optional[datetime] = None
+    end_time: datetime | None = None
     active: bool = False
-    original_topic: Optional[str] = None
-    current_topic: Optional[str] = None
-    messages: List[TrackedMessage] = field(factory=list)
-    events: List[TrackedEvent] = field(factory=list)
-    aliases: Dict[str, Optional[str]] = field(factory=dict)
+    original_topic: str | None = None
+    current_topic: str | None = None
+    messages: list[TrackedMessage] = field(factory=list)
+    events: list[TrackedEvent] = field(factory=list)
+    aliases: dict[str, str | None] = field(factory=dict)
     vote_in_progress: bool = False
-    motion_index: Optional[int] = None
+    motion_index: int | None = None
 
     # noinspection PyUnresolvedReferences
     @chair.default
@@ -189,13 +188,13 @@ class Meeting:
 
     # noinspection PyUnresolvedReferences
     @chairs.default
-    def _default_chairs(self) -> List[str]:
+    def _default_chairs(self) -> list[str]:
         return [self.chair]
 
     # noinspection PyUnresolvedReferences
     @nicks.default
-    def _default_nicks(self) -> Dict[str, int]:
-        return {nick: 0 for nick in self.chairs}
+    def _default_nicks(self) -> dict[str, int]:
+        return dict.fromkeys(self.chairs, 0)
 
     # noinspection PyUnresolvedReferences
     @name.default
@@ -223,10 +222,10 @@ class Meeting:
         """Get the meeting display name."""
         return "%s/%s@%s" % (self.channel, self.network, formatdate(self.start_time))
 
-    def add_chair(self, nick: str, primary: bool = True) -> None:
+    def add_chair(self, nick: str, *, primary: bool = True) -> None:
         """Add a chair to a meeting, potentially making it the primary chair."""
         self.track_nick(nick, messages=0)
-        if not nick in self.chairs:
+        if nick not in self.chairs:
             self.chairs.append(nick)
             self.chairs.sort()
         if primary:
@@ -243,14 +242,14 @@ class Meeting:
         """Whether a nickname is a chair for the meeting"""
         return nick in self.chairs
 
-    def track_attendee(self, nick: str, alias: Optional[str] = None) -> None:
+    def track_attendee(self, nick: str, alias: str | None = None) -> None:
         """Track an IRC nick as a meeting attendee, optionally assigning an alias."""
         self.aliases[nick] = alias if alias and alias != nick else None
         self.track_nick(nick=nick, messages=0)
 
     def track_nick(self, nick: str, messages: int = 1) -> None:
         """Track an IRC nick, incrementing its count of messages as indicated"""
-        if not nick in self.nicks:
+        if nick not in self.nicks:
             self.nicks[nick] = 0
         self.nicks[nick] += messages
 
@@ -267,13 +266,13 @@ class Meeting:
         self.track_nick(message.nick)
         return tracked
 
-    def track_event(self, event_type: EventType, message: TrackedMessage, operand: Optional[Any] = None) -> TrackedEvent:
+    def track_event(self, event_type: EventType, message: TrackedMessage, operand: Any | None = None) -> TrackedEvent:
         """Track an event associated with a meeting."""
         event = TrackedEvent(event_type=event_type, message=message, operand=operand)
         self.events.append(event)
         return event
 
-    def pop_event(self) -> Optional[TrackedEvent]:
+    def pop_event(self) -> TrackedEvent | None:
         """Pop the last tracked event off the list of events, if possible, returning the event."""
         # We do not allow the caller to pop the very first event (#startmeeting), because that would leave
         # things in a strange, indeterminate state.  If they don't want the meeting, they should end it.

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # vim: set ft=python ts=4 sw=4 expandtab:
 
 """
@@ -8,17 +7,17 @@ Writes meeting log and minutes to disk.
 import os
 import re
 from enum import Enum
-from typing import Any, Dict, List, Optional, TextIO
+from typing import Any, TextIO
 
 from attrs import field, frozen
 from genshi.builder import Element, tag
 from genshi.template import MarkupTemplate, TemplateLoader
 
-from .config import Config, OutputFormat
-from .dateutil import formatdate
-from .location import Locations, derive_locations
-from .meeting import EventType, Meeting, TrackedMessage
-from .release import DATE, URL, VERSION
+from hcoopmeetbotlogic.config import Config, OutputFormat
+from hcoopmeetbotlogic.dateutil import formatdate
+from hcoopmeetbotlogic.location import Locations, derive_locations
+from hcoopmeetbotlogic.meeting import EventType, Meeting, TrackedMessage
+from hcoopmeetbotlogic.release import DATE, URL, VERSION
 
 # Location of Genshi templates
 _TEMPLATES = os.path.join(os.path.dirname(__file__), "templates")
@@ -97,21 +96,16 @@ class _LogMessage:
     def _content(message: TrackedMessage) -> Element:
         if message.action:
             return tag.span(_LogMessage._payload(message.payload), class_="ac")
-        else:
-            operation_match = _OPERATION_REGEX.match(message.payload)
-            if operation_match:
-                operation = operation_match.group(_OPERATION_GROUP).lower().strip()
-                operand = operation_match.group(_OPERAND_GROUP).strip()
-                if operation == "#topic":
-                    return tag.span(
-                        tag.span("%s " % operation, class_="topic"), tag.span(_LogMessage._payload(operand), class_="topicline")
-                    )
-                else:
-                    return tag.span(
-                        tag.span("%s " % operation, class_="cmd"), tag.span(_LogMessage._payload(operand), class_="cmdline")
-                    )
-            else:
-                return _LogMessage._payload(message.payload)
+        operation_match = _OPERATION_REGEX.match(message.payload)
+        if operation_match:
+            operation = operation_match.group(_OPERATION_GROUP).lower().strip()
+            operand = operation_match.group(_OPERAND_GROUP).strip()
+            if operation == "#topic":
+                return tag.span(
+                    tag.span("%s " % operation, class_="topic"), tag.span(_LogMessage._payload(operand), class_="topicline")
+                )
+            return tag.span(tag.span("%s " % operation, class_="cmd"), tag.span(_LogMessage._payload(operand), class_="cmdline"))
+        return _LogMessage._payload(message.payload)
 
     @staticmethod
     def _payload(payload: str) -> Element:
@@ -135,10 +129,10 @@ class _MeetingAttendee:
     """A meeting attendee, including count of chat lines and all associated actions."""
 
     nick: str
-    alias: Optional[str]
+    alias: str | None
     count: int
     percentage: str  # stored as a string so we control rounding and format
-    actions: List[_MeetingAction]
+    actions: list[_MeetingAction]
 
 
 @frozen
@@ -146,9 +140,9 @@ class _AliasMatcher:
     """Utility class to identify whether an attendee nick or alias is found in a message."""
 
     nick: str
-    alias: Optional[str]
+    alias: str | None
     nick_pattern: re.Pattern[str] = field()
-    alias_pattern: Optional[re.Pattern[str]] = field()
+    alias_pattern: re.Pattern[str] | None = field()
 
     # noinspection PyUnresolvedReferences
     @nick_pattern.default
@@ -157,7 +151,7 @@ class _AliasMatcher:
 
     # noinspection PyUnresolvedReferences
     @alias_pattern.default
-    def _alias_pattern_default(self) -> Optional[re.Pattern[str]]:
+    def _alias_pattern_default(self) -> re.Pattern[str] | None:
         return _AliasMatcher._regex(self.alias) if self.alias else None
 
     @staticmethod
@@ -180,7 +174,7 @@ class _MeetingEvent:
     timestamp: str
     nick: str
     payload: str
-    link: Optional[str] = None
+    link: str | None = None
 
 
 @frozen
@@ -191,7 +185,7 @@ class _MeetingTopic:
     name: str
     timestamp: str
     nick: str
-    events: List[_MeetingEvent] = field(factory=list)
+    events: list[_MeetingEvent] = field(factory=list)
 
 
 @frozen
@@ -201,9 +195,9 @@ class _MeetingMinutes:
     start_time: str
     end_time: str
     founder: str
-    actions: List[_MeetingAction]
-    attendees: List[_MeetingAttendee]
-    topics: List[_MeetingTopic]
+    actions: list[_MeetingAction]
+    attendees: list[_MeetingAttendee]
+    topics: list[_MeetingTopic]
 
     @staticmethod
     def for_meeting(config: Config, meeting: Meeting) -> "_MeetingMinutes":
@@ -217,7 +211,7 @@ class _MeetingMinutes:
         )
 
     @staticmethod
-    def _actions(meeting: Meeting) -> List[_MeetingAction]:
+    def _actions(meeting: Meeting) -> list[_MeetingAction]:
         actions = []
         for event in meeting.events:
             if event.event_type == EventType.ACTION and event.operand:
@@ -226,20 +220,20 @@ class _MeetingMinutes:
         return actions
 
     @staticmethod
-    def _attendees(meeting: Meeting) -> List[_MeetingAttendee]:
+    def _attendees(meeting: Meeting) -> list[_MeetingAttendee]:
         attendees = []
         total = sum(meeting.nicks.values())
         for nick in sorted(meeting.nicks.keys()):
             count = meeting.nicks[nick]
             percentage = "%d" % (round(count / total * 100.0) if total > 0.0 else 0.0)
-            alias = meeting.aliases[nick] if nick in meeting.aliases else None
+            alias = meeting.aliases.get(nick, None)
             actions = _MeetingMinutes._attendee_actions(meeting, nick, alias)
             attendee = _MeetingAttendee(nick=nick, alias=alias, count=count, percentage=percentage, actions=actions)
             attendees.append(attendee)
         return attendees
 
     @staticmethod
-    def _attendee_actions(meeting: Meeting, nick: str, alias: Optional[str]) -> List[_MeetingAction]:
+    def _attendee_actions(meeting: Meeting, nick: str, alias: str | None) -> list[_MeetingAction]:
         actions = []
         matcher = _AliasMatcher(nick, alias)
         for event in meeting.events:
@@ -250,7 +244,7 @@ class _MeetingMinutes:
         return actions
 
     @staticmethod
-    def _topics(config: Config, meeting: Meeting) -> List[_MeetingTopic]:
+    def _topics(config: Config, meeting: Meeting) -> list[_MeetingTopic]:
         current = _MeetingTopic(
             id=meeting.messages[0].id,
             name="Prologue",
@@ -293,7 +287,7 @@ class _MeetingMinutes:
         return topics
 
 
-def _render_html(template: str, context: Dict[str, Any], out: TextIO) -> None:
+def _render_html(template: str, context: dict[str, Any], out: TextIO) -> None:
     """Render the named template to HTML, writing into the provided file."""
     renderer = _LOADER.load(filename=template, cls=MarkupTemplate)  # type: MarkupTemplate
     renderer.generate(**context).render(method="html", doctype="html", out=out)
