@@ -51,13 +51,17 @@ class TestConfig:
         set_config.assert_called_once_with(config)
 
 
-@patch("hcoopmeetbotlogic.handler.logger")
 class TestHandlers:
+    @pytest.fixture(autouse=True)
+    def logger(self):
+        with patch("hcoopmeetbotlogic.handler.logger"):
+            yield
+
     @patch("hcoopmeetbotlogic.handler.dispatch")
     @patch("hcoopmeetbotlogic.handler.is_startmeeting")
     @patch("hcoopmeetbotlogic.handler.add_meeting")
     @patch("hcoopmeetbotlogic.handler.get_meeting")
-    def test_irc_message_no_meeting(self, get_meeting, add_meeting, is_startmeeting, dispatch, logger, context):
+    def test_irc_message_no_meeting(self, get_meeting, add_meeting, is_startmeeting, dispatch, context):
         message = MagicMock(nick="nick", channel="channel", network="network")
         get_meeting.return_value = None
         is_startmeeting.return_value = False
@@ -70,7 +74,7 @@ class TestHandlers:
     @patch("hcoopmeetbotlogic.handler.is_startmeeting")
     @patch("hcoopmeetbotlogic.handler.add_meeting")
     @patch("hcoopmeetbotlogic.handler.get_meeting")
-    def test_irc_message_with_meeting(self, get_meeting, add_meeting, is_startmeeting, dispatch, logger, context):
+    def test_irc_message_with_meeting(self, get_meeting, add_meeting, is_startmeeting, dispatch, context):
         message = MagicMock(nick="nick", channel="channel", network="network")
         meeting = MagicMock()
         meeting.track_message = MagicMock(return_value="xxx")
@@ -85,7 +89,7 @@ class TestHandlers:
     @patch("hcoopmeetbotlogic.handler.is_startmeeting")
     @patch("hcoopmeetbotlogic.handler.add_meeting")
     @patch("hcoopmeetbotlogic.handler.get_meeting")
-    def test_irc_message_start_meeting(self, get_meeting, add_meeting, is_startmeeting, dispatch, logger, context):
+    def test_irc_message_start_meeting(self, get_meeting, add_meeting, is_startmeeting, dispatch, context):
         message = MagicMock(nick="nick", channel="channel", network="network")
         meeting = MagicMock()
         meeting.track_message = MagicMock(return_value="xxx")
@@ -99,14 +103,14 @@ class TestHandlers:
         dispatch.assert_called_once_with(meeting, context, "xxx")
 
     @patch("hcoopmeetbotlogic.handler.get_meeting")
-    def test_outbound_message_no_meeting(self, get_meeting, logger, context):
+    def test_outbound_message_no_meeting(self, get_meeting, context):
         get_meeting.return_value = None
         message = MagicMock(channel="channel", network="network")
         outbound_message(context, message)
         get_meeting.assert_called_once_with("channel", "network")
 
     @patch("hcoopmeetbotlogic.handler.get_meeting")
-    def test_outbound_message_with_meeting(self, get_meeting, logger, context):
+    def test_outbound_message_with_meeting(self, get_meeting, context):
         meeting = MagicMock()
         meeting.track_message = MagicMock()
         get_meeting.return_value = meeting
@@ -116,18 +120,22 @@ class TestHandlers:
         meeting.track_message.assert_called_once_with(message)
 
 
-@patch("hcoopmeetbotlogic.handler.logger")
 class TestCommands:
+    @pytest.fixture(autouse=True)
+    def logger(self):
+        with patch("hcoopmeetbotlogic.handler.logger"):
+            yield
+
     @patch("hcoopmeetbotlogic.handler._send_reply")
     @patch("hcoopmeetbotlogic.handler.DATE", "2001-02-03")
     @patch("hcoopmeetbotlogic.handler.VERSION", "1.2.3")
-    def test_meetversion(self, send_reply, logger, context):
+    def test_meetversion(self, send_reply, context):
         meetversion(context)
         send_reply.assert_called_once_with(context, "HCoop Meetbot v1.2.3 (2001-02-03)")
 
     @patch("hcoopmeetbotlogic.handler._send_reply")
     @patch("hcoopmeetbotlogic.handler.get_meetings")
-    def test_listmeetings_no_meetings(self, get_meetings, send_reply, logger, context):
+    def test_listmeetings_no_meetings(self, get_meetings, send_reply, context):
         get_meetings.return_value = []
         listmeetings(context)
         get_meetings.assert_called_once_with(active=True, completed=False)
@@ -135,7 +143,7 @@ class TestCommands:
 
     @patch("hcoopmeetbotlogic.handler._send_reply")
     @patch("hcoopmeetbotlogic.handler.get_meetings")
-    def test_listmeetings_with_meetings(self, get_meetings, send_reply, logger, context):
+    def test_listmeetings_with_meetings(self, get_meetings, send_reply, context):
         meeting1 = MagicMock()
         meeting1.display_name = MagicMock(return_value="xxx")
         meeting2 = MagicMock()
@@ -147,7 +155,7 @@ class TestCommands:
 
     @patch("hcoopmeetbotlogic.handler._send_reply")
     @patch("hcoopmeetbotlogic.handler.get_meetings")
-    def test_savemeetings_no_meetings(self, get_meetings, send_reply, logger, context):
+    def test_savemeetings_no_meetings(self, get_meetings, send_reply, context):
         get_meetings.return_value = []
         savemeetings(context)
         get_meetings.assert_called_once_with(active=True, completed=False)
@@ -157,7 +165,7 @@ class TestCommands:
     @patch("hcoopmeetbotlogic.handler.config")
     @patch("hcoopmeetbotlogic.handler.write_meeting")
     @patch("hcoopmeetbotlogic.handler.get_meetings")
-    def test_savemeetings_with_meeting(self, get_meetings, write_meeting, config, send_reply, logger, context):
+    def test_savemeetings_with_meeting(self, get_meetings, write_meeting, config, send_reply, context):
         meeting = MagicMock()
         config.return_value = "xxx"
         get_meetings.return_value = [meeting]
@@ -170,7 +178,7 @@ class TestCommands:
     @patch("hcoopmeetbotlogic.handler.config")
     @patch("hcoopmeetbotlogic.handler.write_meeting")
     @patch("hcoopmeetbotlogic.handler.get_meetings")
-    def test_savemeetings_with_meetings(self, get_meetings, write_meeting, config, send_reply, logger, context):
+    def test_savemeetings_with_meetings(self, get_meetings, write_meeting, config, send_reply, context):
         meeting1 = MagicMock()
         meeting2 = MagicMock()
         config.return_value = "xxx"
@@ -182,7 +190,7 @@ class TestCommands:
 
     @patch("hcoopmeetbotlogic.handler._send_reply")
     @patch("hcoopmeetbotlogic.handler.get_meeting")
-    def test_addchair_not_found(self, get_meeting, send_reply, logger, context):
+    def test_addchair_not_found(self, get_meeting, send_reply, context):
         get_meeting.return_value = None
         addchair(context, "channel", "network", "nick")
         get_meeting.assert_called_once_with("channel", "network")
@@ -190,7 +198,7 @@ class TestCommands:
 
     @patch("hcoopmeetbotlogic.handler._send_reply")
     @patch("hcoopmeetbotlogic.handler.get_meeting")
-    def test_addchair_found(self, get_meeting, send_reply, logger, context):
+    def test_addchair_found(self, get_meeting, send_reply, context):
         meeting = MagicMock()
         meeting.chair = "yyy"
         meeting.add_chair = MagicMock()
@@ -205,7 +213,7 @@ class TestCommands:
     @patch("hcoopmeetbotlogic.handler.write_meeting")
     @patch("hcoopmeetbotlogic.handler.deactivate_meeting")
     @patch("hcoopmeetbotlogic.handler.get_meeting")
-    def test_deletemeeting_not_found(self, get_meeting, deactivate_meeting, write_meeting, send_reply, logger, context):
+    def test_deletemeeting_not_found(self, get_meeting, deactivate_meeting, write_meeting, send_reply, context):
         get_meeting.return_value = None
         deletemeeting(context, "channel", "network", save=True)
         get_meeting.assert_called_once_with("channel", "network")
@@ -217,7 +225,7 @@ class TestCommands:
     @patch("hcoopmeetbotlogic.handler.write_meeting")
     @patch("hcoopmeetbotlogic.handler.deactivate_meeting")
     @patch("hcoopmeetbotlogic.handler.get_meeting")
-    def test_deletemeeting_found_no_save(self, get_meeting, deactivate_meeting, write_meeting, send_reply, logger, context):
+    def test_deletemeeting_found_no_save(self, get_meeting, deactivate_meeting, write_meeting, send_reply, context):
         meeting = MagicMock()
         meeting.display_name = MagicMock(return_value="xxx")
         get_meeting.return_value = meeting
@@ -232,7 +240,7 @@ class TestCommands:
     @patch("hcoopmeetbotlogic.handler.write_meeting")
     @patch("hcoopmeetbotlogic.handler.deactivate_meeting")
     @patch("hcoopmeetbotlogic.handler.get_meeting")
-    def test_deletemeeting_found_save(self, get_meeting, deactivate_meeting, write_meeting, config, send_reply, logger, context):
+    def test_deletemeeting_found_save(self, get_meeting, deactivate_meeting, write_meeting, config, send_reply, context):
         meeting = MagicMock()
         meeting.display_name = MagicMock(return_value="xxx")
         config.return_value = "yyy"
@@ -245,7 +253,7 @@ class TestCommands:
 
     @patch("hcoopmeetbotlogic.handler._send_reply")
     @patch("hcoopmeetbotlogic.handler.get_meetings")
-    def test_recent_no_meetings(self, get_meetings, send_reply, logger, context):
+    def test_recent_no_meetings(self, get_meetings, send_reply, context):
         get_meetings.return_value = []
         recent(context)
         get_meetings.assert_called_once_with(active=False, completed=True)
@@ -253,7 +261,7 @@ class TestCommands:
 
     @patch("hcoopmeetbotlogic.handler._send_reply")
     @patch("hcoopmeetbotlogic.handler.get_meetings")
-    def test_recent_with_meetings(self, get_meetings, send_reply, logger, context):
+    def test_recent_with_meetings(self, get_meetings, send_reply, context):
         meeting1 = MagicMock()
         meeting1.display_name = MagicMock(return_value="meeting1")
         meeting2 = MagicMock()
@@ -265,7 +273,7 @@ class TestCommands:
 
     @patch("hcoopmeetbotlogic.handler._send_reply")
     @patch("hcoopmeetbotlogic.handler.list_commands")
-    def test_commands(self, list_commands, send_reply, logger, context):
+    def test_commands(self, list_commands, send_reply, context):
         list_commands.return_value = ["a", "b", "c"]
         commands(context)
         send_reply.assert_has_calls([
