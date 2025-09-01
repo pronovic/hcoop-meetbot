@@ -1,7 +1,6 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 # ruff: noqa: FURB113
 
-import os
 from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -15,8 +14,8 @@ from hcoopmeetbotlogic.meeting import Meeting
 from hcoopmeetbotlogic.writer import _AliasMatcher, _LogMessage, write_meeting
 from tests.hcoopmeetbotlogic.testdata import contents, sample_meeting
 
-EXPECTED_LOG = os.path.join(Path(__file__).parent, "fixtures/test_writer/log.html")
-EXPECTED_MINUTES = os.path.join(Path(__file__).parent, "fixtures/test_writer/minutes.html")
+EXPECTED_LOG = str(Path(__file__).parent / "fixtures/test_writer/log.html")
+EXPECTED_MINUTES = str(Path(__file__).parent / "fixtures/test_writer/minutes.html")
 TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
 
 
@@ -145,9 +144,9 @@ class TestRendering:
         # valid, and that files are written as expected.  We don't necessarily verify every
         # different scenario - there are tests elsewhere that delve into some of the details.
         with TemporaryDirectory() as temp:
-            raw_log = Location(path=os.path.join(temp, "log.json"), url="http://raw")
-            formatted_log = Location(path=os.path.join(temp, "log.html"), url="http://log")
-            formatted_minutes = Location(path=os.path.join(temp, "minutes.html"), url="http://minutes")
+            raw_log = Location(path=str(Path(temp) / "log.json"), url="http://raw")
+            formatted_log = Location(path=str(Path(temp) / "log.html"), url="http://log")
+            formatted_minutes = Location(path=str(Path(temp) / "minutes.html"), url="http://minutes")
             locations = Locations(raw_log=raw_log, formatted_log=formatted_log, formatted_minutes=formatted_minutes)
             derive_locations.return_value = locations
             config = MagicMock(timezone="America/Chicago", output_format=OutputFormat.HTML)

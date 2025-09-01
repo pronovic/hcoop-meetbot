@@ -4,7 +4,6 @@
 Writes meeting log and minutes to disk.
 """
 
-import os
 import re
 from enum import Enum
 from pathlib import Path
@@ -21,7 +20,7 @@ from hcoopmeetbotlogic.meeting import EventType, Meeting, TrackedMessage
 from hcoopmeetbotlogic.release import DATE, URL, VERSION
 
 # Location of Genshi templates
-_TEMPLATES = os.path.join(Path(__file__).parent, "templates")
+_TEMPLATES = str(Path(__file__).parent / "templates")
 _LOADER = TemplateLoader(search_path=_TEMPLATES, auto_reload=False)
 
 # Standard date and time formats
