@@ -55,6 +55,7 @@ dependencies = [
 [project.urls]
 homepage = "https://pypi.org/project/hcoop-meetbot/"
 repository = "https://github.com/pronovic/hcoop-meetbot"
+documentation = "https://hcoop-meetbot.readthedocs.io/en/stable/"
 
 [project.optional-dependencies]
 docs = [
