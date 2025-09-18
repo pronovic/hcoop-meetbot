@@ -1,4 +1,4 @@
-Version 0.6.16     unreleased
+Version 0.7.0     17 Sep 2025
 
 	* Remove `__all__ = []` from __init__.py.
 	* Add a new 'suite -f' command to run faster subset of the suite.
