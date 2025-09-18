@@ -15,6 +15,10 @@ Version and release information.
 # (COPYRIGHT), but that information is not available in the package metadata.  These
 # variables are maintained to avoid breaking the public interface, but are always
 # "unset".
+#
+# See also:
+#   https://packaging.python.org/en/latest/specifications/core-metadata/#core-metadata-project-url
+#   https://packaging.python.org/en/latest/specifications/well-known-project-urls/#well-known-project-urls
 
 from importlib.metadata import PackageMetadata, metadata
 from typing import cast
