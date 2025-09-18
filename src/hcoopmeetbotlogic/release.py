@@ -5,15 +5,16 @@ Version and release information.
 """
 
 # Historically, this information was tracked directly within this file as part of the
-# release process.  In modern Python, it's better to rely on the package metadata, which
-# is managed by Poetry on our behalf.
+# release process.  In modern Python, it's better to rely on the package metadata,
+# which is managed by Poetry on our behalf.
 #
-# The metadata will always be set any time the package has been completely and properly
-# installed, but defaults are provided for times when the package is not really installed.
+# The metadata will always be set any time the package has been completely and
+# properly installed, but defaults are provided for times when this is not the case.
 #
-# Note: previously, we also tracked release date and copyright date range, but that
-# information is not available in the package metadata.  These values are maintained to
-# avoid breaking the public interface, but are always "unset".
+# Note: previously, we also tracked release date (DATE) and copyright date range
+# (COPYRIGHT), but that information is not available in the package metadata.  These
+# variables are maintained to avoid breaking the public interface, but are always
+# "unset".
 
 from importlib.metadata import PackageMetadata, metadata
 from typing import cast
