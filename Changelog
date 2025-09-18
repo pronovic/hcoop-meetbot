@@ -10,10 +10,8 @@ Version 0.6.16     unreleased
 	* Move unit tests from `tests` into `src/tests/hcoopmeetbotlogic`.
 	* Replace black, isort, and pylint with the Ruff formatter and linter.
 	* Remove importlib-metadata dependency in favor of standard library.
-	* Update the jinja2 transitive dependency to address CVE-2025-27516.
-	* Update the requests transitive dependency to address CVE-2024-47081.
-	* Update the urllib3 transitive dependency to address CVE-2025-50181.
 	* Fix bug with `meetversion` introduced in or around v0.6.2.
+	* Update all dependencies and outdated constraints.
 
 Version 0.6.15     27 Jan 2025
 
