@@ -17,7 +17,7 @@ from hcoopmeetbotlogic.config import Config, OutputFormat
 from hcoopmeetbotlogic.dateutil import formatdate
 from hcoopmeetbotlogic.location import Locations, derive_locations
 from hcoopmeetbotlogic.meeting import EventType, Meeting, TrackedMessage
-from hcoopmeetbotlogic.release import DATE, URL, VERSION
+from hcoopmeetbotlogic.release import URL, VERSION
 
 # Location of Genshi templates
 _TEMPLATES = str(Path(__file__).parent / "templates")
@@ -319,7 +319,7 @@ def write_formatted_minutes(config: Config, locations: Locations, meeting: Meeti
     """Write the formatted meeting minutes to disk."""
     context = {
         "title": f"{meeting.name} Minutes",
-        "software": {"version": VERSION, "url": URL, "date": DATE},
+        "software": {"version": VERSION, "url": URL},
         "logpath": Path(locations.formatted_log.path).name,
         "minutes": _MeetingMinutes.for_meeting(config, meeting),
     }

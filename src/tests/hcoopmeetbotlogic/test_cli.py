@@ -75,7 +75,6 @@ class TestRegenerate:
         result = invoke(["regenerate", "-c", CONFIG_PATH, "-r", RAW_LOG, "-d", "bogus"])
         assert result.exit_code == 2
 
-    @patch("hcoopmeetbotlogic.writer.DATE", "2001-02-03")
     @patch("hcoopmeetbotlogic.writer.VERSION", "1.2.3")
     @patch("hcoopmeetbotlogic.cli.derive_locations")
     @patch("hcoopmeetbotlogic.cli.load_config")

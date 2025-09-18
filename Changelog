@@ -13,6 +13,7 @@ Version 0.6.16     unreleased
 	* Update the jinja2 transitive dependency to address CVE-2025-27516.
 	* Update the requests transitive dependency to address CVE-2024-47081.
 	* Update the urllib3 transitive dependency to address CVE-2025-50181.
+	* Fix bug with `meetversion` introduced in or around v0.6.2.
 
 Version 0.6.15     27 Jan 2025
 

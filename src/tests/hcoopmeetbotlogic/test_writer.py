@@ -136,7 +136,6 @@ class TestLogMessage:
 
 
 class TestRendering:
-    @patch("hcoopmeetbotlogic.writer.DATE", "2001-02-03")
     @patch("hcoopmeetbotlogic.writer.VERSION", "1.2.3")
     @patch("hcoopmeetbotlogic.writer.derive_locations")
     def test_html_rendering(self, derive_locations):

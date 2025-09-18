@@ -9,7 +9,7 @@ from logging import Logger
 from hcoopmeetbotlogic.command import dispatch, is_startmeeting, list_commands
 from hcoopmeetbotlogic.config import load_config
 from hcoopmeetbotlogic.interface import Context, Message
-from hcoopmeetbotlogic.release import DATE, DOCS, VERSION
+from hcoopmeetbotlogic.release import DOCS, VERSION
 from hcoopmeetbotlogic.state import (
     add_meeting,
     config,
@@ -81,7 +81,7 @@ def outbound_message(context: Context, message: Message) -> None:  # noqa: ARG00
 def meetversion(context: Context) -> None:
     """Reply with a string describing the version of the plugin."""
     logger().debug("Handled 'meetversion'")
-    _send_reply(context, f"HCoop Meetbot v{VERSION} ({DATE})")
+    _send_reply(context, f"HCoop Meetbot v{VERSION}")
 
 
 def listmeetings(context: Context) -> None:
