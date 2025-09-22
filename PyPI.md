@@ -7,7 +7,6 @@
 [![Test Suite](https://github.com/pronovic/hcoop-meetbot/workflows/Test%20Suite/badge.svg)](https://github.com/pronovic/hcoop-meetbot/actions?query=workflow%3A%22Test+Suite%22)
 [![docs](https://readthedocs.org/projects/hcoop-meetbot/badge/?version=stable&style=flat)](https://hcoop-meetbot.readthedocs.io/en/stable/)
 [![coverage](https://coveralls.io/repos/github/pronovic/hcoop-meetbot/badge.svg?branch=main)](https://coveralls.io/github/pronovic/hcoop-meetbot?branch=main)
-[![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
 
 [hcoop-meetbot](https://github.com/pronovic/hcoop-meetbot) is a plugin for [Limnoria](https://github.com/ProgVal/Limnoria), a bot framework for IRC.  It is designed to help run meetings on IRC.  It was originally written for quarterly board meetings at [HCoop](https://hcoop.net), when Ken was on the board there.
 
