@@ -32,7 +32,7 @@ GITHUB_REPO = "hcoop-meetbot"
 _METADATA = metadata("hcoop-meetbot")
 PROJECT = _METADATA["Name"]
 SUMMARY = _METADATA["Summary"]
-AUTHOR = _METADATA["Author"]
+AUTHOR = _METADATA["Author-email"]
 VERSION = _METADATA["Version"]
 
 # Dump metadata so it's obvious in the build log
