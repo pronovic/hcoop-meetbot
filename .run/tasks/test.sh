@@ -54,7 +54,7 @@ task_test() {
          run_command openfile .htmlcov/index.html
       fi
    else
-      run_command uvrun run supybot-test --clean --plugins-dir=src HcoopMeetbot
+      run_command uvrun supybot-test --clean --plugins-dir=src HcoopMeetbot
       RESULT=$?
       rm -rf logs web tmp backup test-data test-conf  # supybot-test leaves around a lot of junk
       if [ $RESULT != 0 ]; then
