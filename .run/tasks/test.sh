@@ -38,29 +38,29 @@ task_test() {
    fi
 
    if [ $coverage == "yes" ]; then
-      poetry run coverage run "$(poetry run which supybot-test)" --clean --plugins-dir=src HcoopMeetbot
+      run_command uvrun coverage run "$(run_command uvrun which supybot-test)" --clean --plugins-dir=src HcoopMeetbot
       RESULT=$?
       rm -rf logs web tmp backup test-data test-conf  # supybot-test leaves around a lot of junk
       if [ $RESULT != 0 ]; then
          exit 1
       fi
 
-      poetry_run coverage run -a -m pytest --testdox --force-testdox $color src/tests  # note -a to append data
+      run_command uvrun coverage run -a -m pytest --testdox --force-testdox $color src/tests  # note -a to append data
 
-      poetry_run coverage report
-      poetry_run coverage lcov -o .coverage.lcov
+      run_command uvrun coverage report
+      run_command uvrun coverage lcov -o .coverage.lcov
       if [ $html == "yes" ]; then
-         poetry_run coverage html -d .htmlcov
+         run_command uvrun coverage html -d .htmlcov
          run_command openfile .htmlcov/index.html
       fi
    else
-      poetry run supybot-test --clean --plugins-dir=src HcoopMeetbot
+      run_command uvrun run supybot-test --clean --plugins-dir=src HcoopMeetbot
       RESULT=$?
       rm -rf logs web tmp backup test-data test-conf  # supybot-test leaves around a lot of junk
       if [ $RESULT != 0 ]; then
          exit 1
       fi
 
-      poetry_run pytest --testdox --force-testdox $color src/tests
+      run_command uvrun pytest --testdox --force-testdox $color src/tests
    fi
 }

@@ -24,6 +24,6 @@ task_bot() {
       cat utils/HcoopMeetbot.conf.template | sed "s|%%WORKDIR%%|$(pwd)|" > localbot/conf/HcoopMeetbot.conf
    fi
 
-   poetry_run supybot localbot/localbot.conf
+   run_command uvrun supybot localbot/localbot.conf
 }
 
