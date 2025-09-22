@@ -6,7 +6,7 @@ Version and release information.
 
 # Historically, this information was tracked directly within this file as part of the
 # release process.  In modern Python, it's better to rely on the package metadata,
-# which is managed by Poetry on our behalf.
+# which is managed by UV on our behalf.
 #
 # The metadata will always be set any time the package has been completely and
 # properly installed, but defaults are provided for times when this is not the case.
