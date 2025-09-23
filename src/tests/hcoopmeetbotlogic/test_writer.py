@@ -1,7 +1,7 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 # ruff: noqa: FURB113
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import MagicMock, patch
@@ -16,7 +16,7 @@ from tests.hcoopmeetbotlogic.testdata import contents, sample_meeting
 
 EXPECTED_LOG = str(Path(__file__).parent / "fixtures/test_writer/log.html")
 EXPECTED_MINUTES = str(Path(__file__).parent / "fixtures/test_writer/minutes.html")
-TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc)
+TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC)
 
 
 class TestLogMessage:
