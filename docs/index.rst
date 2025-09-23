@@ -6,7 +6,7 @@ Release v\ |version|
 .. image:: https://img.shields.io/pypi/v/hcoop-meetbot.svg
     :target: https://pypi.org/project/hcoop-meetbot/
 
-.. image:: https://img.shields.io/pypi/l/hcoop-meetbot.svg
+.. image:: https://img.shields.io/github/license/pronovic/hcoop-meetbot
     :target: https://github.com/pronovic/hcoop-meetbot/blob/main/LICENSE
 
 .. image:: https://img.shields.io/pypi/wheel/hcoop-meetbot.svg

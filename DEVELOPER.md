@@ -25,7 +25,7 @@ suites and combines the coverage results together into a single report.
 
 ## Packaging and Dependencies
 
-This project uses [Poetry v2](https://python-poetry.org/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through Poetry.
+This project uses [UV](https://docs.astral.sh/uv/) to manage Python packaging and dependencies.  Most day-to-day tasks (such as running unit tests from the command line) are orchestrated through UV.
 
 A coding standard is enforced using [Ruff](https://docs.astral.sh/ruff/).  Python 3 type hinting is validated using [MyPy](https://pypi.org/project/mypy/).  To reduce boilerplate, classes are defined using [Attrs](https://www.attrs.org/) (see this [rationale](https://glyph.twistedmatrix.com/2016/08/attrs.html)).
 
@@ -48,60 +48,13 @@ in this repository.  Instead of relying on automatic behavior, the
 
 ## Prerequisites
 
-Nearly all prerequisites are managed by Poetry.  All you need to do is make
-sure that you have a working Python 3 enviroment and install Poetry itself.
+All prerequisites are managed by UV.  All you need to do install UV itself,
+following the [instructions](https://docs.astral.sh/uv/getting-started/installation/).
+UV will take care of installing the required Python interpreter and all of the
+dependencies.
 
-### Poetry Version
-
-The project is designed to work with Poetry >= 2.0.0.  If you already have an older
-version of Poetry installed on your system, upgrade it first.
-
-### MacOS
-
-On MacOS, it's easiest to use [Homebrew](https://brew.sh/) to install Python and pipx:
-
-```
-brew install python3 pipx
-```
-
-Once that's done, make sure the `python` on your `$PATH` is Python 3 from
-Homebrew (in `/usr/local`), rather than the standard Python 2 that comes with
-older versions of MacOS.
-
-Finally, install Poetry itself and then verify your installation:
-
-```
-pipx install poetry
-```
-
-To upgrade this installation later, use:
-
-```
-pipx upgrade poetry
-```
-
-### Debian
-
-First, install Python 3 and related tools:
-
-```
-sudo apt-get install python3 python-is-python3 pipx
-```
-
-Once that's done, make sure that the `python` interpreter on your `$PATH` is
-Python 3.
-
-Finally, install Poetry itself and then verify your installation:
-
-```
-pipx install poetry
-```
-
-To upgrade this installation later, use:
-
-```
-pipx upgrade poetry
-```
+> **Note:** The development environment (the `run` script, etc.) expects a bash
+> shell to be available.  On Windows, it works fine with the standard Git Bash.
 
 ## Developer Tasks
 
@@ -116,7 +69,10 @@ Shortcuts for common developer tasks
 
 Basic tasks:
 
-- run install: Setup the virtualenv via Poetry and install pre-commit hooks
+- run install: Install the Python virtualenv and pre-commit hooks
+- run update: Update all dependencies, or a subset passed as arguments
+- run outdated: Find top-level dependencies with outdated constraints
+- run rebuild: Rebuild all dependencies flagged as no-binary-package
 - run format: Run the code formatters
 - run checks: Run the code checkers
 - run build: Build artifacts in the dist/ directory
@@ -124,7 +80,7 @@ Basic tasks:
 - run test -c: Run the unit tests with coverage
 - run test -ch: Run the unit tests with coverage and open the HTML report
 - run suite: Run the complete test suite, as for the GitHub Actions CI build
-- run suite -f: Run a faster version of the test suite, ommitting some steps
+- run suite -f: Run a faster version of the test suite, omitting some steps
 - run clean: Clean the source tree
 
 Additional tasks:
@@ -195,7 +151,7 @@ the source tree.  If you make changes to the code, you can either reload using
 `@reload HcoopMeetbot` or just CTRL-C the bot and restart it.  If reload
 doesn't seem to work as expected, just use CTRL-C.
 
-> `Note:` The first time you use `run bot`, a `localbot` directory is created
+> **Note:** The first time you use `run bot`, a `localbot` directory is created
 > with a `localbot.conf` file based on the original template in
 > `util/localbot.conf.template`.  If something gets screwed up and you want to
 > start over, just blow away the `localbot` directory and it will be recreated
@@ -204,8 +160,9 @@ doesn't seem to work as expected, just use CTRL-C.
 ## Integration with PyCharm
 
 Currently, I use [PyCharm Community Edition](https://www.jetbrains.com/pycharm/download) as
-my day-to-day IDE.  By integrating Ruff, most everything important that can be
-done from a shell environment can also be done right in PyCharm.
+my day-to-day IDE.  By integrating the `run` script to execute MyPy and Ruff,
+most everything important that can be done from a shell environment can also be
+done right in PyCharm.
 
 PyCharm offers a good developer experience.  However, the underlying configuration
 on disk mixes together project policy (i.e. preferences about which test runner to
@@ -216,13 +173,11 @@ there are instructions below about how to manually configure the remaining items
 
 ### Prerequisites
 
-Before going any further, make sure sure that you have installed all of the system
-prerequisites discussed above.  Then, make sure your environment is in working
-order.  In particular, if you do not run the install step, there will be no
-virtualenv for PyCharm to use:
+Before going any further, make sure sure that you have installed UV and have a
+working bash shell.  Then, run the suite and confirm that everything is working:
 
 ```
-./run install && ./run suite
+./run suite
 ```
 
 ### Open the Project
@@ -235,10 +190,10 @@ retained and all of the existing settings will be used.
 ### Interpreter
 
 As a security precaution, PyCharm does not trust any virtual environment
-installed within the repository, such as the Poetry `.venv` directory. In the
+installed within the repository, such as the UV `.venv` directory. In the
 status bar on the bottom right, PyCharm will report _No interpreter_.  Click
 on this error and select **Add Interpreter**.  In the resulting dialog, click
-**Ok** to accept the selected environment, which should be the Poetry virtual
+**Ok** to accept the selected environment, which should be the UV virtual
 environment.
 
 ### Project Structure
@@ -248,7 +203,7 @@ Go to the PyCharm settings and find the `hcoop-meetbot` project.  Under
 folder.  In the **Exclude Files** box, enter the following:
 
 ```
-LICENSE;NOTICE;PyPI.md;build;dist;docs/_build;out;poetry.lock;poetry.toml;run;.coverage;.coverage.lcov;.coveragerc;.gitattributes;.github;.gitignore;.htmlcov;.idea;.mypy_cache;.poetry;.pre-commit-config.yaml;.pytest_cache;.python-version;.readthedocs.yml;.ruff_cache;.run;.tabignore;.venv;localbot;test-conf;test-data;tmp;web;backup;meetings;test-logs
+LICENSE;NOTICE;PyPI.md;build;dist;docs/_build;out;uv.lock;run;.coverage;.coverage.lcov;.coveragerc;.gitattributes;.github;.gitignore;.htmlcov;.idea;.mypy_cache;.pre-commit-config.yaml;.pytest_cache;.python-version;.readthedocs.yaml;.ruff_cache;.run;.tabignore;.venv;localbot;test-conf;test-data;tmp;web;backup;meetings;test-logs
 ```
 
 When you're done, click **Ok**.  Then, go to the gear icon in the project panel
@@ -261,10 +216,9 @@ In the PyCharm settings, go to **Editor > Inspections** and be sure that the
 **Project Default** profile is selected.
 
 Unit tests are written using [Pytest](https://docs.pytest.org/en/latest/),
-and API documentation is written
-using [Google Style Python Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html).  However,
+and API documentation is written using [Google Style Python Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html).  However,
 neither of these is the default in PyCharm.  In the PyCharm settings, go to
-**Tools > Python Integrated Tools**.  Under **Testing > Default test runner**,
+**Python > Integrated Tools**.  Under **Testing > Default test runner**,
 select _pytest_.  Under **Docstrings > Docstring format**, select _Google_.
 
 ### Running Unit Tests
@@ -275,7 +229,7 @@ different option (i.e. for "Unittest" instead of "pytest") then you probably
 skipped the preferences setup discussed above.  You may need to remove the
 run configuration before PyCharm will find the right test suite.
 
-> _Note:_ Keep in mind that the specialized Limnoria test suite can only be run
+> **Note:** Keep in mind that the specialized Limnoria test suite can only be run
 > from the command line, not from within PyCharm. 
 
 ### External Tools
@@ -289,7 +243,7 @@ described below.
 
 #### Shell Environment
 
-For this to work, it's important that tools like `poetry` are on the system
+For this to work, it's important that tools like `uv` are on the system
 path used by PyCharm.  On Linux, depending on how you start PyCharm, your
 normal shell environment may or may not be inherited.  For instance, I had to
 adjust the target of my LXDE desktop shortcut to be the script below, which
@@ -341,7 +295,7 @@ source ~/.bash_profile
 |Description|`Run the Ruff linter code checks`|
 |Group|`Developer Tools`|
 |Program|`$ProjectFileDir$/run`|
-|Arguments|`lint`|
+|Arguments|`ruff`|
 |Working directory|`$ProjectFileDir$`|
 |Synchronize files after execution|_Unchecked_|
 |Open console for tool outout|_Checked_|
@@ -362,7 +316,7 @@ documentation.
 Code is released to [PyPI](https://pypi.org/project/hcoop-meetbot/).  There is a
 partially-automated process to publish a new release.
 
-> _Note:_ In order to publish code, you must must have push permissions to the
+> **Note:** In order to publish code, you must must have push permissions to the
 > GitHub repo.
 
 Ensure that you are on the `main` branch.  Releases must always be done from
@@ -386,7 +340,7 @@ and release date, commits those changes, tags the code, and pushes to GitHub.
 The new tag triggers a GitHub Actions build that runs the test suite, generates
 the artifacts, publishes to PyPI, and finally creates a release from the tag.
 
-> _Note:_ This process relies on a PyPI API token with upload permissions for
+> **Note:** This process relies on a PyPI API token with upload permissions for
 > the project.  This token is stored in a GitHub Actions secret called
 > `PYPI_TOKEN`.
 

@@ -12,7 +12,7 @@
 
 import os
 import sys
-
+import re
 from importlib.metadata import metadata
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -32,7 +32,7 @@ GITHUB_REPO = "hcoop-meetbot"
 _METADATA = metadata("hcoop-meetbot")
 PROJECT = _METADATA["Name"]
 SUMMARY = _METADATA["Summary"]
-AUTHOR = _METADATA["Author"]
+AUTHOR = re.sub(r"(^)(\"?)([^<\"]*)(\"?)( <)([^>]*)(>$)", r"\3", _METADATA["Author-email"])
 VERSION = _METADATA["Version"]
 
 # Dump metadata so it's obvious in the build log
