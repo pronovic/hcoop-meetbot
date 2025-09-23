@@ -1,7 +1,7 @@
 # HCoop Meetbot Plugin
 
 [![pypi](https://img.shields.io/pypi/v/hcoop-meetbot.svg)](https://pypi.org/project/hcoop-meetbot/)
-[![license](https://img.shields.io/pypi/l/hcoop-meetbot.svg)](https://github.com/pronovic/hcoop-meetbot/blob/main/LICENSE)
+[![license](https://img.shields.io/github/license/pronovic/hcoop-meetbot)](https://github.com/pronovic/hcoop-meetbot/blob/main/LICENSE)
 [![wheel](https://img.shields.io/pypi/wheel/hcoop-meetbot.svg)](https://pypi.org/project/hcoop-meetbot/)
 [![python](https://img.shields.io/pypi/pyversions/hcoop-meetbot.svg)](https://pypi.org/project/hcoop-meetbot/)
 [![Test Suite](https://github.com/pronovic/hcoop-meetbot/workflows/Test%20Suite/badge.svg)](https://github.com/pronovic/hcoop-meetbot/actions?query=workflow%3A%22Test+Suite%22)
