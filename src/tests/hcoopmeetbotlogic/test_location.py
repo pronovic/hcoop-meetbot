@@ -1,7 +1,7 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
 # ruff: noqa: S108
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -47,7 +47,7 @@ class TestFunctions:
             founder="f",
             channel="c",
             network="n",
-            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC),
         )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/constant.log.json"
@@ -71,7 +71,7 @@ class TestFunctions:
             founder="f",
             channel="c",
             network="n",
-            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC),
         )
         locations = derive_locations(config, meeting, prefix="prefix")
         assert locations.raw_log.path == "/data/meetings/hcoop/prefix.log.json"
@@ -95,7 +95,7 @@ class TestFunctions:
             founder="f",
             channel="c",
             network="n",
-            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC),
         )
         locations = derive_locations(config, meeting, output_dir="/tmp")
         assert locations.raw_log.path == "/tmp/constant.log.json"
@@ -119,7 +119,7 @@ class TestFunctions:
             founder="f",
             channel="c",
             network="n",
-            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC),
         )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/i-n-f-c-n.log.json"
@@ -143,7 +143,7 @@ class TestFunctions:
             founder="f",
             channel="c",
             network="n",
-            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC),
         )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/20210307.1314.log.json"
@@ -167,7 +167,7 @@ class TestFunctions:
             founder="f",
             channel="c",
             network="n",
-            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC),
         )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/_network_.log.json"
@@ -191,7 +191,7 @@ class TestFunctions:
             founder="f",
             channel="c",
             network="n",
-            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC),
         )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/2021/n.20210307.1314.log.json"
@@ -211,7 +211,7 @@ class TestFunctions:
             founder="f",
             channel="c",
             network="n",
-            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC),
         )
         locations = derive_locations(config, meeting)
         assert locations.raw_log.path == "/data/meetings/hcoop/20210307.1314.log.json"
@@ -235,7 +235,7 @@ class TestFunctions:
             founder="f",
             channel="c",
             network="n",
-            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=timezone.utc),
+            start_time=datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC),
         )
         with pytest.raises(ValueError):
             derive_locations(config, meeting)

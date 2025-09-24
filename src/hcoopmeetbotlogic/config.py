@@ -5,7 +5,7 @@ Plugin configuration and parsing.
 """
 
 import configparser
-from enum import Enum
+from enum import StrEnum
 from logging import Logger
 from pathlib import Path
 
@@ -28,7 +28,7 @@ TIMEZONE_DEFAULT = "UTC"
 USE_CHANNEL_TOPIC_DEFAULT = False
 
 
-class OutputFormat(str, Enum):
+class OutputFormat(StrEnum):
     """Legal output formats."""
 
     HTML = "HTML"

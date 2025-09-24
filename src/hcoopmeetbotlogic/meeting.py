@@ -7,7 +7,7 @@ Meeting state.
 import json
 import uuid
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 import cattrs
@@ -33,7 +33,7 @@ _CONVERTER = _CattrConverter()
 # Note: we use (str, Enum) so that the enum value gets serialized rather than the enum name
 
 
-class EventType(str, Enum):
+class EventType(StrEnum):
     """Legal event types for TrackedEvent."""
 
     START_MEETING = "START_MEETING"
@@ -58,7 +58,7 @@ class EventType(str, Enum):
     LINK = "LINK"
 
 
-class VotingAction(str, Enum):
+class VotingAction(StrEnum):
     """Voting actions"""
 
     IN_FAVOR = "+1"
