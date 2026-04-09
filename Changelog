@@ -1,3 +1,7 @@
+Version 0.8.2     unreleased
+
+	* Add support for Visual Studio Code as an IDE.
+
 Version 0.8.1     16 Nov 2025
 
 	* Add support for Python v3.14 and drop support for v3.10.
