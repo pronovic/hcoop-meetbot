@@ -1,6 +1,7 @@
 Version 0.8.2     unreleased
 
 	* Add support for Visual Studio Code as an IDE.
+	* Use pytest-cov for test coverage, for more consistency.
 
 Version 0.8.1     16 Nov 2025
 
