@@ -195,7 +195,10 @@ Project configuration in `.vscode/settings.json` should configure the tests
 properly.  You can right click on `src/tests` in the explorer and run tests
 from there, or do something similar for individual directories or `.py` files.
 Workspace configuration includes a `launch.json` that should allow you to
-run unit tests in the debugger.
+run the standard pytest unit tests in the debugger.
+
+> **Note:** Keep in mind that the specialized Limnoria test suite can only be run
+> from the command line, not from within Visual Studio Code.
 
 ### Plugins
 
