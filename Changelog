@@ -1,5 +1,6 @@
 Version 0.8.2     unreleased
 
+	* Address Dependabot warnings for requests, pygments, and urllib3.
 	* Add support for Visual Studio Code as an IDE.
 	* Use pytest-cov for test coverage, for more consistency.
 
