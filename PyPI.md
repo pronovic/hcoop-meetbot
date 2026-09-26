@@ -14,3 +14,4 @@ The code is based in part on the [MeetBot](https://github.com/rkdarst/MeetBot/) 
 
 See the [user documentation](https://hcoop-meetbot.readthedocs.io/en/stable/) for more information about how to use the plugin, including installation instructions.
 
+**Statement on free-threading:** This code is single-threaded by design. Starting with Python 3.14, the matrix build CI workflow in GitHub Actions ensures that the test suite passes for both standard and free-threaded interpreters.

@@ -7,6 +7,7 @@ Version 0.8.2     unreleased
 	* Add support for Visual Studio Code as an IDE.
 	* Use pytest-cov for test coverage, for more consistency.
 	* Update Read the Docs config to use generic latest Ubuntu runner.
+	* Run the GHA matrix build on free-threaded 3.14t and 3.15t.
 
 Version 0.8.1     16 Nov 2025
 
