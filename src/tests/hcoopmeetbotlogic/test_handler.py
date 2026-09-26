@@ -52,7 +52,7 @@ class TestConfig:
 
 
 class TestHandlers:
-    @pytest.fixture(autouse=True)
+    @pytest.fixture(autouse=True)  # ruff: ignore[pytest-fixture-autouse]
     def logger(self):
         with patch("hcoopmeetbotlogic.handler.logger"):
             yield
@@ -121,7 +121,7 @@ class TestHandlers:
 
 
 class TestCommands:
-    @pytest.fixture(autouse=True)
+    @pytest.fixture(autouse=True)  # ruff: ignore[pytest-fixture-autouse]
     def logger(self):
         with patch("hcoopmeetbotlogic.handler.logger"):
             yield
