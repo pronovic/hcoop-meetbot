@@ -223,14 +223,11 @@ wheels = [
 
 [[package]]
 name = "genshi"
-version = "0.7.9"
+version = "0.7.11"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e5/3c/6ae5689f4676c4c8d19a715d96b6efa70db0a806d9b238aa8a49a08172bb/Genshi-0.7.9.tar.gz", hash = "sha256:c76170a8b2dc18944e0915103c284cb889dfcee34e0e140ba3363c80f7541ad2", size = 269399, upload-time = "2024-06-15T23:53:22.272Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f3/a7/3f7a2b2cafa7af1938f1653855a0d47a0e44d4d5794571e4392343def34d/genshi-0.7.11.tar.gz", hash = "sha256:82c4f9bbf4b03be5162a24d6d8e4fdbfe3ed2602d3ebcbf505a33350a379dcb7", size = 237591, upload-time = "2026-05-17T13:27:07.574Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/89/86/7a8bb428086cdbf1d179af4d4d6f96e19e51d671cf119adc9c74a25feb27/Genshi-0.7.9-py3-none-any.whl", hash = "sha256:0f888d0ec944d7812eb92893380d6fdaea025e9e54c3e5a61f3dc666b2afb178", size = 177762, upload-time = "2024-06-15T23:53:20.075Z" },
+    { url = "https://files.pythonhosted.org/packages/b7/27/503016bc329720ba2856eb4831d6ba36089cd6f15bc4fe85db69fea5b563/genshi-0.7.11-py3-none-any.whl", hash = "sha256:3fdd03ab9c255db1dd612f7189ba94e3310e2b77d5f94bce37e2952eb9977842", size = 179395, upload-time = "2026-05-17T13:27:04.912Z" },
 ]
 
 [[package]]
@@ -644,15 +641,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/cc/f1/7119e42aa1d3bf036ffc9478885c2e248812b7de9abea4eae89163d2929d/ruff-0.14.5-py3-none-win32.whl", hash = "sha256:c83642e6fccfb6dea8b785eb9f456800dcd6a63f362238af5fc0c83d027dd08b", size = 12925808, upload-time = "2025-11-13T19:58:42.779Z" },
     { url = "https://files.pythonhosted.org/packages/3b/9d/7c0a255d21e0912114784e4a96bf62af0618e2190cae468cd82b13625ad2/ruff-0.14.5-py3-none-win_amd64.whl", hash = "sha256:9d55d7af7166f143c94eae1db3312f9ea8f95a4defef1979ed516dbb38c27621", size = 14331546, upload-time = "2025-11-13T19:58:45.691Z" },
     { url = "https://files.pythonhosted.org/packages/e5/80/69756670caedcf3b9be597a6e12276a6cf6197076eb62aad0c608f8efce0/ruff-0.14.5-py3-none-win_arm64.whl", hash = "sha256:4b700459d4649e2594b31f20a9de33bc7c19976d4746d8d0798ad959621d64a4", size = 13433331, upload-time = "2025-11-13T19:58:48.434Z" },
-]
-
-[[package]]
-name = "six"
-version = "1.17.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81", size = 34031, upload-time = "2024-12-04T17:35:28.174Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274", size = 11050, upload-time = "2024-12-04T17:35:26.475Z" },
 ]
 
 [[package]]
