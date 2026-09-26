@@ -22,25 +22,25 @@ _COMPLETED_SIZE = 16  # size of the _COMPLETED deque
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _LOGGER  # type: ignore[has-type,used-before-def] # noqa: B018
+    _LOGGER  # type: ignore[has-type,used-before-def] # ruff: ignore[useless-expression]
 except NameError:
     _LOGGER = None
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _CONFIG  # type: ignore[has-type,used-before-def] # noqa: B018
+    _CONFIG  # type: ignore[has-type,used-before-def] # ruff: ignore[useless-expression]
 except NameError:
     _CONFIG = None
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _ACTIVE  # type: ignore[used-before-def] # noqa: B018
+    _ACTIVE  # type: ignore[used-before-def] # ruff: ignore[useless-expression]
 except NameError:
     _ACTIVE: dict[str, Meeting] = {}
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-    _COMPLETED  # type: ignore[used-before-def] # noqa: B018
+    _COMPLETED  # type: ignore[used-before-def] # ruff: ignore[useless-expression]
 except NameError:
     _COMPLETED: deque[Meeting] = deque(maxlen=_COMPLETED_SIZE)
 
@@ -48,7 +48,7 @@ except NameError:
 # noinspection PyShadowingNames
 def set_logger(logger: Logger) -> None:
     """Set the shared logger instance."""
-    global _LOGGER  # noqa: PLW0603
+    global _LOGGER  # ruff: ignore[global-statement]
     _LOGGER = logger
 
 
@@ -63,7 +63,7 @@ def logger() -> Logger:
 # noinspection PyShadowingNames
 def set_config(config: Config) -> None:
     """Set shared configuration."""
-    global _CONFIG  # noqa: PLW0603
+    global _CONFIG  # ruff: ignore[global-statement]
     _CONFIG = config
 
 

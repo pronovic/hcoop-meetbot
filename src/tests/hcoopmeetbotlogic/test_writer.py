@@ -1,5 +1,5 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
-# ruff: noqa: FURB113
+# ruff: file-ignore[repeated-append]
 
 from datetime import UTC, datetime
 from pathlib import Path
