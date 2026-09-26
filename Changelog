@@ -1,6 +1,6 @@
 Version 0.8.2     unreleased
 
-	* Drop support for Python 3.11.
+	* Drop support for Python v3.11.
 	* Address Dependabot warnings for requests, pygments, urllib3, and idna.
 	* Upgrade to Pytest v9 for new TOML syntax, strict mode, and Dependabot.
 	* Add support for Visual Studio Code as an IDE.
