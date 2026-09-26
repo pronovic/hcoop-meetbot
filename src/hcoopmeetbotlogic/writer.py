@@ -289,7 +289,7 @@ class _MeetingMinutes:
 
 def _render_html(template: str, context: dict[str, Any], out: TextIO) -> None:
     """Render the named template to HTML, writing into the provided file."""
-    renderer = _LOADER.load(filename=template, cls=MarkupTemplate)  # type: MarkupTemplate
+    renderer: MarkupTemplate = _LOADER.load(filename=template, cls=MarkupTemplate)
     renderer.generate(**context).render(method="html", doctype="html", out=out)
 
 
