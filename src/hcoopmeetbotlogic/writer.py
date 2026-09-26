@@ -289,11 +289,11 @@ class _MeetingMinutes:
 
 def _render_html(template: str, context: dict[str, Any], out: TextIO) -> None:
     """Render the named template to HTML, writing into the provided file."""
-    renderer = _LOADER.load(filename=template, cls=MarkupTemplate)  # type: MarkupTemplate
+    renderer: MarkupTemplate = _LOADER.load(filename=template, cls=MarkupTemplate)
     renderer.generate(**context).render(method="html", doctype="html", out=out)
 
 
-def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> None:  # noqa: ARG001
+def write_raw_log(config: Config, locations: Locations, meeting: Meeting) -> None:  # ruff: ignore[unused-function-argument]
     """Write the raw meeting log to disk in JSON format."""
     Path(locations.raw_log.path).parent.mkdir(exist_ok=True, parents=True)
     Path(locations.raw_log.path).write_text(meeting.to_json(), encoding="utf-8")

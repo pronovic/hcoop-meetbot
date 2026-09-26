@@ -1,5 +1,5 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
-# ruff: noqa: PLR6301
+# ruff: file-ignore[no-self-use]
 
 # Note: this must be executed by supybot-test.  Use 'run test' from the command line.
 #
@@ -22,7 +22,7 @@ PREFIX = "@"
 TIMESTAMP = datetime(2021, 3, 7, 13, 14, 0, tzinfo=UTC)
 
 
-def _stub(context, **kwargs):  # noqa: ARG001
+def _stub(context, **kwargs):  # ruff: ignore[unused-function-argument]
     """Stub handler method that returns a static reply; without this, the handler tests all time out."""
     context.send_reply("Hello")
 

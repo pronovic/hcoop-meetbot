@@ -44,7 +44,7 @@ def _project_url(key: str, default: str) -> str:
 
 AUTHOR = re.sub(_REGEX, r"\3", _METADATA["Author-email"]) if "Author-email" in _METADATA else "unset"
 EMAIL = re.sub(_REGEX, r"\6", _METADATA["Author-email"]) if "Author-email" in _METADATA else "unset"
-VERSION = _METADATA["Version"] if "Version" in _METADATA else "0.0.0"  # noqa: SIM401 # this is not a dict
+VERSION = _METADATA["Version"] if "Version" in _METADATA else "0.0.0"  # ruff: ignore[if-else-block-instead-of-dict-get] # this is not a dict
 URL = _project_url("Homepage", "unset")
 DOCS = _project_url("Documentation", "unset")
 

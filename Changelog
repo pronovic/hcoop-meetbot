@@ -1,10 +1,12 @@
 Version 0.8.2     unreleased
 
 	* Add support for Python v3.15 and drop support for v3.11.
-	* Address Dependabot warnings for requests, pygments, urllib3, and idna.
+	* Update dependencies and dependency pins across the board.
+	* Upgrade to MyPy v2, adjust for new strict settings, use native parser.
 	* Upgrade to Pytest v9 for new TOML syntax, strict mode, and Dependabot.
 	* Add support for Visual Studio Code as an IDE.
 	* Use pytest-cov for test coverage, for more consistency.
+	* Update Read the Docs config to use generic latest Ubuntu runner.
 
 Version 0.8.1     16 Nov 2025
 

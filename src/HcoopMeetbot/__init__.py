@@ -20,7 +20,7 @@ reload(plugin)
 
 __version__ = release.VERSION
 __author__ = Author(name=release.AUTHOR, email=release.EMAIL)
-__contributors__ = {}  # type: dict[str, str]
+__contributors__: dict[str, str] = {}
 __url__ = release.URL
 
 if world.testing:

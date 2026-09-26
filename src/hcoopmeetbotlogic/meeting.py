@@ -111,7 +111,7 @@ class TrackedEvent:
     timestamp: datetime = field()
 
     # noinspection PyUnresolvedReferences
-    @id.default  # noqa: A003
+    @id.default  # ruff: ignore[builtin-attribute-shadowing]
     def _default_id(self) -> str:
         return self.message.id
 
