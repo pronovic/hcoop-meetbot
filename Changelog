@@ -1,6 +1,10 @@
-Version 0.8.2     unreleased
+Version 0.8.3     unreleased
 
-	* Add support for Python v3.15 and drop support for v3.11.
+	* Add support for Python 3.15.
+
+Version 0.8.2     26 Sep 2026
+
+	* Drop support for Python v3.11.
 	* Update dependencies and dependency pins across the board.
 	* Upgrade to MyPy v2, adjust for new strict settings, use native parser.
 	* Upgrade to Pytest v9 for new TOML syntax, strict mode, and Dependabot.
