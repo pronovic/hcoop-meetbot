@@ -1,4 +1,4 @@
-Version 0.8.2     unreleased
+Version 0.8.2     26 Sep 2026
 
 	* Drop support for Python v3.11.
 	* Update dependencies and dependency pins across the board.
