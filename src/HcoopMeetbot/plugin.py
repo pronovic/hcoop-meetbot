@@ -1,5 +1,5 @@
 # vim: set ft=python ts=4 sw=4 expandtab:
-# ruff: noqa: ARG001,ARG002
+# ruff: file-ignore[unused-function-argument, unused-method-argument]
 
 """
 Implement the HcoopMeetbot plugin in terms of Limnoria functionality.

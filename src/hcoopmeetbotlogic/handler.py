@@ -63,7 +63,7 @@ def irc_message(context: Context, message: Message) -> None:
         dispatch(meeting, context, tracked)
 
 
-def outbound_message(context: Context, message: Message) -> None:  # noqa: ARG001
+def outbound_message(context: Context, message: Message) -> None:  # ruff: ignore[unused-function-argument]
     """
     Handle an outbound message from the bot.
 
