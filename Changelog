@@ -1,3 +1,8 @@
+Version 0.8.3     unreleased
+
+	* Add support for Python 3.15.
+	* Update dependencies across the board, including genshi for Python 3.15.
+
 Version 0.8.2     26 Sep 2026
 
 	* Drop support for Python v3.11.
